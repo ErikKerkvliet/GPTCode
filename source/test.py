@@ -18,7 +18,7 @@
 #     if return_code:
 #         raise subprocess.CalledProcessError(return_code, cmd)
 #
-# cmd = ['curl', '-X', 'GET', 'https://api.bitpanda.com/v1/wallets', '-H', 'X-API-KEY:dafae09f622692a2acb9671492bb9d31e2f562bacc3e31be8ab2fe175825df83b11cfff55ec35719fbe64905ef6f8b694ea72153d89571dea46a77ac33ce182b']
+# cmd = ['curl', '-X', 'GET', 'https://api.bitpanda.com/v1/wallets', '-H', 'X-API-KEY:']
 # while 1:
 #     for path in execute(cmd):
 #         json.loads(path)
