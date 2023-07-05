@@ -7,10 +7,10 @@ TEST = True
 DEFAULT_CURRENCY = 'EUR'
 DEFAULT_CRYPTO = 'BTC'
 TIMER = 20
-MAX_DROPS = 5
-PROFIT_PERC = 0.05
-LOSS_PERC = 0.05
-SELL_PERC = 0.95
+MAX_DROPS = 3
+PROFIT_PERC = 0.01
+LOSS_PERC = 0.01
+SELL_PERC = 0.99
 BITPANDA_PERC = 0.006
 SAVE_FILE = './save'
 
@@ -27,3 +27,16 @@ def execute(cmd):
     return_code = popen.wait()
     if return_code:
         raise subprocess.CalledProcessError(return_code, cmd)
+
+
+def convert_to_value(value):
+    if isinstance(value, str) and value.isdigit():
+        return int(value)
+    try:
+        float_value = float(value)
+        if float_value.is_integer():
+            return int(float_value)
+        else:
+            return float_value
+    except ValueError:
+        return str(value)

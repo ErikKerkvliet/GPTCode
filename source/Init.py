@@ -13,8 +13,7 @@ class Init:
 
         loop = asyncio.get_event_loop()
         response = loop.run_until_complete(self.bitpanda.get_balances())
-        print(response)
-        exit()
+
         for crypto in response:
             if crypto['currency_code'] not in wallet.keys():
                 wallet[crypto['currency_code']] = Crypto(crypto['currency_code'])

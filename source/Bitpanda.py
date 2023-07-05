@@ -82,7 +82,7 @@ class Bitpanda:
 
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self.create_order(order_data))
-        # self.client.close()
+        self.client.close()
 
     def buy(self, crypto, amount=None):
         amount_euro = 1

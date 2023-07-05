@@ -30,7 +30,8 @@ class Crypto:
         self.sells += 1
         amount = self.available * globalvar.SELL_PERC
         if self.sells % 10 == 0:
-            amount += self.profit
+            self.gain += self.rate - self.buy_rate
+            amount = self.available - amount
             self.profit = 0
             return amount
         else:

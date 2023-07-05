@@ -65,9 +65,10 @@ class CryptoPrices:
                     self.wallet[crypto].up(response)
 
             if last_diff_perc < 0:
-                self.wallet[crypto].value_drops += 1
-            elif last_diff_perc > 0:
-                self.wallet[crypto].value_drops -= 1
+                if self.wallet[crypto].rate > self.wallet[crypto].last_rate and self.wallet[crypto].value_drops > 0:
+                    self.wallet[crypto].value_drops = 0
+                else:
+                    self.wallet[crypto].value_drops += 1
 
             self.wallet[crypto].last_rate = self.wallet[crypto].rate
             self.store.save(self.wallet)
