@@ -2,8 +2,9 @@ keys.py
 pyvenv.cfg
 /lib
 /bin
-/.idea
 /source/__pycache__
 .pyc
 *.pyc
 source/save
+
+__pycache__/
