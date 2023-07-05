@@ -33,8 +33,10 @@ class CryptoPrices:
                 self.wallet[crypto].set_rate(data[crypto])
                 self.wallet[crypto].last_rate = self.wallet[crypto].rate
 
-                if globalvar.TEST:
+                if crypto == 'SHIB':#globalvar.TEST:
                     response = self.bitpanda.buy(self.wallet[crypto])
+                    if not response:
+                        continue
                     self.wallet[crypto].up(response)
                 continue
 

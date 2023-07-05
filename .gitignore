@@ -3,5 +3,7 @@ pyvenv.cfg
 /lib
 /bin
 /.idea
-/__pycache__
+/source/__pycache__
+.pyc
 *.pyc
+source/save

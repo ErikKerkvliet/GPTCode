@@ -1,5 +1,6 @@
 import json
 import keys
+import decimal
 
 import globalvar
 
@@ -14,7 +15,7 @@ import asyncio
 class Bitpanda:
 
     def __init__(self):
-        self.client = BitpandaClient(keys.BALANCE_KEY)
+        self.client = BitpandaClient(keys.TRADE_KEY)
         self.response = {}
 
     @staticmethod
@@ -72,40 +73,72 @@ class Bitpanda:
         return response['response']['balances'][coin]
 
     def sell(self, crypto):
-        pair = Pair(globalvar.DEFAULT_CURRENCY, crypto.code)
+        pair = Pair('BTC', globalvar.DEFAULT_CURRENCY)
 
         order_data = {
             'pair': pair,
-            'exchange_type': OrderSide.SELL.value,
-            'amount': crypto.get_sell_amount(),
+            'exchange_type': OrderSide.SELL,
+            # 'amount': '0.00036',crypto.get_sell_amount(),
         }
-
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self.create_order(order_data))
-        self.client.close()
-
-    def buy(self, crypto, amount=None):
-        amount_euro = 1
-        rate = self.ticker(crypto.code, globalvar.DEFAULT_CURRENCY)
-        amount = amount if amount else amount_euro / float(rate)
-        amount = f'{amount:.8f}'
-
-        pair = Pair(crypto.code, globalvar.DEFAULT_CURRENCY)
-
-        order_data = {
-            'pair': pair,
-            'exchange_type': OrderSide.BUY.value,
-            'amount': amount,
-        }
-
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self.create_order(order_data))
         # self.client.close()
 
+    def buy(self, crypto, amount=None):
+        amount_euro = 10
+        rate = self.ticker(crypto.code, globalvar.DEFAULT_CURRENCY)
+        amount = amount if amount else amount_euro / float(rate)
+
+        pair = Pair(crypto.code, globalvar.DEFAULT_CURRENCY)
+        instruments = self.get_instrument()
+        if instruments[crypto.code]['state'] != 'ACTIVE' or amount < instruments[crypto.code]['min_size']:
+            return False
+
+        amount = float(10)
+        precision = instruments[crypto.code]['amount_precision']
+        print(instruments[crypto.code])
+        amount = f'{amount:.{precision}f}'
+
+
+        order_data = {
+            'pair': pair,
+            'exchange_type': OrderSide.BUY,
+            # 'amount': '2451378',
+        }
+
+        loop = asyncio.get_event_loop()
+        response = loop.run_until_complete(self.create_order(order_data))
+        self.client.close()
+
+        print(response)
+        exit()
         self.response['rate'] = float(rate)
         self.response['amount_euro'] = amount_euro
 
         return self.response
+
+    def get_instrument(self, crypto='ALL'):
+        loop = asyncio.get_event_loop()
+        response = loop.run_until_complete(self.client.get_instruments())
+        # self.client.close()
+
+        instruments = {}
+        for instrument in response['response']:
+            instruments[instrument['base']['code']] = {
+                'state': instrument['state'],
+                'code': instrument['base']['code'],
+                'precision': int(instrument['base']['precision']),
+                'amount_precision': int(instrument['amount_precision']),
+                'market_precision': int(instrument['market_precision']),
+                'min_size': float(instrument['min_size']),
+            }
+            print(instruments[instrument['base']['code']])
+
+        if crypto == 'ALL':
+            return instruments
+
+        return instruments[crypto]
+
 
     # UNI , EURO Koop 2 UNI voor ? EURO
     # side = OrderSide('BUY')
@@ -115,17 +148,16 @@ class Bitpanda:
     # UNI , EUR sell 2 UNI voor ? EURO
     # await client.close()
     async def create_order(self, order_data) -> dict:
-        print(f'Type: {order_data["exchange_type"]} crypto: {order_data["pair"]}, amount: {float(order_data["amount"]):.8f}')
+        print(f'Type: {order_data["exchange_type"]}, Pair: {order_data["pair"]}, Amount: {order_data["amount"]}')
+        # if globalvar.TEST:
+        #     self.response = {
+        #         'code': order_data['pair'],
+        #         'amount': order_data['amount'],
+        #     }
+        #     return self.response
 
-        if globalvar.TEST:
-            self.response = {
-                'code': order_data['pair'],
-                'amount': order_data['amount'],
-            }
-            return self.response
-
-        # return await self.client.create_market_order(
-        #     order_data['pair'],
-        #     order_data['exchange_type'],
-        #     order_data['amount']
-        # )
+        return await self.client.create_market_order(
+            order_data['pair'],
+            order_data['exchange_type'],
+            order_data['amount']
+        )
