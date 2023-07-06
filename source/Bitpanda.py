@@ -1,6 +1,5 @@
 import json
 import keys
-import decimal
 
 import globalvar
 
@@ -15,7 +14,12 @@ import asyncio
 class Bitpanda:
 
     def __init__(self):
-        self.client = BitpandaClient(keys.TRADE_KEY)
+        if globalvar.get_ip() == globalvar.IP_WORK:
+            self.client = BitpandaClient(keys.KEY_NON_PRO)
+        else:
+            self.client = BitpandaClient(keys.KEY_TRADE)
+
+        self.instruments = {}
         self.response = {}
 
     @staticmethod
@@ -75,6 +79,8 @@ class Bitpanda:
     def sell(self, crypto):
         pair = Pair('BTC', globalvar.DEFAULT_CURRENCY)
 
+        # - 0.00036 BTC
+        # + 10 EUR
         order_data = {
             'pair': pair,
             'exchange_type': OrderSide.SELL,
@@ -91,7 +97,9 @@ class Bitpanda:
 
         pair = Pair(crypto.code, globalvar.DEFAULT_CURRENCY)
         instruments = self.get_instrument()
-        if instruments[crypto.code]['state'] != 'ACTIVE' or amount < instruments[crypto.code]['min_size']:
+        if crypto.code not in globalvar.DEFAULT_CURRENCY \
+                or instruments[crypto.code]['state'] != 'ACTIVE' \
+                or amount < instruments[crypto.code]['min_size']:
             return False
 
         amount = float(10)
@@ -99,7 +107,8 @@ class Bitpanda:
         print(instruments[crypto.code])
         amount = f'{amount:.{precision}f}'
 
-
+        # + 2451378 SHIB
+        # - 10 EUR
         order_data = {
             'pair': pair,
             'exchange_type': OrderSide.BUY,
@@ -110,21 +119,21 @@ class Bitpanda:
         response = loop.run_until_complete(self.create_order(order_data))
         self.client.close()
 
-        print(response)
-        exit()
         self.response['rate'] = float(rate)
         self.response['amount_euro'] = amount_euro
 
         return self.response
 
     def get_instrument(self, crypto='ALL'):
+        if self.instruments:
+            return self.instruments
+        
         loop = asyncio.get_event_loop()
         response = loop.run_until_complete(self.client.get_instruments())
         # self.client.close()
 
-        instruments = {}
         for instrument in response['response']:
-            instruments[instrument['base']['code']] = {
+            self.instruments[instrument['base']['code']] = {
                 'state': instrument['state'],
                 'code': instrument['base']['code'],
                 'precision': int(instrument['base']['precision']),
@@ -132,13 +141,12 @@ class Bitpanda:
                 'market_precision': int(instrument['market_precision']),
                 'min_size': float(instrument['min_size']),
             }
-            print(instruments[instrument['base']['code']])
+            print(self.instruments[instrument['base']['code']])
 
         if crypto == 'ALL':
-            return instruments
+            return self.instruments
 
-        return instruments[crypto]
-
+        return self.instruments[crypto]
 
     # UNI , EURO Koop 2 UNI voor ? EURO
     # side = OrderSide('BUY')
@@ -149,15 +157,15 @@ class Bitpanda:
     # await client.close()
     async def create_order(self, order_data) -> dict:
         print(f'Type: {order_data["exchange_type"]}, Pair: {order_data["pair"]}, Amount: {order_data["amount"]}')
-        # if globalvar.TEST:
-        #     self.response = {
-        #         'code': order_data['pair'],
-        #         'amount': order_data['amount'],
-        #     }
-        #     return self.response
+        if globalvar.TEST or globalvar.get_ip() == globalvar.IP_WORK:
+            self.response = {
+                'code': order_data['pair'],
+                'amount': order_data['amount'],
+            }
+            return self.response
 
-        return await self.client.create_market_order(
-            order_data['pair'],
-            order_data['exchange_type'],
-            order_data['amount']
-        )
+        # return await self.client.create_market_order(
+        #     order_data['pair'],
+        #     order_data['exchange_type'],
+        #     order_data['amount']
+        # )

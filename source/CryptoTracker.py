@@ -33,7 +33,7 @@ class CryptoPrices:
                 self.wallet[crypto].set_rate(data[crypto])
                 self.wallet[crypto].last_rate = self.wallet[crypto].rate
 
-                if crypto == 'SHIB':#globalvar.TEST:
+                if globalvar.TEST:
                     response = self.bitpanda.buy(self.wallet[crypto])
                     if not response:
                         continue
@@ -74,6 +74,9 @@ class CryptoPrices:
 
             self.wallet[crypto].last_rate = self.wallet[crypto].rate
             self.store.save(self.wallet)
+
+        self.bitpanda.instruments = {}
+
 
     def run_infinitely(self):
         while True:

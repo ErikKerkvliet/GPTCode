@@ -1,7 +1,7 @@
-import json
 import subprocess
 import os
 import signal
+import requests
 
 TEST = True
 DEFAULT_CURRENCY = 'EUR'
@@ -13,6 +13,9 @@ LOSS_PERC = 0.01
 SELL_PERC = 0.99
 BITPANDA_PERC = 0.006
 SAVE_FILE = './save'
+IP_WORK = '145.131.206.197'
+IP_HOME = ''
+IP_VPS = ''
 
 
 def execute(cmd):
@@ -40,3 +43,10 @@ def convert_to_value(value):
             return float_value
     except ValueError:
         return str(value)
+
+
+def get_ip():
+    response = requests.get('https://api.ipify.org/?format=json')
+    data = response.json()
+
+    return data['ip']
