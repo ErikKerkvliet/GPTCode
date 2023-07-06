@@ -2,20 +2,33 @@ import subprocess
 import os
 import signal
 import requests
+import Bitpanda
 
 TEST = True
 DEFAULT_CURRENCY = 'EUR'
 DEFAULT_CRYPTO = 'BTC'
 TIMER = 20
 MAX_DROPS = 3
+MIN_UPS = 3
 PROFIT_PERC = 0.01
 LOSS_PERC = 0.01
 SELL_PERC = 0.99
-BITPANDA_PERC = 0.006
+BUY_AMOUNT = 10.02
+BITPANDA_PERC = 0.005
+BITPANDA_MARGIN = 0.995
+OPTION = 'steps'
 SAVE_FILE = './save'
 IP_WORK = '145.131.206.197'
-IP_HOME = ''
+IP_HOME = '80.60.131.14'
 IP_VPS = ''
+
+
+class Globalvar:
+    def __init__(self):
+        self.bitpanda = Bitpanda.Bitpanda()
+
+    def get_bitpanda(self) -> Bitpanda:
+        return self.bitpanda
 
 
 def execute(cmd):

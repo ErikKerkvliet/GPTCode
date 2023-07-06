@@ -3,18 +3,25 @@ import globalvar
 
 class Crypto:
     def __init__(self, code):
-        self.code = code
-        self.rate = 0
+        self.rate = None
+        self.last_rate = None
         self.buy_rate = 0
         self.top_rate = 0
-        self.last_rate = 0
+        self.code = code
+        self.amount = 0
+
+        # Percentages
         self.value_drops = 0
         self.amount_euro = 0
-        self.amount = 0
         self.profit = 0
         self.available = 0
         self.sells = 0
         self.gain = 0
+
+        # Steps
+        self.up_down = 0
+        self.down_up = 0
+        self.position = 0
 
     def reset(self):
         self.buy_rate = 0
@@ -23,7 +30,15 @@ class Crypto:
         self.value_drops = 0
 
     def set_rate(self, crypto):
+        if self.rate is not None:
+            self.last_rate = self.rate
+
         self.rate = float(crypto[globalvar.DEFAULT_CURRENCY])
+
+        if self.top_rate is None:
+            self.top_rate = self.rate
+            self.buy_rate = self.rate
+
         self.top_rate = self.rate if self.rate > self.top_rate else self.top_rate
 
     def get_sell_amount(self):

@@ -1,82 +1,54 @@
-from Crypto import Crypto
-from Bitpanda import Bitpanda
+from Options.Percentages import Percentages
+from Options.Steps import Steps
 from time import sleep
 import globalvar
+from globalvar import Globalvar
 from Init import Init
 from Store import Store
+from bitpanda.enums import OrderSide
 
 
 class CryptoPrices:
     def __init__(self):
         self.wallet = {}
-        self.bitpanda = Bitpanda()
-        self.init = Init(self.bitpanda)
+        self.glv = Globalvar()
+        self.init = Init(self.glv.bitpanda)
         self.store = Store()
         self.times = 0
+        self.options = {
+            'percentages': Percentages(self.glv),
+            'steps': Steps(self.glv),
+        }
 
     def update_prices(self):
-        data = self.bitpanda.ticker()
+        data = self.glv.bitpanda.ticker()
 
         if self.times % 10 == 0:
             print(f'Times: {self.times} | Rate BTC: {float(data[globalvar.DEFAULT_CRYPTO][globalvar.DEFAULT_CURRENCY]):.2f}')
 
-        if self.times == 1:
+        if self.times == 0:
             self.wallet = self.init.fill_wallet(self.wallet)
 
-        for crypto in data.keys():
+        for crypto in self.wallet.keys():
             if crypto == globalvar.DEFAULT_CURRENCY:
-                continue
-
-            if crypto not in self.wallet.keys():
-                self.wallet[crypto] = Crypto(crypto)
-                self.wallet[crypto].rate = float(data[crypto][globalvar.DEFAULT_CURRENCY])
-                self.wallet[crypto].set_rate(data[crypto])
-                self.wallet[crypto].last_rate = self.wallet[crypto].rate
-
-                if globalvar.TEST:
-                    response = self.bitpanda.buy(self.wallet[crypto])
-                    if not response:
-                        continue
-                    self.wallet[crypto].up(response)
                 continue
 
             self.wallet[crypto].set_rate(data[crypto])
 
-            buy_diff_perc = ((self.wallet[crypto].rate - self.wallet[crypto].buy_rate) / self.wallet[crypto].buy_rate)
-            top_diff_perc = ((self.wallet[crypto].rate - self.wallet[crypto].top_rate) / self.wallet[crypto].top_rate)
-            last_diff_perc = ((self.wallet[crypto].rate - self.wallet[crypto].last_rate) / self.wallet[crypto].last_rate)
+            result = self.options[globalvar.OPTION].calculate(self.wallet[crypto])
+            if result == OrderSide.SELL.value:
+                self.glv.bitpanda.sell(self.wallet[crypto])
+                crypto.position = 0
+                crypto.down_up = 0
+                crypto.up_down = 0
 
-            # if globalvar.TEST:
-            #     self.bitpanda.sell(self.wallet[crypto])
-            #     self.wallet[crypto].lower()
-            #     self.wallet[crypto].print_variables()
-            #     self.wallet[crypto].reset()
-            #
-            #     response = self.bitpanda.buy(self.wallet[crypto])
-            #     self.wallet[crypto].up(response)
-            #     continue
+                self.glv.bitpanda.buy(crypto)
 
-            if buy_diff_perc > globalvar.PROFIT_PERC:
-                if self.wallet[crypto].value_drops >= globalvar.MAX_DROPS or top_diff_perc > globalvar.LOSS_PERC:
-                    self.bitpanda.sell(self.wallet[crypto])
-                    self.wallet[crypto].lower()
-                    self.wallet[crypto].print_variables()
-                    self.wallet[crypto].reset()
+            elif result == OrderSide.BUY.value:
+                self.glv.bitpanda.buy(crypto)
 
-                    response = self.bitpanda.buy(self.wallet[crypto])
-                    self.wallet[crypto].up(response)
-
-            if last_diff_perc < 0:
-                if self.wallet[crypto].rate > self.wallet[crypto].last_rate and self.wallet[crypto].value_drops > 0:
-                    self.wallet[crypto].value_drops = 0
-                else:
-                    self.wallet[crypto].value_drops += 1
-
-            self.wallet[crypto].last_rate = self.wallet[crypto].rate
-            self.store.save(self.wallet)
-
-        self.bitpanda.instruments = {}
-
+        self.store.save(self.wallet)
+        self.glv.bitpanda.instruments = {}
 
     def run_infinitely(self):
         while True:

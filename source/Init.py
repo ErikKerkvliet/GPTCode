@@ -17,10 +17,10 @@ class Init:
         for crypto in response:
             if crypto['currency_code'] not in wallet.keys():
                 wallet[crypto['currency_code']] = Crypto(crypto['currency_code'])
-                wallet[crypto['currency_code']].rate = 1
-                wallet[crypto['currency_code']].top_rate = 1
-                wallet[crypto['currency_code']].last_rate = 1
-            wallet[crypto['currency_code']].available += float(crypto['available'])
+                wallet[crypto['currency_code']].rate = None
+                wallet[crypto['currency_code']].top_rate = None
+                wallet[crypto['currency_code']].last_rate = None
+            wallet[crypto['currency_code']].amount += float(crypto['available'])
 
         return wallet
 
