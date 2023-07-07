@@ -11,6 +11,20 @@ class Init:
     def fill_wallet(self, wallet) -> dict:
         # self.load_file(wallet)
 
+        if globalvar.get_ip() == globalvar.IP_WORK:
+            wallet['BTC'] = Crypto('BTC')
+            wallet['BTC'].rate = None
+            wallet['BTC'].top_rate = None
+            wallet['BTC'].last_rate = None
+            wallet['BTC'].amount += 0.0003
+
+            wallet['SHIB'] = Crypto('SHIB')
+            wallet['SHIB'].rate = None
+            wallet['SHIB'].top_rate = None
+            wallet['SHIB'].last_rate = None
+            wallet['SHIB'].amount += 0.0004
+            return wallet
+
         loop = asyncio.get_event_loop()
         response = loop.run_until_complete(self.bitpanda.get_balances())
 

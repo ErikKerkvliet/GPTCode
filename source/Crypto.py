@@ -3,11 +3,11 @@ import globalvar
 
 class Crypto:
     def __init__(self, code):
+        self.code = code
         self.rate = None
         self.last_rate = None
         self.buy_rate = 0
         self.top_rate = 0
-        self.code = code
         self.amount = 0
 
         # Percentages

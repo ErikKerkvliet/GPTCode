@@ -19,6 +19,8 @@ class Steps:
 
         if not profit:
             crypto.position -= 1
+            if crypto.position > 0:
+                crypto.up_down += 1
 
         if not profit \
                 and crypto.position <= 3 \

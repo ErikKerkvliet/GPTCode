@@ -6,5 +6,7 @@ pyvenv.cfg
 .pyc
 *.pyc
 source/save
+.idea/GPTCode.iml
+.idea/misc.xml
 
 __pycache__/
