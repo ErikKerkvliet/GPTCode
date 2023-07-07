@@ -3,18 +3,20 @@ import tkinter as tk
 from time import sleep
 import globalvar
 from tkinter import ttk
-from WatcherOptions.Percentages import PercentagesWatcher
-from WatcherOptions.Steps import StepsWatcher
+from Watchers.Percentages import Percentages
+from Watchers.Steps import Steps
+
 
 class App:
     def __init__(self):
         self.window = tk.Tk()
         self.window.title('Watcher')
-        self.window.geometry('1467x100')
+        self.window.geometry('1467x200')
+        self.option = ''
 
-        self.watcher_options = {
-            'percentages': PercentagesWatcher(),
-            'steps': StepsWatcher(),
+        self.watchers = {
+            globalvar.WATCHER_PERCENTAGES: Percentages(),
+            globalvar.WATCHER_STEPS: Steps(),
         }
 
         self.data = []
@@ -25,9 +27,6 @@ class App:
 
         # Top level Treeview object
         self.treeview = ttk.Treeview(self.window)
-
-        # Columns (treeview objects also)
-        columns = self.get_columns(list(self.data[0].keys()))
 
         # Create a custom style for Treeview
         style = ttk.Style()
@@ -49,18 +48,19 @@ class App:
         self.treeview.heading("#0", text="")
         self.treeview.column("#0", width=10, stretch=False)
 
-        for index, column in enumerate(titles):
+        for column in titles:
             heading_text = column.title()
             self.treeview.heading(column, text=heading_text)
-
             anchor_value = tk.E
-            if index == 0:
-                column_width = 60
+            if column == 'code':
+                column_width = 20
                 anchor_value = tk.W
             elif column == 'available':
                 column_width = 110
             elif column == 'sells':
                 column_width = 70
+            elif column in ['position', 'more ⇧', 'less ⇩']:
+                column_width = 50
             else:
                 column_width = 100
 
@@ -70,31 +70,45 @@ class App:
         self.treeview.column("", width=10, stretch=False)
 
     def load_data(self):
-        self.data = None
         self.data = self.load_file()
 
         self.treeview.delete(*self.treeview.get_children())
 
         for row in self.data:
-            result = self.watcher_options[globalvar.OPTION].load_row(self.treeview, row)
+            for key in row.keys():
+                if row[key] == globalvar.DEFAULT_CURRENCY:
+                    continue
+
+                row[key] = globalvar.convert_to_value(row[key])
+
+            result = self.watchers[self.option].load_row(self.treeview, row)
 
             self.treeview.insert("", "end", text="", values=list(result['row'].values()), tags=result['tags'])
 
-    @staticmethod
-    def get_columns(columns):
+    def get_columns(self, columns):
         for key, column in enumerate(columns):
             columns[key] = column.replace('_', ' ')
 
-        if globalvar.OPTION == 'percentages':
+        if self.option == globalvar.WATCHER_PERCENTAGES:
             columns.append('diff')
             columns.append('diff €')
+
+        if globalvar.CURRENT_WATCHER == globalvar.WATCHER_PERCENTAGES:
+            columns.append('value in €')
+
         columns.append('')
         return columns
 
-    @staticmethod
-    def load_file():
-        with open('./save') as file:
+    def load_file(self):
+        with open(globalvar.SAVE_FILE) as file:
             data = json.load(file)
+
+            if 'option' == list(data[0].keys())[0]:
+                self.option = data[0]['option']
+                del data[0]
+            else:
+                self.option = globalvar.WATCHER_STEPS
+
             file.close()
         return sorted(data, key=lambda x: x['code'])
 

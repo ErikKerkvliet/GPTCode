@@ -1,11 +1,8 @@
-import source.globalvar as globalvar
 
 
-class StepsWatcher:
+class Steps:
     @staticmethod
     def load_row(treeview, row):
-        for key in row.keys():
-            row[key] = globalvar.convert_to_value(row[key]) if row[key] else 0
 
         tags = "odd row"
         treeview.tag_configure('oddrow', background='white')
@@ -29,6 +26,7 @@ class StepsWatcher:
         row['rate'] = f'{float(row["rate"]):.8f}'
         row['last_rate'] = f'{float(row["last_rate"]):.8f}'
         row['buy_rate'] = f'{float(row["buy_rate"]):.8f}'
+        row['amount_€'] = f'{float(row["amount_€"]):.4f}'
 
         return {
             'row': row,

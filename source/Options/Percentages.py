@@ -1,5 +1,4 @@
 import source.globalvar as globalvar
-from source.Crypto import Crypto
 
 
 class Percentages:

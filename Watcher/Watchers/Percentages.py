@@ -1,11 +1,11 @@
-import source.globalvar as globalvar
 
 
-class PercentagesWatcher:
-    def load_data(self, treeview, row):
-        for key in row.keys():
-            row[key] = globalvar.convert_to_value(row[key])
+class Percentages:
+    def __init__(self):
+        pass
 
+    @staticmethod
+    def load_data(treeview, row):
         tags = "odd row"
         treeview.tag_configure('oddrow', background='white')
 

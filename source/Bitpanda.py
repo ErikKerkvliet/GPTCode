@@ -132,7 +132,7 @@ class Bitpanda:
     def get_instrument(self, crypto='ALL'):
         if self.instruments:
             return self.instruments
-        
+
         loop = asyncio.get_event_loop()
         response = loop.run_until_complete(self.client.get_instruments())
         # self.client.close()

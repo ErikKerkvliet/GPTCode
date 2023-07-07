@@ -19,8 +19,8 @@ class Crypto:
         self.gain = 0
 
         # Steps
-        self.up_down = 0
-        self.down_up = 0
+        self.more = 0         # Position is below zero
+        self.less = 0       # Position is above zero
         self.position = 0
 
     def reset(self):
@@ -39,7 +39,7 @@ class Crypto:
             self.top_rate = self.rate
             self.buy_rate = self.rate
 
-        self.top_rate = self.rate if self.rate > self.top_rate else self.top_rate
+        self.top_rate = self.rate if self.rate >= self.top_rate else self.top_rate
 
     def get_sell_amount(self):
         self.sells += 1

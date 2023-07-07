@@ -4,20 +4,23 @@ import globalvar
 
 class Store:
     def __init__(self):
-        self.save_data = []
+        self.save_data = [{'option': globalvar.CURRENT_OPTION}]
 
     def save(self, wallet):
         for crypto in wallet.keys():
-            if globalvar.get_ip() == globalvar.IP_WORK:
+            if crypto == globalvar.DEFAULT_CURRENCY:
+                continue
+            if globalvar.CURRENT_OPTION == globalvar.OPTION_STEPS:
                 crypto_data = {
                     'code': wallet[crypto].code,
                     'rate': wallet[crypto].rate,
                     'last_rate': wallet[crypto].last_rate,
                     'buy_rate': wallet[crypto].buy_rate,
                     'amount': wallet[crypto].amount,
+                    'amount_€': float(wallet[crypto].rate) * float(wallet[crypto].amount),
                     'position': wallet[crypto].position,
-                    'up_down_⇩': wallet[crypto].up_down,
-                    'down_up_⇧': wallet[crypto].down_up,
+                    'more_⇧': wallet[crypto].more,
+                    'less_⇩': wallet[crypto].less,
                 }
             else:
                 crypto_data = {

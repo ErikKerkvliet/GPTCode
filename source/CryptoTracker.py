@@ -16,8 +16,8 @@ class CryptoPrices:
         self.store = Store()
         self.times = 0
         self.options = {
-            'percentages': Percentages(self.glv),
-            'steps': Steps(self.glv),
+            globalvar.OPTION_PERCENTAGES: Percentages(self.glv),
+            globalvar.OPTION_STEPS: Steps(self.glv),
         }
 
     def update_prices(self):
@@ -35,12 +35,12 @@ class CryptoPrices:
 
             self.wallet[crypto].set_rate(data[crypto])
 
-            result = self.options[globalvar.OPTION].calculate(self.wallet[crypto])
+            result = self.options[globalvar.CURRENT_OPTION].calculate(self.wallet[crypto])
             if result == OrderSide.SELL.value:
                 self.glv.bitpanda.sell(self.wallet[crypto])
                 crypto.position = 0
-                crypto.down_up = 0
-                crypto.up_down = 0
+                crypto.more = 0
+                crypto.less = 0
 
                 self.glv.bitpanda.buy(crypto)
 
