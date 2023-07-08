@@ -9,11 +9,11 @@ class Crypto:
         self.buy_rate = 0
         self.top_rate = 0
         self.amount = 0
+        self.profit = 0
+        self.amount_euro = 0
 
         # Percentages
         self.value_drops = 0
-        self.amount_euro = 0
-        self.profit = 0
         self.available = 0
         self.sells = 0
         self.gain = 0
@@ -42,7 +42,6 @@ class Crypto:
         self.top_rate = self.rate if self.rate >= self.top_rate else self.top_rate
 
     def get_sell_amount(self):
-        self.sells += 1
         amount = self.available * globalvar.SELL_PERC
         if self.sells % 10 == 0:
             self.gain += self.rate - self.buy_rate

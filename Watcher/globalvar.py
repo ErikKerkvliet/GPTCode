@@ -6,7 +6,7 @@ import requests
 TEST = True
 DEFAULT_CURRENCY = 'EUR'
 DEFAULT_CRYPTO = 'BTC'
-TIMER = 20
+TIMER = 10
 SAVE_FILE = '../save'
 IP_WORK = '145.131.206.197'
 IP_HOME = '80.60.131.14'

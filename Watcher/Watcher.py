@@ -11,7 +11,7 @@ class App:
     def __init__(self):
         self.window = tk.Tk()
         self.window.title('Watcher')
-        self.window.geometry('1467x200')
+        self.window.geometry('1240x200')
         self.option = ''
 
         self.watchers = {
@@ -53,16 +53,16 @@ class App:
             self.treeview.heading(column, text=heading_text)
             anchor_value = tk.E
             if column == 'code':
-                column_width = 20
+                column_width = 30
                 anchor_value = tk.W
             elif column == 'available':
                 column_width = 110
             elif column == 'sells':
-                column_width = 70
+                column_width = 40
             elif column in ['position', 'more ⇧', 'less ⇩']:
                 column_width = 50
             else:
-                column_width = 100
+                column_width = 80
 
             self.treeview.column(column, width=column_width, anchor=anchor_value)
 
@@ -90,7 +90,6 @@ class App:
             columns[key] = column.replace('_', ' ')
 
         if self.option == globalvar.WATCHER_PERCENTAGES:
-            columns.append('diff')
             columns.append('diff €')
 
         if globalvar.CURRENT_WATCHER == globalvar.WATCHER_PERCENTAGES:
@@ -117,7 +116,7 @@ if __name__ == "__main__":
     app = App()
 
     # Refresh interval in milliseconds (e.g., refresh every 1 second)
-    refresh_interval_ms = 5000
+    refresh_interval_ms = globalvar.TIMER
 
     def refresh():
         app.load_data()

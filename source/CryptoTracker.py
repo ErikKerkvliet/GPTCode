@@ -38,14 +38,11 @@ class CryptoPrices:
             result = self.options[globalvar.CURRENT_OPTION].calculate(self.wallet[crypto])
             if result == OrderSide.SELL.value:
                 self.glv.bitpanda.sell(self.wallet[crypto])
-                crypto.position = 0
-                crypto.more = 0
-                crypto.less = 0
 
-                self.glv.bitpanda.buy(crypto)
+                self.glv.bitpanda.buy(self.wallet[crypto])
 
             elif result == OrderSide.BUY.value:
-                self.glv.bitpanda.buy(crypto)
+                self.glv.bitpanda.buy(self.wallet[crypto])
 
         self.store.save(self.wallet)
         self.glv.bitpanda.instruments = {}

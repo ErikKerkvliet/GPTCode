@@ -3,12 +3,13 @@ import keys
 
 import globalvar
 
-from bitpanda.BitpandaClient import BitpandaClient
+from bitpanda.BitpandaClient import BitpandaClient, MarketTickerSubscription
 from Exceptions import CoinIndexNotFoundException, CurrencyIndexNotFoundException
 import http.client
 from bitpanda.enums import OrderSide
 from bitpanda.Pair import Pair
 import asyncio
+import requests
 
 
 class Bitpanda:
@@ -89,6 +90,11 @@ class Bitpanda:
         }
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self.create_order(order_data))
+        crypto.profit += crypto.last_rate - (crypto.buy_rate * globalvar.SELL_PERC)
+        crypto.sells += 1
+        crypto.position = 0
+        crypto.more = 0
+        crypto.less = 0
         # self.client.close()
 
     def buy(self, crypto, amount=None):
@@ -106,7 +112,6 @@ class Bitpanda:
 
         amount = float(10)
         precision = instruments[crypto.code]['amount_precision']
-        print(instruments[crypto.code])
         amount = f'{amount:.{precision}f}'
 
         # + 2451378 SHIB
@@ -146,7 +151,7 @@ class Bitpanda:
                 'market_precision': int(instrument['market_precision']),
                 'min_size': float(instrument['min_size']),
             }
-            print(self.instruments[instrument['base']['code']])
+            # print(self.instruments[instrument['base']['code']])
 
         if crypto == 'ALL':
             return self.instruments
