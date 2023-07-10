@@ -5,6 +5,11 @@ import requests
 import Bitpanda
 
 TEST = True
+
+STATE_DEVELOPMENT = 'development'
+STATE_PRODUCTION = 'production'
+STATE = STATE_DEVELOPMENT
+
 DEFAULT_CURRENCY = 'EUR'
 DEFAULT_CRYPTO = 'BTC'
 TIMER = 10
@@ -17,6 +22,7 @@ BUY_AMOUNT = 10.02
 BITPANDA_PERC = 0.005
 BITPANDA_MARGIN = 0.996
 SAVE_FILE = '../save'
+SAVE_FILE_TEST = '../save_test'
 IP_WORK = '145.131.206.197'
 IP_HOME = '80.60.131.14'
 IP_VPS = ''

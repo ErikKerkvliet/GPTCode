@@ -11,8 +11,8 @@ class Init:
     def fill_wallet(self, wallet) -> dict:
         # self.from_file(wallet)
 
-        # if globalvar.TEST:
-        #     return self.from_test(wallet)
+        if globalvar.TEST:
+            return self.from_test(wallet)
 
         if globalvar.get_ip() == globalvar.IP_WORK:
             return self.from_work(wallet)
@@ -22,9 +22,9 @@ class Init:
 
     def from_balance(self, wallet):
         loop = asyncio.get_event_loop()
+        # response = self.bitpanda.get_instrument()
         response = loop.run_until_complete(self.bitpanda.get_balances())
-        print(response)
-        exit()
+
         for crypto in response:
             if crypto['currency_code'] not in wallet.keys():
                 wallet[crypto['currency_code']] = Crypto(crypto['currency_code'])

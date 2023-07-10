@@ -85,6 +85,13 @@ class App:
 
             self.treeview.insert("", "end", text="", values=list(result['row'].values()), tags=result['tags'])
 
+        combined_dict = self.data[0].copy()
+        combined_dict = {key: '' for key in combined_dict}
+        combined_dict.update(self.watchers[self.option].get_totals())
+
+        self.treeview.insert("", "end", text="", values=list(combined_dict.values()))
+        self.watchers[self.option].reset_totals()
+
     def get_columns(self, columns):
         for key, column in enumerate(columns):
             columns[key] = column.replace('_', ' ')
@@ -116,7 +123,7 @@ if __name__ == "__main__":
     app = App()
 
     # Refresh interval in milliseconds (e.g., refresh every 1 second)
-    refresh_interval_ms = globalvar.TIMER
+    refresh_interval_ms = globalvar.TIMER * 1000
 
     def refresh():
         app.load_data()

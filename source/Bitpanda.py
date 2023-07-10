@@ -3,7 +3,7 @@ import keys
 
 import globalvar
 
-from bitpanda.BitpandaClient import BitpandaClient, MarketTickerSubscription
+from bitpanda.BitpandaClient import BitpandaClient
 from Exceptions import CoinIndexNotFoundException, CurrencyIndexNotFoundException
 import http.client
 from bitpanda.enums import OrderSide
@@ -23,9 +23,15 @@ class Bitpanda:
         self.instruments = {}
         self.response = {}
 
-    @staticmethod
-    def ticker(coin='ALL', currency='ALL'):
+    def ticker(self, coin='ALL', currency='ALL'):
         data = None
+        crypto_codes = []
+
+        if globalvar.get_ip() == globalvar.IP_HOME:
+            loop = asyncio.get_event_loop()
+            response = loop.run_until_complete(self.client.get_currencies())
+            for crypto in response['response']:
+                crypto_codes.append(crypto['code'])
 
         connection = http.client.HTTPSConnection("api.bitpanda.com")
         while data is None:
@@ -47,31 +53,35 @@ class Bitpanda:
 
         response_data = json.loads(data.decode("utf-8"))
 
-        if coin != 'ALL' and coin not in response_data.keys():
+        wallet = {}
+        for crypto in response_data.keys():
+            if crypto in crypto_codes:
+                wallet[crypto] = response_data[crypto]
+
+        if coin != 'ALL' and coin not in wallet.keys():
             raise CoinIndexNotFoundException
 
         if coin == 'ALL' and currency != 'ALL':
             coins_data = {}
-            for coin in response_data.keys():
+            for coin in wallet.keys():
                 coins_data[coin] = {}
-                for currency_code in response_data[coin].keys():
-                    coins_data[coin] = float(response_data[coin][currency_code])
+                for currency_code in wallet[coin].keys():
+                    coins_data[coin] = float(wallet[coin][currency_code])
             return coins_data
 
         if coin == 'ALL':
-            return response_data
+            return wallet
 
-        if currency not in response_data[coin]:
+        if currency not in wallet[coin]:
             raise CurrencyIndexNotFoundException
 
         if currency == 'ALL':
-            return response_data[coin]
+            return wallet[coin]
 
-        return float(response_data[coin][currency])
+        return float(wallet[coin][currency])
 
     async def get_balances(self, coin='all'):
         response = await self.client.get_account_balances()
-        await self.client.close()
 
         if coin == 'all':
             return response['response']['balances']
@@ -91,6 +101,7 @@ class Bitpanda:
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self.create_order(order_data))
         crypto.profit += crypto.last_rate - (crypto.buy_rate * globalvar.SELL_PERC)
+        crypto.profit_euro += crypto.profit / crypto.rate
         crypto.sells += 1
         crypto.position = 0
         crypto.more = 0
@@ -124,7 +135,7 @@ class Bitpanda:
 
         loop = asyncio.get_event_loop()
         response = loop.run_until_complete(self.create_order(order_data))
-        self.client.close()
+
 
         crypto.buy_rate = crypto.rate
         crypto.amount = crypto.rate * 10
@@ -140,6 +151,7 @@ class Bitpanda:
 
         loop = asyncio.get_event_loop()
         response = loop.run_until_complete(self.client.get_instruments())
+
         # self.client.close()
 
         for instrument in response['response']:
@@ -151,7 +163,7 @@ class Bitpanda:
                 'market_precision': int(instrument['market_precision']),
                 'min_size': float(instrument['min_size']),
             }
-            # print(self.instruments[instrument['base']['code']])
+        print(sorted(list(self.instruments)))
 
         if crypto == 'ALL':
             return self.instruments
@@ -167,15 +179,19 @@ class Bitpanda:
     # await client.close()
     async def create_order(self, order_data) -> dict:
         print(f'Type: {order_data["exchange_type"]}, Pair: {order_data["pair"]}, Amount: {order_data["amount"]}')
-        if globalvar.TEST or globalvar.get_ip() == globalvar.IP_WORK:
+
+        if globalvar.STATE == globalvar.STATE_DEVELOPMENT or globalvar.get_ip() == globalvar.IP_WORK:
             self.response = {
                 'code': order_data['pair'],
                 'amount': order_data['amount'],
             }
             return self.response
 
-        # return await self.client.create_market_order(
-        #     order_data['pair'],
-        #     order_data['exchange_type'],
-        #     order_data['amount']
-        # )
+        if globalvar.STATE is globalvar.STATE_PRODUCTION:
+            print('NOOOOO !!!!!!!!!!!!!!!!!!!')
+            exit()
+            return await self.client.create_market_order(
+                order_data['pair'],
+                order_data['exchange_type'],
+                order_data['amount']
+            )

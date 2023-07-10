@@ -9,8 +9,9 @@ class Crypto:
         self.buy_rate = 0
         self.top_rate = 0
         self.amount = 0
-        self.profit = 0
         self.amount_euro = 0
+        self.profit = 0
+        self.profit_euro = 0
 
         # Percentages
         self.value_drops = 0
@@ -65,6 +66,7 @@ class Crypto:
         else:
             amount = self.available * (1 - (globalvar.SELL_PERC - globalvar.BITPANDA_PERC))
             self.profit += (self.available - amount)
+            self.profit_euro += (self.available - amount) / self.rate
             self.available -= amount
 
     def print_variables(self):

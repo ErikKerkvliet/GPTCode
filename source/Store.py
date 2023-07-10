@@ -26,9 +26,10 @@ class Store:
                     'position': wallet[crypto].position,
                     # 'more_⇧': wallet[crypto].more,
                     # 'less_⇩': wallet[crypto].less,
-                    'sells': wallet[crypto].sells,
                     'difference': difference,
+                    'sells': wallet[crypto].sells,
                     'profit': wallet[crypto].profit,
+                    'profit_€': wallet[crypto].profit_euro,
                 }
             else:
                 crypto_data = {
@@ -48,6 +49,7 @@ class Store:
             self.save_data.append(crypto_data)
 
         dump = json.dumps(self.save_data)
+        save_file = globalvar.SAVE_FILE if not globalvar.TEST else globalvar.SAVE_FILE_TEST
         with open(globalvar.SAVE_FILE, 'w') as file:
             file.write(dump)
             self.save_data = []
