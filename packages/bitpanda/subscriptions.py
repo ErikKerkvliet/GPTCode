@@ -5,8 +5,8 @@ import asyncio
 from abc import ABC, abstractmethod
 from typing import List, Callable, Any
 
-from bitpanda.Pair import Pair
-from bitpanda import enums
+from packages.bitpanda.Pair import Pair
+from packages.bitpanda import enums
 
 LOG = logging.getLogger(__name__)
 

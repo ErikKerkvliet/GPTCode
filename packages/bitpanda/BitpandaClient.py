@@ -7,11 +7,11 @@ import pytz
 import json
 from typing import List, Callable, Any
 
-from bitpanda.Pair import Pair
-from bitpanda.subscriptions import Subscription, SubscriptionMgr, PricesSubscription, OrderbookSubscription, AccountSubscription, CandlesticksSubscription, \
+from packages.bitpanda.Pair import Pair
+from packages.bitpanda.subscriptions import Subscription, SubscriptionMgr, PricesSubscription, OrderbookSubscription, AccountSubscription, CandlesticksSubscription, \
 	MarketTickerSubscription, CandlesticksSubscriptionParams
-from bitpanda import enums
-from bitpanda.Timer import Timer
+from packages.bitpanda import enums
+from packages.bitpanda.Timer import Timer
 
 LOG = logging.getLogger(__name__)
 

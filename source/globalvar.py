@@ -2,7 +2,7 @@ import subprocess
 import os
 import signal
 import requests
-import Bitpanda
+import source.Bitpanda as Bitpanda
 
 TEST = True
 

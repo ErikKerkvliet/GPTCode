@@ -3,11 +3,11 @@ import keys
 
 import globalvar
 
-from bitpanda.BitpandaClient import BitpandaClient
+from packages.bitpanda.BitpandaClient import BitpandaClient
 from Exceptions import CoinIndexNotFoundException, CurrencyIndexNotFoundException
 import http.client
-from bitpanda.enums import OrderSide
-from bitpanda.Pair import Pair
+from packages.bitpanda.enums import OrderSide
+from packages.bitpanda.Pair import Pair
 import asyncio
 import requests
 
@@ -15,24 +15,33 @@ import requests
 class Bitpanda:
 
     def __init__(self):
-        if globalvar.get_ip() == globalvar.IP_WORK:
-            self.client = BitpandaClient(keys.KEY_NON_PRO)
-        else:
-            self.client = BitpandaClient(keys.KEY_TRADE)
+        self.client = self.get_client()
 
         self.instruments = {}
         self.response = {}
 
+    def get_client(self):
+        if globalvar.get_ip() == globalvar.IP_WORK:
+            return BitpandaClient(keys.KEY_NON_PRO)
+        else:
+            return BitpandaClient(keys.KEY_TRADE)
+
+    async def close_client(self):
+        await self.client.close()
+
     def ticker(self, coin='ALL', currency='ALL'):
         data = None
         crypto_codes = []
+        if not self.client:
+            self.client = self.get_client()
 
         if globalvar.get_ip() == globalvar.IP_HOME:
             loop = asyncio.get_event_loop()
             response = loop.run_until_complete(self.client.get_currencies())
+            self.close_client()
+
             for crypto in response['response']:
                 crypto_codes.append(crypto['code'])
-
         connection = http.client.HTTPSConnection("api.bitpanda.com")
         while data is None:
             try:
@@ -53,10 +62,13 @@ class Bitpanda:
 
         response_data = json.loads(data.decode("utf-8"))
 
-        wallet = {}
-        for crypto in response_data.keys():
-            if crypto in crypto_codes:
-                wallet[crypto] = response_data[crypto]
+        if not crypto_codes:
+            wallet = response_data
+        else:
+            wallet = {}
+            for crypto in response_data.keys():
+                if crypto in crypto_codes:
+                    wallet[crypto] = response_data[crypto]
 
         if coin != 'ALL' and coin not in wallet.keys():
             raise CoinIndexNotFoundException
@@ -88,7 +100,7 @@ class Bitpanda:
         return response['response']['balances'][coin]
 
     def sell(self, crypto):
-        pair = Pair('BTC', globalvar.DEFAULT_CURRENCY)
+        pair = Pair(crypto.code, globalvar.DEFAULT_CURRENCY)
 
         # - 0.00036 BTC
         # + 10.02 EUR
@@ -163,7 +175,7 @@ class Bitpanda:
                 'market_precision': int(instrument['market_precision']),
                 'min_size': float(instrument['min_size']),
             }
-        print(sorted(list(self.instruments)))
+        # print(sorted(list(self.instruments)))
 
         if crypto == 'ALL':
             return self.instruments

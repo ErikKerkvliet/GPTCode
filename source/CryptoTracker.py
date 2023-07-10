@@ -5,7 +5,7 @@ import globalvar
 from globalvar import Globalvar
 from Init import Init
 from Store import Store
-from bitpanda.enums import OrderSide
+from packages.bitpanda.enums import OrderSide
 
 
 class CryptoPrices:

@@ -1,5 +1,5 @@
 import source.globalvar as globalvar
-from bitpanda.enums import OrderSide
+from packages.bitpanda.enums import OrderSide
 
 
 class Steps:
