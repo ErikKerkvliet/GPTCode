@@ -10,24 +10,23 @@ class Steps:
 
         profit = crypto.rate > crypto.last_rate
         if profit:
-            if crypto.position < 0:
-                crypto.position = 0
-            elif crypto.position >= 0:
+            if crypto.buy_rate < crypto.rate and crypto.position < 0:
+                crypto.position = 1
+            elif crypto.buy_rate < crypto.rate:
                 crypto.position += 1
 
         if not profit:
+            if crypto.buy_rate > crypto.rate and crypto.position > 0:
+                crypto.position = -1
+            elif crypto.buy_rate > crypto.rate:
+                crypto.position -= 1
 
-            if crypto.position > 3 \
+            if crypto.position > 1 \
                     and crypto.buy_rate < crypto.rate \
                     and crypto.rate - crypto.buy_rate > (crypto.top_rate - crypto.buy_rate) * 0.8:
                 return OrderSide.SELL.value
 
-            if crypto.position > 0 and crypto.buy_rate < crypto.rate < crypto.top_rate * globalvar.SELL_PERC:
+            if crypto.position > 1 and crypto.buy_rate < (crypto.rate * globalvar.BITPANDA_MARGIN):
                 return OrderSide.SELL.value
-
-            if crypto.position <= 0:
-                crypto.position -= 1
-            elif crypto.position > 0:
-                crypto.position = 0
 
         return False

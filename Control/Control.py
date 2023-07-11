@@ -2,6 +2,7 @@ import pyautogui
 from pyautogui import Size
 from PIL import Image
 import time
+from Trade import Trade
 
 
 class Control:
@@ -134,4 +135,7 @@ class Control:
 
 
 if __name__ == '__main__':
-    cp = Control()
+    # cp = Control()
+    trade = Trade()
+    #     USDC XRP  EUROC ETH PAN SOL ANT
+    trade.buy('', 15)

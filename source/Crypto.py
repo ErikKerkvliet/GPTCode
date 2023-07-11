@@ -1,4 +1,4 @@
-import globalvar
+import source.globalvar as globalvar
 
 
 class Crypto:
@@ -12,6 +12,7 @@ class Crypto:
         self.amount_euro = 0
         self.profit = 0
         self.profit_euro = 0
+        self.instrument = None
 
         # Percentages
         self.value_drops = 0

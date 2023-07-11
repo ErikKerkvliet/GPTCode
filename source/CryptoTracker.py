@@ -47,7 +47,7 @@ class CryptoPrices:
                 self.glv.bitpanda.buy(self.wallet[crypto])
 
         self.store.save(self.wallet)
-        self.glv.bitpanda.instruments = {}
+        self.glv.bitpanda.instruments = []
 
     def run_infinitely(self):
         while True:

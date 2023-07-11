@@ -11,7 +11,7 @@ class App:
     def __init__(self):
         self.window = tk.Tk()
         self.window.title('Watcher')
-        self.window.geometry('1240x200')
+        self.window.geometry('1270x200')
         self.option = ''
 
         self.watchers = {
@@ -56,6 +56,8 @@ class App:
                 column_width = 30
                 anchor_value = tk.W
             elif column == 'available':
+                column_width = 110
+            elif column == 'difference %':
                 column_width = 110
             elif column == 'sells':
                 column_width = 40

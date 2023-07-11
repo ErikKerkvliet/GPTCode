@@ -11,8 +11,8 @@ class Init:
     def fill_wallet(self, wallet) -> dict:
         # self.from_file(wallet)
 
-        if globalvar.TEST:
-            return self.from_test(wallet)
+        # if globalvar.TEST:
+        #     return self.from_test(wallet)
 
         if globalvar.get_ip() == globalvar.IP_WORK:
             return self.from_work(wallet)
@@ -26,6 +26,9 @@ class Init:
         response = loop.run_until_complete(self.bitpanda.get_balances())
 
         for crypto in response:
+            if crypto['currency_code'] == 'UNI' or crypto['currency_code'] == 'BTC' or crypto['currency_code'] == 'BEST':
+                continue
+
             if crypto['currency_code'] not in wallet.keys():
                 wallet[crypto['currency_code']] = Crypto(crypto['currency_code'])
                 wallet[crypto['currency_code']].rate = None
