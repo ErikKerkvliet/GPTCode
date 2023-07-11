@@ -23,8 +23,6 @@ class Percentages:
         if buy_diff_perc > globalvar.PROFIT_PERC:
             if wallet[code].value_drops >= globalvar.MAX_DROPS or top_diff_perc > globalvar.LOSS_PERC:
                 self.bitpanda.sell(wallet[code])
-                wallet[code].lower()
-                wallet[code].print_variables()
                 wallet[code].reset()
 
                 response = self.bitpanda.buy(wallet[code])

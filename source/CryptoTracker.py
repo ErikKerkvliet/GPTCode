@@ -1,5 +1,6 @@
 from Options.Percentages import Percentages
 from Options.Steps import Steps
+from Options.Profit import Profit
 from time import sleep
 import globalvar
 from globalvar import Globalvar
@@ -17,7 +18,8 @@ class CryptoPrices:
         self.times = 0
         self.options = {
             globalvar.OPTION_PERCENTAGES: Percentages(self.glv),
-            globalvar.OPTION_STEPS: Steps(self.glv),
+            globalvar.OPTION_STEPS: Steps(),
+            globalvar.OPTION_PROFIT: Profit(),
         }
 
     def update_prices(self):

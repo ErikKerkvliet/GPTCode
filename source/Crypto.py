@@ -20,8 +20,6 @@ class Crypto:
         self.gain = 0
 
         # Steps
-        self.more = 0         # Position is below zero
-        self.less = 0       # Position is above zero
         self.position = 0
 
     def reset(self):
@@ -65,8 +63,6 @@ class Crypto:
             self.available -= amount
         else:
             amount = self.available * (1 - (globalvar.SELL_PERC - globalvar.BITPANDA_PERC))
-            self.profit += (self.available - amount)
-            self.profit_euro += (self.available - amount) / self.rate
             self.available -= amount
 
     def print_variables(self):

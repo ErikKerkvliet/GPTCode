@@ -11,9 +11,15 @@ class Store:
             if crypto == globalvar.DEFAULT_CURRENCY:
                 continue
             if globalvar.CURRENT_OPTION == globalvar.OPTION_STEPS:
-                difference = f'{float( wallet[crypto].rate) - float(wallet[crypto].buy_rate):.8f}'
+                difference = wallet[crypto].rate - wallet[crypto].buy_rate
+
+                difference = f'{difference:.8f}'
+                difference_percentage = f'{float(difference) / float(wallet[crypto].rate):.8f}'
                 if '.' in difference:
                     difference = difference.rstrip('0').rstrip('.')
+
+                if '.' in difference_percentage:
+                    difference_percentage = difference_percentage.rstrip('0').rstrip('.')
 
                 crypto_data = {
                     'code': wallet[crypto].code,
@@ -24,9 +30,8 @@ class Store:
                     'amount': wallet[crypto].amount,
                     'amount_€': float(wallet[crypto].rate) * float(wallet[crypto].amount),
                     'position': wallet[crypto].position,
-                    # 'more_⇧': wallet[crypto].more,
-                    # 'less_⇩': wallet[crypto].less,
                     'difference': difference,
+                    'difference_%': difference_percentage,
                     'sells': wallet[crypto].sells,
                     'profit': wallet[crypto].profit,
                     'profit_€': wallet[crypto].profit_euro,

@@ -104,16 +104,21 @@ class Bitpanda:
 
         # - 0.00036 BTC
         # + 10.02 EUR
-        amount = crypto.amount / crypto.rate
+        amount = crypto.amount * globalvar.SELL_PERC
         order_data = {
             'pair': pair,
             'exchange_type': OrderSide.SELL,
-            'amount': crypto.amount,
+            'amount': amount,
         }
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self.create_order(order_data))
+
         crypto.profit += crypto.last_rate - (crypto.buy_rate * globalvar.SELL_PERC)
-        crypto.profit_euro += crypto.profit / crypto.rate
+        crypto.profit_euro = (crypto.last_rate - (crypto.buy_rate * globalvar.SELL_PERC)) / crypto.rate
+
+        crypto.amount -= amount
+        crypto.amount_euro = crypto.amount / crypto.rate
+
         crypto.sells += 1
         crypto.position = 0
         crypto.more = 0
@@ -148,12 +153,12 @@ class Bitpanda:
         loop = asyncio.get_event_loop()
         response = loop.run_until_complete(self.create_order(order_data))
 
-
         crypto.buy_rate = crypto.rate
-        crypto.amount = crypto.rate * 10
+        crypto.amount += crypto.rate * 10
+        crypto.amount_euro += crypto.amount / crypto.rate
 
         self.response['rate'] = float(rate)
-        self.response['amount_euro'] = globalvar.BUY_AMOUNT
+        self.response['amount_euro'] = crypto.amount / crypto.rate
 
         return self.response
 
