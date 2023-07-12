@@ -4,7 +4,7 @@ import globalvar
 
 class Store:
     def __init__(self):
-        self.save_data = [{'option': globalvar.CURRENT_OPTION}]
+        self.save_data = [{'option': globalvar.CURRENT_OPTION, 'run_time': globalvar.get_run_time()}]
 
     def save(self, wallet):
         for crypto in wallet.keys():

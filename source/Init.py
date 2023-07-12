@@ -11,8 +11,8 @@ class Init:
     def fill_wallet(self, wallet) -> dict:
         # self.from_file(wallet)
 
-        # if globalvar.TEST:
-        #     return self.from_test(wallet)
+        if globalvar.TEST:
+            return self.from_test(wallet)
 
         if globalvar.get_ip() == globalvar.IP_WORK:
             return self.from_work(wallet)
@@ -74,10 +74,11 @@ class Init:
         response = self.bitpanda.ticker()
         for crypto in response.keys():
             if crypto not in wallet.keys():
+                amount = float(response[crypto][globalvar.DEFAULT_CURRENCY])
                 wallet[crypto] = Crypto(crypto)
-                wallet[crypto].amount += float(response[crypto][globalvar.DEFAULT_CURRENCY])
-                wallet[crypto].rate = wallet[crypto].amount
-                wallet[crypto].top_rate = wallet[crypto].amount
-                wallet[crypto].last_rate = wallet[crypto].amount
-                wallet[crypto].buy_rate = wallet[crypto].amount
+                wallet[crypto].amount = amount * 10
+                wallet[crypto].rate = amount
+                wallet[crypto].top_rate = amount
+                wallet[crypto].last_rate = amount
+                wallet[crypto].buy_rate = amount
         return wallet

@@ -3,6 +3,7 @@ import os
 import signal
 import requests
 import source.Bitpanda as Bitpanda
+from datetime import datetime
 
 TEST = True
 
@@ -17,7 +18,7 @@ MAX_DROPS = 3
 MIN_UPS = 3
 PROFIT_PERC = 0.01
 LOSS_PERC = 0.01
-SELL_PERC = 0.995
+SELL_PERC = 0.997
 BUY_AMOUNT = 10.02
 BITPANDA_PERC = 0.005
 BITPANDA_MARGIN = 0.996
@@ -30,6 +31,8 @@ OPTION_STEPS = 'steps'
 OPTION_PERCENTAGES = 'percentages'
 OPTION_PROFIT = 'profit'
 CURRENT_OPTION = OPTION_STEPS
+
+start_time = datetime.now().time().strftime("%H:%M:%S")
 
 
 class Globalvar:
@@ -72,3 +75,10 @@ def get_ip():
     data = response.json()
 
     return data['ip']
+
+
+def get_run_time():
+    now = datetime.now().time().strftime("%H:%M:%S")
+    run_time = datetime.strptime(now, "%H:%M:%S") - datetime.strptime(start_time, "%H:%M:%S")
+
+    return f'{run_time}'

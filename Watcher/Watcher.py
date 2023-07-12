@@ -13,6 +13,7 @@ class App:
         self.window.title('Watcher')
         self.window.geometry('1270x200')
         self.option = ''
+        self.run_time = ''
 
         self.watchers = {
             globalvar.WATCHER_PERCENTAGES: Percentages(),
@@ -87,8 +88,9 @@ class App:
 
             self.treeview.insert("", "end", text="", values=list(result['row'].values()), tags=result['tags'])
 
-        combined_dict = self.data[0].copy()
+        combined_dict = self.data[1].copy()
         combined_dict = {key: '' for key in combined_dict}
+        combined_dict[list(combined_dict.keys())[0]] = self.run_time
         combined_dict.update(self.watchers[self.option].get_totals())
 
         self.treeview.insert("", "end", text="", values=list(combined_dict.values()))
@@ -113,6 +115,7 @@ class App:
 
             if 'option' == list(data[0].keys())[0]:
                 self.option = data[0]['option']
+                self.run_time = data[0]['run_time']
                 del data[0]
             else:
                 self.option = globalvar.WATCHER_STEPS
