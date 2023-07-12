@@ -22,15 +22,18 @@ class Init:
 
     def from_balance(self, wallet):
         loop = asyncio.get_event_loop()
-        # response = self.bitpanda.get_instrument()
+        instruments = self.bitpanda.get_instrument()
         response = loop.run_until_complete(self.bitpanda.get_balances())
 
         for crypto in response:
-            if crypto['currency_code'] == 'UNI' or crypto['currency_code'] == 'BTC' or crypto['currency_code'] == 'BEST':
+            if crypto['currency_code'] == 'EUR' or instruments[crypto['currency_code']]['state'] != 'ACTIVE':
+                continue
+            if crypto['currency_code'] == 'BTC' or crypto['currency_code'] == 'BEST':
                 continue
 
             if crypto['currency_code'] not in wallet.keys():
                 wallet[crypto['currency_code']] = Crypto(crypto['currency_code'])
+                wallet[crypto['currency_code']].instrument = instruments[crypto['currency_code']]
                 wallet[crypto['currency_code']].rate = None
                 wallet[crypto['currency_code']].top_rate = None
                 wallet[crypto['currency_code']].last_rate = None

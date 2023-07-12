@@ -4,7 +4,7 @@ import globalvar
 
 class Store:
     def __init__(self):
-        self.save_data = [{'option': globalvar.CURRENT_OPTION, 'run_time': globalvar.get_run_time()}]
+        self.save_data = [{'option': globalvar.CURRENT_OPTION}]
 
     def save(self, wallet):
         for crypto in wallet.keys():
@@ -51,12 +51,13 @@ class Store:
                     'sells': wallet[crypto].sells,
                     'gain_€': wallet[crypto].gain,
                 }
+            self.save_data[0]['run_time'] = globalvar.get_run_time()
             self.save_data.append(crypto_data)
 
         dump = json.dumps(self.save_data)
         save_file = globalvar.SAVE_FILE if not globalvar.TEST else globalvar.SAVE_FILE_TEST
         with open(globalvar.SAVE_FILE, 'w') as file:
             file.write(dump)
-            self.save_data = []
+            self.save_data = [{}]
             file.close()
             return

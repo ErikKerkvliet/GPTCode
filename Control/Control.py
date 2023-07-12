@@ -137,5 +137,5 @@ class Control:
 if __name__ == '__main__':
     # cp = Control()
     trade = Trade()
-    #     USDC XRP  EUROC ETH PAN SOL ANT
-    trade.buy('', 15)
+    #      XRP  EUROC ETH PAN SOL ANT
+    trade.buy('USDC', 15)

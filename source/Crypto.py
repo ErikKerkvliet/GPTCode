@@ -41,16 +41,6 @@ class Crypto:
 
         self.top_rate = self.rate if self.rate >= self.top_rate else self.top_rate
 
-    def get_sell_amount(self):
-        amount = self.available * globalvar.SELL_PERC
-        if self.sells % 10 == 0:
-            self.gain += self.rate - self.buy_rate
-            amount = self.available - amount
-            self.profit = 0
-            return amount
-        else:
-            return amount
-
     def up(self, response):
         self.amount_euro = response['amount_euro']
         self.buy_rate = response['rate']
@@ -58,13 +48,6 @@ class Crypto:
         self.last_rate = self.buy_rate
         self.amount = float(response['amount'])
         self.available += float(response['amount'])
-
-    def lower(self, amount=None):
-        if amount:
-            self.available -= amount
-        else:
-            amount = self.available * (1 - (globalvar.SELL_PERC - globalvar.BITPANDA_PERC))
-            self.available -= amount
 
     def print_variables(self):
         print(f'code: {self.code}')

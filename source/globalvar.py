@@ -18,9 +18,6 @@ MAX_DROPS = 3
 MIN_UPS = 3
 PROFIT_PERC = 0.01
 LOSS_PERC = 0.01
-SELL_PERC = 0.997
-BUY_AMOUNT = 10.02
-BITPANDA_PERC = 0.005
 BITPANDA_MARGIN = 0.996
 SAVE_FILE = '../save'
 SAVE_FILE_TEST = '../save_test'
@@ -81,4 +78,4 @@ def get_run_time():
     now = datetime.now().time().strftime("%H:%M:%S")
     run_time = datetime.strptime(now, "%H:%M:%S") - datetime.strptime(start_time, "%H:%M:%S")
 
-    return f'{run_time}'
+    return f'🕑 {run_time}'

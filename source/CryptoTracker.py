@@ -23,13 +23,13 @@ class CryptoPrices:
         }
 
     def update_prices(self):
+
+        self.wallet = self.init.fill_wallet(self.wallet)
+
         data = self.glv.bitpanda.ticker()
 
         if self.times % 10 == 0:
             print(f'Times: {self.times} | Rate BTC: {float(data[globalvar.DEFAULT_CRYPTO][globalvar.DEFAULT_CURRENCY]):.2f}')
-
-        if self.times == 0:
-            self.wallet = self.init.fill_wallet(self.wallet)
 
         for crypto in self.wallet.keys():
             if crypto == globalvar.DEFAULT_CURRENCY:
@@ -41,13 +41,13 @@ class CryptoPrices:
             if result == OrderSide.SELL.value:
                 self.glv.bitpanda.sell(self.wallet[crypto])
 
-                self.glv.bitpanda.buy(self.wallet[crypto])
+                self.glv.bitpanda.buy(self.wallet[crypto], 15)
 
             elif result == OrderSide.BUY.value:
                 self.glv.bitpanda.buy(self.wallet[crypto])
 
         self.store.save(self.wallet)
-        self.glv.bitpanda.instruments = []
+        self.glv.bitpanda.instruments = {}
 
     def run_infinitely(self):
         while True:

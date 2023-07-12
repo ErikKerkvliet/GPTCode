@@ -90,7 +90,7 @@ class App:
 
         combined_dict = self.data[1].copy()
         combined_dict = {key: '' for key in combined_dict}
-        combined_dict[list(combined_dict.keys())[0]] = self.run_time
+        combined_dict[list(combined_dict.keys())[1]] = self.run_time
         combined_dict.update(self.watchers[self.option].get_totals())
 
         self.treeview.insert("", "end", text="", values=list(combined_dict.values()))
@@ -117,6 +117,10 @@ class App:
                 self.option = data[0]['option']
                 self.run_time = data[0]['run_time']
                 del data[0]
+            elif 'run_time' == list(data[0].keys())[0]:
+                self.option = globalvar.WATCHER_STEPS
+                self.run_time = data[0]['run_time']
+                del data[0]
             else:
                 self.option = globalvar.WATCHER_STEPS
 
@@ -126,7 +130,7 @@ class App:
 
 if __name__ == "__main__":
     app = App()
-
+    app.load_data()
     # Refresh interval in milliseconds (e.g., refresh every 1 second)
     refresh_interval_ms = globalvar.TIMER * 1000
 
