@@ -7,6 +7,7 @@ from globalvar import Globalvar
 from Init import Init
 from Store import Store
 from packages.bitpanda.enums import OrderSide
+import asyncio
 
 
 class CryptoPrices:
@@ -31,6 +32,7 @@ class CryptoPrices:
         if self.times % 10 == 0:
             print(f'Times: {self.times} | Rate BTC: {float(data[globalvar.DEFAULT_CRYPTO][globalvar.DEFAULT_CURRENCY]):.2f}')
 
+        loop = asyncio.get_event_loop()
         for crypto in self.wallet.keys():
             if crypto == globalvar.DEFAULT_CURRENCY:
                 continue
@@ -39,12 +41,12 @@ class CryptoPrices:
 
             result = self.options[globalvar.CURRENT_OPTION].calculate(self.wallet[crypto])
             if result == OrderSide.SELL.value:
-                self.glv.bitpanda.sell(self.wallet[crypto])
+                loop.run_until_complete(self.glv.bitpanda.sell(self.wallet[crypto]))
 
-                self.glv.bitpanda.buy(self.wallet[crypto], 15)
+                loop.run_until_complete(self.glv.bitpanda.buy(self.wallet[crypto], 15))
 
             elif result == OrderSide.BUY.value:
-                self.glv.bitpanda.buy(self.wallet[crypto])
+                loop.run_until_complete(self.glv.bitpanda.buy(self.wallet[crypto]))
 
         self.store.save(self.wallet)
         self.glv.bitpanda.instruments = {}

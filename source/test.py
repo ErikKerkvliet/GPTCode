@@ -1,5 +1,4 @@
 import asyncio
-import aiohttp
 import keys
 from packages.bitpanda.BitpandaClient import BitpandaClient
 
@@ -12,7 +11,7 @@ class AsyncBitpandaClient(BitpandaClient):
         return self
 
     async def __aexit__(self, exc_type, exc_val, exc_tb):
-        self.close()
+        await self.close()
 
 
 async def make_request():

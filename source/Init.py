@@ -51,7 +51,6 @@ class Init:
                 wallet[crypto['code']] = Crypto(crypto['code'])
             wallet[crypto['code']].available = crypto['available']
             wallet[crypto['code']].buy_rate = crypto['buy_rate']
-            # wallet[crypto['code']].value_drops = crypto['drops']
             wallet[crypto['code']].amount = crypto['amount']
             wallet[crypto['code']].profit = crypto['profit']
             wallet[crypto['code']].available = crypto['available']
@@ -79,6 +78,7 @@ class Init:
             if crypto not in wallet.keys():
                 amount = float(response[crypto][globalvar.DEFAULT_CURRENCY])
                 wallet[crypto] = Crypto(crypto)
+                wallet[crypto].instrument = {'min_size': 0, 'amount_precision': 5}
                 wallet[crypto].amount = amount * 10
                 wallet[crypto].rate = amount
                 wallet[crypto].top_rate = amount
