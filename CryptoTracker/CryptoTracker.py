@@ -1,9 +1,8 @@
+import globalvar
 from Options.Percentages import Percentages
 from Options.Steps import Steps
 from Options.Profit import Profit
 from time import sleep
-import globalvar
-from globalvar import Globalvar
 from Init import Init
 from Store import Store
 from packages.bitpanda.enums import OrderSide
@@ -12,22 +11,24 @@ import asyncio
 
 class CryptoPrices:
     def __init__(self):
-        self.wallet = {}
-        self.glv = Globalvar()
-        self.init = Init(self.glv.bitpanda)
-        self.store = Store()
+        self.glv = globalvar.Globalvar()
+        self.wallet = self.glv.get_wallet()
+        self.init = Init(self.glv)
+
+        self.store = Store(self.glv)
         self.times = 0
         self.options = {
             globalvar.OPTION_PERCENTAGES: Percentages(self.glv),
-            globalvar.OPTION_STEPS: Steps(),
-            globalvar.OPTION_PROFIT: Profit(),
+            globalvar.OPTION_STEPS: Steps(self.glv),
+            globalvar.OPTION_PROFIT: Profit(self.glv),
         }
+        self.exchange = self.glv.get_exchange('bitpanda')
 
     def update_prices(self):
 
-        self.wallet = self.init.fill_wallet(self.wallet)
+        self.init.fill_wallet()
 
-        data = self.glv.bitpanda.ticker()
+        data = self.exchange.ticker()
 
         if self.times % 10 == 0:
             print(f'Times: {self.times} | Rate BTC: {float(data[globalvar.DEFAULT_CRYPTO][globalvar.DEFAULT_CURRENCY]):.2f}')
@@ -41,15 +42,17 @@ class CryptoPrices:
 
             result = self.options[globalvar.CURRENT_OPTION].calculate(self.wallet[crypto])
             if result == OrderSide.SELL.value:
-                loop.run_until_complete(self.glv.bitpanda.sell(self.wallet[crypto]))
+                loop.run_until_complete(self.exchange.sell(self.wallet[crypto]))
 
-                loop.run_until_complete(self.glv.bitpanda.buy(self.wallet[crypto], 15))
+                loop.run_until_complete(self.exchange.buy(self.wallet[crypto], 15))
 
             elif result == OrderSide.BUY.value:
-                loop.run_until_complete(self.glv.bitpanda.buy(self.wallet[crypto]))
+                loop.run_until_complete(self.exchange.buy(self.wallet[crypto]))
 
-        self.store.save(self.wallet)
-        self.glv.bitpanda.instruments = {}
+        loop.run_until_complete(self.exchange.close_client())
+
+        self.store.save()
+        self.exchange.instruments = {}
 
     def run_infinitely(self):
         while True:

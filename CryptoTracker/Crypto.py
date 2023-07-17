@@ -1,4 +1,4 @@
-import source.globalvar as globalvar
+import globalvar
 
 
 class Crypto:

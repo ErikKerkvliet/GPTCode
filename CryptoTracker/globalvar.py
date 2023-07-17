@@ -2,7 +2,8 @@ import subprocess
 import os
 import signal
 import requests
-import source.Bitpanda as Bitpanda
+import Exchanges.Bitpanda as Bitpanda
+import Exchanges.Kraken as Kraken
 from datetime import datetime
 
 TEST = True
@@ -35,10 +36,17 @@ start_time = datetime.now().time().strftime("%H:%M:%S")
 
 class Globalvar:
     def __init__(self):
-        self.bitpanda = Bitpanda.Bitpanda()
+        self.wallet = {}
+        self.exchanges = {
+            'bitpanda': Bitpanda.Bitpanda(self),
+            'kraken': Kraken.Kraken(self),
+        }
 
-    def get_bitpanda(self) -> Bitpanda:
-        return self.bitpanda
+    def get_wallet(self):
+        return self.wallet
+
+    def get_exchange(self, exchange) -> Bitpanda:
+        return self.exchanges[exchange]
 
 
 def execute(cmd):

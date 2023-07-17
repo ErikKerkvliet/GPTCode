@@ -1,8 +1,11 @@
-import source.globalvar as globalvar
+import globalvar as globalvar
 from packages.bitpanda.enums import OrderSide
 
 
 class Steps:
+    def __init__(self, glv):
+        self.glv = glv
+
     @staticmethod
     def calculate(crypto):
         if crypto.last_rate is None or crypto.rate == crypto.last_rate:

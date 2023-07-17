@@ -1,6 +1,6 @@
-from source.Bitpanda import Bitpanda
-from source.Crypto import Crypto
-import source.globalvar as globalvar
+from CryptoTracker.Bitpanda import Bitpanda
+from CryptoTracker.Crypto import Crypto
+import CryptoTracker.globalvar as globalvar
 
 
 class Trade:

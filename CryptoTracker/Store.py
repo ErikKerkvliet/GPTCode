@@ -3,10 +3,13 @@ import globalvar
 
 
 class Store:
-    def __init__(self):
+    def __init__(self, glv):
+        self.glv = glv
+
         self.save_data = [{'option': globalvar.CURRENT_OPTION}]
 
-    def save(self, wallet):
+    def save(self):
+        wallet = self.glv.wallet
         for crypto in wallet.keys():
             if crypto == globalvar.DEFAULT_CURRENCY:
                 continue

@@ -1,9 +1,10 @@
-import source.globalvar as globalvar
+import globalvar as globalvar
 
 
 class Percentages:
     def __init__(self, glv):
-        self.bitpanda = glv.get_bitpanda()
+        self.glv = glv
+        self.bitpanda = self.glv.get_exchange('bitpanda')
 
     def calculate(self, wallet, code):
         buy_diff_perc = ((wallet[code].rate - wallet[code].buy_rate) / wallet[code].buy_rate)
