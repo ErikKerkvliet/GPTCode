@@ -8,7 +8,7 @@ class Init:
     def __init__(self, glv):
         self.glv = glv
         self.wallet = self.glv.get_wallet()
-        self.exchange = self.glv.get_exchange('bitpanda')
+        self.exchange = self.glv.get_exchange(globalvar.EXCHANGE)
 
     def fill_wallet(self):
         # self.from_file()
@@ -25,8 +25,8 @@ class Init:
     def from_balance(self):
         wallet = {}
         loop = asyncio.get_event_loop()
-        instruments = self.glv.bitpanda.get_instrument()
-        response = loop.run_until_complete(self.glv.bitpanda.get_balances())
+        instruments = self.glv.exchange.get_instrument()
+        response = loop.run_until_complete(self.glv.exchange.get_balances())
 
         for crypto in response:
             if crypto['currency_code'] == 'EUR' or instruments[crypto['currency_code']]['state'] != 'ACTIVE':

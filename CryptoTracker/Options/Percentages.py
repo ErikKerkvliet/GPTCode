@@ -4,7 +4,7 @@ import globalvar as globalvar
 class Percentages:
     def __init__(self, glv):
         self.glv = glv
-        self.bitpanda = self.glv.get_exchange('bitpanda')
+        self.exchange = self.glv.get_exchange(globalvar.EXCHANGE)
 
     def calculate(self, wallet, code):
         buy_diff_perc = ((wallet[code].rate - wallet[code].buy_rate) / wallet[code].buy_rate)
@@ -12,21 +12,21 @@ class Percentages:
         last_diff_perc = ((wallet[code].rate - wallet[code].last_rate) / wallet[code].last_rate)
 
         # if globalvar.TEST:
-        #     self.bitpanda.sell(wallet[code])
+        #     self.exchange.sell(wallet[code])
         #     wallet[code].lower()
         #     wallet[code].print_variables()
         #     wallet[code].reset()
         #
-        #     response = self.bitpanda.buy(wallet[code])
+        #     response = self.exchange.buy(wallet[code])
         #     wallet[code].up(response)
         #     continue
 
         if buy_diff_perc > globalvar.PROFIT_PERC:
             if wallet[code].value_drops >= globalvar.MAX_DROPS or top_diff_perc > globalvar.LOSS_PERC:
-                self.bitpanda.sell(wallet[code])
+                self.exchange.sell(wallet[code])
                 wallet[code].reset()
 
-                response = self.bitpanda.buy(wallet[code])
+                response = self.exchange.buy(wallet[code])
                 wallet[code].up(response)
 
         if last_diff_perc < 0:

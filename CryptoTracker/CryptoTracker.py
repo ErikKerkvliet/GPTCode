@@ -22,7 +22,9 @@ class CryptoPrices:
             globalvar.OPTION_STEPS: Steps(self.glv),
             globalvar.OPTION_PROFIT: Profit(self.glv),
         }
-        self.exchange = self.glv.get_exchange('bitpanda')
+        self.exchange = self.glv.get_exchange(globalvar.EXCHANGE)
+        self.exchange.get_wallet()
+        exit()
 
     def update_prices(self):
 

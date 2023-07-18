@@ -2,11 +2,9 @@ keys.py
 pyvenv.cfg
 /lib
 /bin
-/source/__pycache__
+/CryptoTracker/__pycache__
 .pyc
 *.pyc
 save
-/.idea/GPTCode.iml
-/.idea/misc.xml
 control/screenshot.png
 __pycache__/

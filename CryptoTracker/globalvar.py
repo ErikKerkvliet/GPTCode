@@ -12,6 +12,10 @@ STATE_DEVELOPMENT = 'development'
 STATE_PRODUCTION = 'production'
 STATE = STATE_DEVELOPMENT
 
+EXCHANGES_BITPANDA = 'bitpanda'
+EXCHANGES_KRAKEN = 'kraken'
+EXCHANGE = EXCHANGES_KRAKEN
+
 DEFAULT_CURRENCY = 'EUR'
 DEFAULT_CRYPTO = 'BTC'
 TIMER = 10
@@ -38,14 +42,14 @@ class Globalvar:
     def __init__(self):
         self.wallet = {}
         self.exchanges = {
-            'bitpanda': Bitpanda.Bitpanda(self),
-            'kraken': Kraken.Kraken(self),
+            EXCHANGES_BITPANDA: Bitpanda.Bitpanda(self),
+            EXCHANGES_KRAKEN: Kraken.Kraken(self),
         }
 
     def get_wallet(self):
         return self.wallet
 
-    def get_exchange(self, exchange) -> Bitpanda:
+    def get_exchange(self, exchange):
         return self.exchanges[exchange]
 
 

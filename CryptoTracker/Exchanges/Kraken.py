@@ -4,21 +4,19 @@ import globalvar
 from packages.kraken.exceptions import KrakenException
 from packages.kraken.base_api import KrakenBaseSpotAPI, defined, ensure_string
 from packages.kraken.spot import Trade
+from packages.kraken.spot import User
 
 
 class Kraken:
     def __init__(self, glv):
         self.glv = glv
         self.client = None
+        self.user = User(key=keys.KEY_KRAKEN_API, secret=keys.KEY_KRAKEN_PRIVATE)
 
     def get_client(self):
         if self.client is not None:
             return self.client
-
-        if globalvar.get_ip() == globalvar.IP_WORK:
-            return Trade(key=keys.KEY_KRAKEN_NONE)
-        else:
-            return Trade(key=keys.KEY_KRAKEN_TRADE)
+        return KrakenBaseSpotAPI(key=keys.KEY_KRAKEN_API)
 
     async def close_client(self):
         if not self.client:
@@ -44,6 +42,14 @@ class Kraken:
 
     def sell(self, crypto):
         pass
+
+    def get_balances(self):
+        with self.user as user:
+            balances = user.get_balances()
+
+        for key in balances.keys():
+            balance[key]
+        return balances
 
     async def create_order(self, order_data):
 
