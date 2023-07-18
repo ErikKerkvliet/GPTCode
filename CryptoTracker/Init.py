@@ -13,16 +13,19 @@ class Init:
     def fill_wallet(self):
         # self.from_file()
 
-        if globalvar.TEST:
-            self.from_test()
+        # if globalvar.TEST:
+        #     self.from_test()
 
         if globalvar.get_ip() == globalvar.IP_WORK:
             self.from_work()
 
         if globalvar.get_ip() == globalvar.IP_HOME:
-            self.from_balance()
+            if globalvar.EXCHANGE == globalvar.EXCHANGES_BITPANDA:
+                self.from_bitpanda_balance()
+            elif globalvar.EXCHANGE == globalvar.EXCHANGES_KRAKEN:
+                self.from_kraken_balance()
 
-    def from_balance(self):
+    def from_bitpanda_balance(self):
         wallet = {}
         loop = asyncio.get_event_loop()
         instruments = self.glv.exchange.get_instrument()
@@ -42,6 +45,19 @@ class Init:
                 wallet[crypto['currency_code']].last_rate = None
             wallet[crypto['currency_code']].amount += float(crypto['available'])
         self.wallet = wallet
+
+    def from_kraken_balance(self):
+        wallet = {}
+        balances = self.glv.exchanges[globalvar.EXCHANGES_KRAKEN].get_balances()
+
+        for code in balances.keys():
+            if code not in wallet.keys():
+                wallet[code] = Crypto(code)
+                wallet[code].rate = None
+                wallet[code].top_rate = None
+                wallet[code].last_rate = None
+            wallet[code].amount += float(balances[code])
+        self.glv.wallet = wallet
 
     def from_file(self):
         wallet = {}

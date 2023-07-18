@@ -1,4 +1,4 @@
-import globalvar as globalvar
+import CryptoTracker.globalvar as globalvar
 
 
 class Percentages:

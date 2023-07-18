@@ -6,6 +6,11 @@ import Exchanges.Bitpanda as Bitpanda
 import Exchanges.Kraken as Kraken
 from datetime import datetime
 
+from Percentages import Percentages
+from Profit import Profit
+from Steps import Steps
+from Store import Store
+
 TEST = True
 
 STATE_DEVELOPMENT = 'development'
@@ -15,6 +20,14 @@ STATE = STATE_DEVELOPMENT
 EXCHANGES_BITPANDA = 'bitpanda'
 EXCHANGES_KRAKEN = 'kraken'
 EXCHANGE = EXCHANGES_KRAKEN
+
+OPTION_STEPS = 'steps'
+OPTION_PERCENTAGES = 'percentages'
+OPTION_PROFIT = 'profit'
+OPTION = OPTION_STEPS
+
+ORDER_SIDE_BUY = 'buy'
+ORDER_SIDE_SELL = 'sell'
 
 DEFAULT_CURRENCY = 'EUR'
 DEFAULT_CRYPTO = 'BTC'
@@ -30,10 +43,6 @@ SAVE_FILE_TEST = '../save_test'
 IP_WORK = '145.131.206.197'
 IP_HOME = '80.60.131.14'
 IP_VPS = ''
-OPTION_STEPS = 'steps'
-OPTION_PERCENTAGES = 'percentages'
-OPTION_PROFIT = 'profit'
-CURRENT_OPTION = OPTION_STEPS
 
 start_time = datetime.now().time().strftime("%H:%M:%S")
 
@@ -45,12 +54,21 @@ class Globalvar:
             EXCHANGES_BITPANDA: Bitpanda.Bitpanda(self),
             EXCHANGES_KRAKEN: Kraken.Kraken(self),
         }
+        self.options = {
+            OPTION_PERCENTAGES: Percentages(self),
+            OPTION_STEPS: Steps(self),
+            OPTION_PROFIT: Profit(self),
+        }
+        self.store = Store(self)
 
     def get_wallet(self):
         return self.wallet
 
     def get_exchange(self, exchange):
         return self.exchanges[exchange]
+
+    def get_option(self):
+        return self.options[OPTION]
 
 
 def execute(cmd):

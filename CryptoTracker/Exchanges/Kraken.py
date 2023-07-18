@@ -1,5 +1,8 @@
+from time import sleep
+
 import keys
 import globalvar
+import requests
 
 from packages.kraken.exceptions import KrakenException
 from packages.kraken.base_api import KrakenBaseSpotAPI, defined, ensure_string
@@ -12,6 +15,7 @@ class Kraken:
         self.glv = glv
         self.client = None
         self.user = User(key=keys.KEY_KRAKEN_API, secret=keys.KEY_KRAKEN_PRIVATE)
+        self.times = 0
 
     def get_client(self):
         if self.client is not None:
@@ -47,9 +51,10 @@ class Kraken:
         with self.user as user:
             balances = user.get_balances()
 
+        cryptos = {}
         for key in balances.keys():
-            balance[key]
-        return balances
+            cryptos[key] = balances[key]['balance']
+        return cryptos
 
     async def create_order(self, order_data):
 
@@ -60,3 +65,43 @@ class Kraken:
             volume=order_data['amount'],
             validate=order_data['validate']
         )
+
+    def asset_pair(self, crypto_code=None):
+        url = f'https://api.kraken.com/0/public/AssetPairs'
+        if crypto_code:
+            url += f'?pair={crypto_code}EUR'
+        response = requests.get(url)
+
+        response_data = response.json()
+        if response_data['error'] and self.times < 3:
+            sleep(5)
+            self.ticker()
+        self.times = 0
+
+        crypto_data = response_data['result']
+        cryptos = {}
+        for code in crypto_data.keys():
+            if code[-3:] == 'EUR' and crypto_data[code]['status'] == 'online':
+                cryptos[crypto_data[code]['base']] = crypto_data[code]['c'][0]
+        return cryptos
+
+    def ticker(self, crypto_code=None) -> dict:
+        url = f'https://api.kraken.com/0/public/Ticker'
+        if crypto_code:
+            url += f'?pair={crypto_code}EUR'
+        response = requests.get(url)
+
+        response_data = response.json()
+
+        if response_data['error'] and self.times < 3:
+            self.times += 1
+            sleep(5)
+            self.ticker()
+        self.times = 0
+
+        crypto_data = response_data['result']
+        cryptos = {}
+        for code in crypto_data.keys():
+            if code[-3:] == 'EUR' and crypto_data[code]['status'] == 'online':
+                cryptos[crypto_data[code]['base']] = crypto_data[code]['c'][0]
+        return cryptos

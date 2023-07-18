@@ -1,5 +1,4 @@
-import globalvar as globalvar
-from packages.bitpanda.enums import OrderSide
+import CryptoTracker.globalvar as globalvar
 
 
 class Steps:
@@ -28,9 +27,9 @@ class Steps:
                     and crypto.buy_rate < crypto.rate \
                     and crypto.rate - crypto.buy_rate > (crypto.top_rate - crypto.buy_rate) * 0.8 \
                     and crypto.rate * crypto.amount > crypto.instrument['min_size']:
-                return OrderSide.SELL.value
+                return globalvar.ORDER_SIDE_SELL
 
             if crypto.position > 3 and crypto.buy_rate < (crypto.rate * globalvar.BITPANDA_MARGIN):
-                return OrderSide.SELL.value
+                return globalvar.ORDER_SIDE_BUY
 
         return False
