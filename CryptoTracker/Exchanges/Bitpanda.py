@@ -1,7 +1,8 @@
 import json
 import keys
 
-import globalvar
+import globalvar as globalvar
+from CostHandler import CostHandler
 
 from packages.bitpanda.BitpandaClient import BitpandaClient
 from packages.bitpanda.enums import OrderSide
@@ -21,6 +22,7 @@ class Bitpanda:
         tracemalloc.start()
         self.instruments = {}
         self.response = {}
+        self.cost_handler = CostHandler()
 
     def get_client(self):
         if self.client is not None:
@@ -127,18 +129,9 @@ class Bitpanda:
 
         await self.create_order(order_data)
 
-        crypto.profit += crypto.rate - crypto.buy_rate
-        crypto.profit_euro += globalvar.BUY_AMOUNT * (crypto.rate / crypto.buy_rate) - globalvar.BUY_AMOUNT
-
-        crypto.amount -= trade_amount
-        crypto.amount_euro = crypto.amount / crypto.rate if crypto.amount > 0 else 0
-
-        crypto.sells += 1
-        crypto.position = 0
+        self.cost_handler.sell(crypto)
 
     async def buy(self, crypto, amount=None):
-        rate = self.ticker(crypto.code, globalvar.DEFAULT_CURRENCIES[0])
-
         if not amount:
             amount = crypto.amount
 
@@ -164,16 +157,7 @@ class Bitpanda:
 
         await self.client.close()
 
-        crypto.amount_euro += trade_amount / crypto.buy_rate
-
-        crypto.buy_rate = crypto.rate
-        crypto.buy_rate_euro = globalvar.BUY_AMOUNT / crypto.rate
-        crypto.amount += globalvar.BUY_AMOUNT
-
-        self.response['rate'] = float(rate)
-        self.response['amount_euro'] = crypto.amount / crypto.rate
-
-        return self.response
+        self.cost_handler.buy(crypto)
 
     def get_instrument(self, crypto='ALL'):
         if self.instruments:

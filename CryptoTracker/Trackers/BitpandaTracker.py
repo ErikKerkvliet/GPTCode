@@ -7,16 +7,13 @@ from Init import Init
 class BitpandaTracker:
     def __init__(self, glv):
         self.glv = glv
-        self.exchange = self.glv.get_exchange(globalvar.EXCHANGES_BITPANDA)
+        self.wallet = {}
         self.init = Init(self.glv)
-        self.wallet = self.glv.get_wallet()
-        self.option = self.glv.get_option()
-        self.store = self.glv.store
+        self.exchange = self.glv.get_exchange(globalvar.EXCHANGES_BITPANDA)
+        self.resolver = self.glv.get_resolver(globalvar.RESOLVER)
 
     def track(self, times):
-
-        self.init.fill_wallet()
-
+        self.wallet = self.init.fill_wallet(self.wallet)
         data = self.exchange.ticker()
 
         if times % 10 == 0:
@@ -29,7 +26,7 @@ class BitpandaTracker:
 
             self.wallet[crypto].set_rate(data[crypto])
 
-            result = self.option.calculate(self.wallet[crypto])
+            result = self.resolver.resolve(self.wallet[crypto])
             if result == globalvar.ORDER_SIDE_SELL:
                 loop.run_until_complete(self.exchange.sell(self.wallet[crypto]))
 

@@ -4,6 +4,7 @@ import keys
 import globalvar
 import requests
 
+from CostHandler import CostHandler
 from packages.kraken.exceptions import KrakenException
 from packages.kraken.base_api import KrakenBaseSpotAPI, defined, ensure_string
 from packages.kraken.spot import Trade
@@ -14,42 +15,70 @@ class Kraken:
     def __init__(self, glv):
         self.glv = glv
         self.client = None
-        self.user = User(key=keys.KEY_KRAKEN_API, secret=keys.KEY_KRAKEN_PRIVATE)
+        self.user = None
         self.times = 0
         self.pairs = self.asset_pairs()
+        self.cost_handler = CostHandler()
 
-    def get_client(self):
+    def get_user(self) -> User:
+        if self.user is not None:
+            return self.user
+        self.user = User(key=keys.KEY_KRAKEN_API, secret=keys.KEY_KRAKEN_PRIVATE)
+        return self.user
+
+    def get_client(self) -> Trade:
         if self.client is not None:
             return self.client
-        return KrakenBaseSpotAPI(key=keys.KEY_KRAKEN_API)
+        self.client = Trade(key=keys.KEY_KRAKEN_API, secret=keys.KEY_KRAKEN_PRIVATE)
+        return self.client
 
-    async def close_client(self):
+    def close_client(self):
         if not self.client:
             return
 
-        await self.client.close()
+        self.client.close()
         self.client = None
 
-    async def buy(self, crypto):
+    def buy(self, crypto, amount=None):
+        if not amount:
+            amount = crypto.amount
 
         order_data = {
             'ordertype': 'market',
             'side': 'buy',
             'pair': '',
-            'amount': crypto.amount,
+            'amount': amount,
             'validate': True  # Test variable
         }
 
         if not globalvar.TEST:
             order_data['validate'] = False
 
-        await self.create_order(order_data)
+        self.create_order(order_data)
 
-    def sell(self, crypto):
-        pass
+        self.cost_handler.buy(crypto)
+
+    def sell(self, crypto, amount=None):
+        if not amount:
+            amount = crypto.amount
+
+        order_data = {
+            'ordertype': 'market',
+            'side': 'sell',
+            'pair': '',
+            'amount': amount,
+            'validate': True  # Test variable
+        }
+
+        if not globalvar.TEST:
+            order_data['validate'] = False
+
+        self.create_order(order_data)
+
+        self.cost_handler.sell(crypto)
 
     def get_balances(self):
-        with self.user as user:
+        with self.get_user() as user:
             balances = user.get_balances()
 
         cryptos = {}
@@ -57,9 +86,8 @@ class Kraken:
             cryptos[key] = balances[key]['balance']
         return cryptos
 
-    async def create_order(self, order_data):
-
-        self.client.create_order(
+    def create_order(self, order_data):
+        self.get_client().create_order(
             ordertype=order_data,
             side=order_data,
             pair=order_data['pair'],

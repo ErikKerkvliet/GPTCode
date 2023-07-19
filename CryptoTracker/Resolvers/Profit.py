@@ -6,7 +6,7 @@ class Profit:
         self.glv = glv
 
     @staticmethod
-    def calculate(crypto):
+    def resolve(crypto):
         if crypto.buy_rate < crypto.rate * 1.0:
             pass
 

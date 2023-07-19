@@ -2,14 +2,13 @@ import subprocess
 import os
 import signal
 import requests
-import Exchanges.Bitpanda as Bitpanda
-import Exchanges.Kraken as Kraken
+from Exchanges.Bitpanda import Bitpanda
+from Exchanges.Kraken import Kraken
 from datetime import datetime
 
-from Percentages import Percentages
-from Profit import Profit
-from Steps import Steps
-from Store import Store
+from Resolvers.Percentages import Percentages
+from Resolvers.Profit import Profit
+from Resolvers.Steps import Steps
 
 TEST = True
 
@@ -21,10 +20,10 @@ EXCHANGES_BITPANDA = 'bitpanda'
 EXCHANGES_KRAKEN = 'kraken'
 EXCHANGE = EXCHANGES_KRAKEN
 
-OPTION_STEPS = 'steps'
-OPTION_PERCENTAGES = 'percentages'
-OPTION_PROFIT = 'profit'
-OPTION = OPTION_STEPS
+RESOLVER_STEPS = 'steps'
+RESOLVER_PERCENTAGES = 'percentages'
+RESOLVER_PROFIT = 'profit'
+RESOLVER = RESOLVER_STEPS
 
 ORDER_SIDE_BUY = 'buy'
 ORDER_SIDE_SELL = 'sell'
@@ -36,7 +35,7 @@ MAX_DROPS = 3
 MIN_UPS = 3
 PROFIT_PERC = 0.01
 LOSS_PERC = 0.01
-BITPANDA_MARGIN = 0.996
+MARGIN = 0.996
 BUY_AMOUNT = 15
 SAVE_FILE = '../save'
 SAVE_FILE_TEST = '../save_test'
@@ -49,26 +48,21 @@ start_time = datetime.now().time().strftime("%H:%M:%S")
 
 class Globalvar:
     def __init__(self):
-        self.wallet = {}
         self.exchanges = {
-            EXCHANGES_BITPANDA: Bitpanda.Bitpanda(self),
-            EXCHANGES_KRAKEN: Kraken.Kraken(self),
+            EXCHANGES_BITPANDA: Bitpanda(self),
+            EXCHANGES_KRAKEN: Kraken(self),
         }
-        self.options = {
-            OPTION_PERCENTAGES: Percentages(self),
-            OPTION_STEPS: Steps(self),
-            OPTION_PROFIT: Profit(self),
+        self.resolvers = {
+            RESOLVER_PERCENTAGES: Percentages(self),
+            RESOLVER_STEPS: Steps(self),
+            RESOLVER_PROFIT: Profit(self),
         }
-        self.store = Store(self)
-
-    def get_wallet(self) -> dict:
-        return self.wallet
 
     def get_exchange(self, exchange):
         return self.exchanges[exchange]
 
-    def get_option(self):
-        return self.options[OPTION]
+    def get_resolver(self, resolver):
+        return self.resolvers[resolver]
 
 
 def execute(cmd):

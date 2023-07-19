@@ -6,14 +6,13 @@ class Store:
     def __init__(self, glv):
         self.glv = glv
 
-        self.save_data = [{'option': globalvar.OPTION}]
+        self.save_data = [{'resolver': globalvar.RESOLVER}]
 
-    def save(self):
-        wallet = self.glv.wallet
+    def save(self, wallet):
         for crypto in wallet.keys():
             if crypto in globalvar.DEFAULT_CURRENCIES:
                 continue
-            if globalvar.OPTION == globalvar.OPTION_STEPS:
+            if globalvar.RESOLVER == globalvar.RESOLVER_STEPS:
                 difference = wallet[crypto].rate - wallet[crypto].buy_rate
 
                 difference = f'{difference:.8f}'

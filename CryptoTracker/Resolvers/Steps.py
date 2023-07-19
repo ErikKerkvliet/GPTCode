@@ -6,7 +6,7 @@ class Steps:
         self.glv = glv
 
     @staticmethod
-    def calculate(crypto):
+    def resolve(crypto):
         if crypto.last_rate is None or crypto.rate == crypto.last_rate:
             return
 
