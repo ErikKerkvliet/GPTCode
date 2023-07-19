@@ -20,11 +20,11 @@ class BitpandaTracker:
         data = self.exchange.ticker()
 
         if times % 10 == 0:
-            print(f'Times: {times} | Rate BTC: {float(data[globalvar.DEFAULT_CRYPTO][globalvar.DEFAULT_CURRENCY]):.2f}')
+            print(f'Times: {times} | Rate BTC: {float(data[globalvar.DEFAULT_CRYPTO][globalvar.DEFAULT_CURRENCIES[0]]):.2f}')
 
         loop = asyncio.get_event_loop()
         for crypto in self.wallet.keys():
-            if crypto == globalvar.DEFAULT_CURRENCY:
+            if crypto in globalvar.DEFAULT_CURRENCIES:
                 continue
 
             self.wallet[crypto].set_rate(data[crypto])

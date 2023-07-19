@@ -34,7 +34,7 @@ class Crypto:
         if self.rate is not None:
             self.last_rate = self.rate
 
-        self.rate = float(crypto[globalvar.DEFAULT_CURRENCY])
+        self.rate = float(crypto[globalvar.DEFAULT_CURRENCIES[0]])
 
         if self.top_rate is None:
             self.top_rate = self.rate

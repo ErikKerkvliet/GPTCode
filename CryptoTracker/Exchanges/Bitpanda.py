@@ -107,7 +107,7 @@ class Bitpanda:
         return response['response']['balances'][coin]
 
     async def sell(self, crypto):
-        pair = Pair(crypto.code, globalvar.DEFAULT_CURRENCY)
+        pair = Pair(crypto.code, globalvar.DEFAULT_CURRENCIES[0])
 
         # - 0.00036 BTC
         # + 10.02 EUR
@@ -136,12 +136,12 @@ class Bitpanda:
         crypto.position = 0
 
     async def buy(self, crypto, amount=None):
-        rate = self.ticker(crypto.code, globalvar.DEFAULT_CURRENCY)
+        rate = self.ticker(crypto.code, globalvar.DEFAULT_CURRENCIES[0])
 
         if not amount:
             amount = crypto.amount
 
-        pair = Pair(crypto.code, globalvar.DEFAULT_CURRENCY)
+        pair = Pair(crypto.code, globalvar.DEFAULT_CURRENCIES[0])
 
         if globalvar.get_ip() == globalvar.IP_HOME:
             precision = crypto.instrument['amount_precision']

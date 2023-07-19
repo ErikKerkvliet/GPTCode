@@ -13,8 +13,11 @@ class Init:
     def fill_wallet(self):
         # self.from_file()
 
-        # if globalvar.TEST:
-        #     self.from_test()
+        if globalvar.EXCHANGE == globalvar.EXCHANGES_KRAKEN:
+            self.from_kraken_balance()
+
+        if globalvar.TEST:
+            self.from_test()
 
         if globalvar.get_ip() == globalvar.IP_WORK:
             self.from_work()
@@ -51,6 +54,8 @@ class Init:
         balances = self.glv.exchanges[globalvar.EXCHANGES_KRAKEN].get_balances()
 
         for code in balances.keys():
+            if code in globalvar.DEFAULT_CURRENCIES:
+                continue
             if code not in wallet.keys():
                 wallet[code] = Crypto(code)
                 wallet[code].rate = None
@@ -66,7 +71,7 @@ class Init:
             file.close()
 
         for crypto in data:
-            if crypto['code'] == globalvar.DEFAULT_CURRENCY:
+            if crypto['code'] in globalvar.DEFAULT_CURRENCIES:
                 wallet[crypto['code']] = Crypto(crypto['code'])
             wallet[crypto['code']].available = crypto['available']
             wallet[crypto['code']].buy_rate = crypto['buy_rate']
@@ -94,8 +99,8 @@ class Init:
         wallet = {}
         response = self.exchange.ticker()
         for crypto in response.keys():
-            if crypto not in wallet.keys():
-                amount = float(response[crypto][globalvar.DEFAULT_CURRENCY])
+            if crypto not in wallet.keys() and crypto in globalvar.DEFAULT_CURRENCIES:
+                amount = float(response[crypto])
                 wallet[crypto] = Crypto(crypto)
                 wallet[crypto].instrument = {'min_size': 0, 'amount_precision': 5}
                 wallet[crypto].amount = amount * 10

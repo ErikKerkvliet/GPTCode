@@ -113,6 +113,11 @@ class App:
         with open(globalvar.SAVE_FILE) as file:
             data = json.load(file)
 
+            if data[0] == {}:
+                self.option = ''
+                self.run_time = ''
+                return {}
+
             if 'option' == list(data[0].keys())[0]:
                 self.option = data[0]['option']
                 self.run_time = data[0]['run_time']

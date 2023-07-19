@@ -19,7 +19,7 @@ STATE = STATE_DEVELOPMENT
 
 EXCHANGES_BITPANDA = 'bitpanda'
 EXCHANGES_KRAKEN = 'kraken'
-EXCHANGE = EXCHANGES_KRAKEN
+EXCHANGE = EXCHANGES_BITPANDA
 
 OPTION_STEPS = 'steps'
 OPTION_PERCENTAGES = 'percentages'
@@ -29,7 +29,7 @@ OPTION = OPTION_STEPS
 ORDER_SIDE_BUY = 'buy'
 ORDER_SIDE_SELL = 'sell'
 
-DEFAULT_CURRENCY = 'EUR'
+DEFAULT_CURRENCIES = ['EUR', 'ZEUR']
 DEFAULT_CRYPTO = 'BTC'
 TIMER = 10
 MAX_DROPS = 3
@@ -61,7 +61,7 @@ class Globalvar:
         }
         self.store = Store(self)
 
-    def get_wallet(self):
+    def get_wallet(self) -> dict:
         return self.wallet
 
     def get_exchange(self, exchange):

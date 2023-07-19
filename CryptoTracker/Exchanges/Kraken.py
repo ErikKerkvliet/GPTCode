@@ -16,6 +16,7 @@ class Kraken:
         self.client = None
         self.user = User(key=keys.KEY_KRAKEN_API, secret=keys.KEY_KRAKEN_PRIVATE)
         self.times = 0
+        self.pairs = self.asset_pairs()
 
     def get_client(self):
         if self.client is not None:
@@ -66,7 +67,7 @@ class Kraken:
             validate=order_data['validate']
         )
 
-    def asset_pair(self, crypto_code=None):
+    def asset_pairs(self, crypto_code=None):
         url = f'https://api.kraken.com/0/public/AssetPairs'
         if crypto_code:
             url += f'?pair={crypto_code}EUR'
@@ -75,14 +76,14 @@ class Kraken:
         response_data = response.json()
         if response_data['error'] and self.times < 3:
             sleep(5)
-            self.ticker()
+            self.asset_pairs()
         self.times = 0
 
         crypto_data = response_data['result']
         cryptos = {}
         for code in crypto_data.keys():
             if code[-3:] == 'EUR' and crypto_data[code]['status'] == 'online':
-                cryptos[crypto_data[code]['base']] = crypto_data[code]['c'][0]
+                cryptos[code] = crypto_data[code]
         return cryptos
 
     def ticker(self, crypto_code=None) -> dict:
@@ -100,8 +101,9 @@ class Kraken:
         self.times = 0
 
         crypto_data = response_data['result']
+        print(self.pairs)
         cryptos = {}
         for code in crypto_data.keys():
-            if code[-3:] == 'EUR' and crypto_data[code]['status'] == 'online':
-                cryptos[crypto_data[code]['base']] = crypto_data[code]['c'][0]
+            if code[-3:] == 'EUR' and code in self.pairs.keys() and self.pairs[code]['status'] == 'online':
+                cryptos[code] = crypto_data[code]['c'][0]
         return cryptos

@@ -9,7 +9,7 @@ class Trade:
 
     def sell(self, crypto_code, amount):
         crypto = Crypto(crypto_code)
-        crypto.amount = amount / self.bitpanda.ticker(crypto_code, globalvar.DEFAULT_CURRENCY)
+        crypto.amount = amount / self.bitpanda.ticker(crypto_code, globalvar.DEFAULT_CURRENCIES[0])
 
         instrument = self.bitpanda.get_instrument(crypto)
 
@@ -20,7 +20,7 @@ class Trade:
 
     def buy(self, crypto_code, amount):
         crypto = Crypto(crypto_code)
-        crypto.amount = (amount / self.bitpanda.ticker(crypto_code, globalvar.DEFAULT_CURRENCY))
+        crypto.amount = (amount / self.bitpanda.ticker(crypto_code, globalvar.DEFAULT_CURRENCIES[0]))
         crypto.rate = crypto.amount
         crypto.amount_euro = amount
         instrument = self.bitpanda.get_instrument(crypto.code)

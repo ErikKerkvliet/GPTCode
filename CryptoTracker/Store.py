@@ -11,7 +11,7 @@ class Store:
     def save(self):
         wallet = self.glv.wallet
         for crypto in wallet.keys():
-            if crypto == globalvar.DEFAULT_CURRENCY:
+            if crypto in globalvar.DEFAULT_CURRENCIES:
                 continue
             if globalvar.OPTION == globalvar.OPTION_STEPS:
                 difference = wallet[crypto].rate - wallet[crypto].buy_rate

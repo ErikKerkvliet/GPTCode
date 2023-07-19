@@ -15,14 +15,17 @@ class KrakenTracker:
         self.init.fill_wallet()
         wallet = self.glv.get_wallet()
         data = self.exchange.ticker()
-        print(self.glv.wallet['ZEUR'].amount)
+        print(list(data.keys()), data["XXBTZEUR"])
 
         if times % 10 == 0:
-            print(f'Times: {times} | Rate BTC: {float(data["TBTC"].amount):.2f}')
+            print(f'Times: {times} | Rate BTC: {float(data["XXBTZEUR"]):.2f}')
 
+            print(data.keys())
+            print(wallet.keys())
         for crypto in wallet.keys():
-            print(data)
-            exit()
+            if crypto in globalvar.DEFAULT_CURRENCIES:
+                continue
+
             self.wallet[crypto].set_rate(data[crypto])
 
             result = self.option.calculate(wallet[crypto])

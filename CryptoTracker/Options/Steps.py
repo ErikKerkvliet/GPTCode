@@ -1,4 +1,4 @@
-import CryptoTracker.globalvar as globalvar
+import globalvar as globalvar
 
 
 class Steps:
