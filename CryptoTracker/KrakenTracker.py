@@ -12,29 +12,21 @@ class KrakenTracker:
         self.store = self.glv.store
 
     def track(self, times):
-        self.init.fill_wallet()
-        wallet = self.glv.get_wallet()
+        self.wallet = self.init.fill_wallet()
         data = self.exchange.ticker()
-        print(list(data.keys()), data["XXBTZEUR"])
 
         if times % 10 == 0:
             print(f'Times: {times} | Rate BTC: {float(data["XXBTZEUR"]):.2f}')
 
-            print(data.keys())
-            print(wallet.keys())
-        for crypto in wallet.keys():
-            if crypto in globalvar.DEFAULT_CURRENCIES:
-                continue
-
+        for crypto in self.wallet.keys():
             self.wallet[crypto].set_rate(data[crypto])
 
-            result = self.option.calculate(wallet[crypto])
+            result = self.option.calculate(self.wallet[crypto])
             if result == globalvar.ORDER_SIDE_SELL:
-                self.exchange.sell(wallet[crypto])
+                self.exchange.sell(self.wallet[crypto])
 
-                self.exchange.buy(wallet[crypto], 15)
+                self.exchange.buy(self.wallet[crypto], 15)
 
             elif result == globalvar.ORDER_SIDE_BUY:
-                self.exchange.buy(wallet[crypto])
-        self.store.save()
-        exit()
+                self.exchange.buy(self.wallet[crypto])
+        self.glv.wallet = self.wallet

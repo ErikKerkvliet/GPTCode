@@ -30,11 +30,11 @@ class Crypto:
         self.last_rate = 0
         self.value_drops = 0
 
-    def set_rate(self, crypto):
+    def set_rate(self, rate):
         if self.rate is not None:
             self.last_rate = self.rate
 
-        self.rate = float(crypto[globalvar.DEFAULT_CURRENCIES[0]])
+        self.rate = float(rate)
 
         if self.top_rate is None:
             self.top_rate = self.rate

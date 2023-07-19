@@ -101,7 +101,6 @@ class Kraken:
         self.times = 0
 
         crypto_data = response_data['result']
-        print(self.pairs)
         cryptos = {}
         for code in crypto_data.keys():
             if code[-3:] == 'EUR' and code in self.pairs.keys() and self.pairs[code]['status'] == 'online':

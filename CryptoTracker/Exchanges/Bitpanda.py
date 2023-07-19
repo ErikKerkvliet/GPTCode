@@ -45,9 +45,10 @@ class Bitpanda:
         if globalvar.get_ip() == globalvar.IP_HOME:
             loop = asyncio.get_event_loop()
             response = loop.run_until_complete(self.get_client().get_account_balances())
+            response_data = response['response']['balances']
 
-            for crypto in response['response']:
-                crypto_codes.append(crypto['code'])
+            for crypto in response_data:
+                crypto_codes.append(crypto['currency_code'])
 
         connection = http.client.HTTPSConnection("api.bitpanda.com")
         while data is None:

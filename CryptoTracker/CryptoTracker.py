@@ -22,11 +22,17 @@ class CryptoPrices:
         self.option = self.glv.get_option()
 
     def run_infinitely(self):
+        print(f'Exchange: {globalvar.EXCHANGE}')
+        print(f'Option: {globalvar.OPTION}')
+        print(f'Sleep time: {globalvar.TIMER}')
+        print(f'Start time: {globalvar.start_time}\n--------------------')
+
         while True:
             if globalvar.EXCHANGE == globalvar.EXCHANGES_BITPANDA:
                 self.bitpanda_tracker.track(self.times)
             elif globalvar.EXCHANGE == globalvar.EXCHANGES_KRAKEN:
                 self.kraken_tracker.track(self.times)
+            self.store.save()
             self.times += 1
             sleep(globalvar.TIMER)
 

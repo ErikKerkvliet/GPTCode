@@ -29,7 +29,7 @@ class Steps:
                     and crypto.rate * crypto.amount > crypto.instrument['min_size']:
                 return globalvar.ORDER_SIDE_SELL
 
-            if crypto.position > 3 and crypto.buy_rate < (crypto.rate * globalvar.BITPANDA_MARGIN):
+            if crypto.position > 3 and crypto.buy_rate < (crypto.rate * globalvar.MARGIN):
                 return globalvar.ORDER_SIDE_BUY
 
         return False

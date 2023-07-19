@@ -15,6 +15,10 @@ WATCHER_STEPS = 'steps'
 WATCHER_PERCENTAGES = 'percentages'
 CURRENT_WATCHER = WATCHER_STEPS
 
+ORDER_SIDE_SELL = 'sell'
+ORDER_SIDE_BUY = 'buy'
+MARGIN = 0.996
+
 
 def execute(cmd):
     popen = subprocess.Popen(cmd, stdout=subprocess.PIPE, universal_newlines=True, preexec_fn=os.setsid)

@@ -13,26 +13,24 @@ class Init:
     def fill_wallet(self):
         # self.from_file()
 
-        if globalvar.EXCHANGE == globalvar.EXCHANGES_KRAKEN:
-            self.from_kraken_balance()
-
         if globalvar.TEST:
             self.from_test()
-
-        if globalvar.get_ip() == globalvar.IP_WORK:
+        elif globalvar.EXCHANGE == globalvar.EXCHANGES_KRAKEN:
+            self.from_kraken_balance()
+        elif globalvar.get_ip() == globalvar.IP_WORK:
             self.from_work()
-
-        if globalvar.get_ip() == globalvar.IP_HOME:
+        elif globalvar.get_ip() == globalvar.IP_HOME:
             if globalvar.EXCHANGE == globalvar.EXCHANGES_BITPANDA:
                 self.from_bitpanda_balance()
             elif globalvar.EXCHANGE == globalvar.EXCHANGES_KRAKEN:
                 self.from_kraken_balance()
+        return self.wallet
 
     def from_bitpanda_balance(self):
         wallet = {}
         loop = asyncio.get_event_loop()
-        instruments = self.glv.exchange.get_instrument()
-        response = loop.run_until_complete(self.glv.exchange.get_balances())
+        instruments = self.glv.exchanges.get_instrument()
+        response = loop.run_until_complete(self.glv.exchanges.get_balances())
 
         for crypto in response:
             if crypto['currency_code'] == 'EUR' or instruments[crypto['currency_code']]['state'] != 'ACTIVE':
@@ -62,7 +60,7 @@ class Init:
                 wallet[code].top_rate = None
                 wallet[code].last_rate = None
             wallet[code].amount += float(balances[code])
-        self.glv.wallet = wallet
+        self.wallet = wallet
 
     def from_file(self):
         wallet = {}
@@ -71,7 +69,7 @@ class Init:
             file.close()
 
         for crypto in data:
-            if crypto['code'] in globalvar.DEFAULT_CURRENCIES:
+            if crypto['code'] not in globalvar.DEFAULT_CURRENCIES:
                 wallet[crypto['code']] = Crypto(crypto['code'])
             wallet[crypto['code']].available = crypto['available']
             wallet[crypto['code']].buy_rate = crypto['buy_rate']
@@ -99,7 +97,7 @@ class Init:
         wallet = {}
         response = self.exchange.ticker()
         for crypto in response.keys():
-            if crypto not in wallet.keys() and crypto in globalvar.DEFAULT_CURRENCIES:
+            if crypto not in wallet.keys() and crypto not in globalvar.DEFAULT_CURRENCIES:
                 amount = float(response[crypto])
                 wallet[crypto] = Crypto(crypto)
                 wallet[crypto].instrument = {'min_size': 0, 'amount_precision': 5}

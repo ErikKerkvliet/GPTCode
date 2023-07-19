@@ -40,5 +40,4 @@ class BitpandaTracker:
 
         loop.run_until_complete(self.exchange.close_client())
 
-        self.store.save()
         self.exchange.instruments = {}
