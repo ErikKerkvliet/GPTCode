@@ -42,6 +42,7 @@ class Steps:
         row['buy_rate'] = f'{float(row["buy_rate"]):.8f}'
         row['amount_€'] = f'{float(row["amount_€"]):.4f}'
         row['difference'] = difference
+        row['difference_%'] = f'{float(row["difference_%"]):.8f}'
 
         return {
             'row': row,

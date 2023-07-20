@@ -10,6 +10,7 @@ class CryptoPrices:
     def __init__(self):
         self.glv = globalvar.Globalvar()
         self.init = Init(self.glv)
+        self.wallet = {}
 
         self.store = Store(self.glv)
         self.resolver = self.glv.get_resolver(globalvar.RESOLVER)

@@ -12,7 +12,7 @@ class Init:
     def fill_wallet(self, wallet):
         # self.from_file(wallet)
 
-        if not globalvar.TEST:
+        if globalvar.TEST:
             return self.from_test(wallet)
         elif globalvar.EXCHANGE == globalvar.EXCHANGES_KRAKEN:
             return self.from_kraken_balance(wallet)
@@ -48,7 +48,7 @@ class Init:
     def from_kraken_balance(self, wallet) -> dict:
         balances = self.glv.exchanges[globalvar.EXCHANGES_KRAKEN].get_balances()
         for full_code in balances.keys():
-            code = f'{full_code}Z' if full_code[0:2] == 'XX' else full_code
+            code = f'{full_code}Z' if full_code[0:2] == 'XX' or 'XE' else full_code
             if code == globalvar.DEFAULT_CURRENCY:
                 continue
             if full_code not in wallet.keys():

@@ -11,7 +11,8 @@ class KrakenTracker:
         self.resolver = self.glv.get_resolver(globalvar.RESOLVER)
 
     def track(self, times):
-        self.wallet = self.init.fill_wallet(self.wallet)
+        if times % 25 == 0:
+            self.wallet = self.init.fill_wallet(self.wallet)
         data = self.exchange.ticker()
 
         if times % 10 == 0:
