@@ -12,7 +12,7 @@ class Init:
     def fill_wallet(self, wallet):
         # self.from_file(wallet)
 
-        if globalvar.TEST:
+        if not globalvar.TEST:
             return self.from_test(wallet)
         elif globalvar.EXCHANGE == globalvar.EXCHANGES_KRAKEN:
             return self.from_kraken_balance(wallet)
@@ -38,6 +38,7 @@ class Init:
             if crypto['currency_code'] not in wallet.keys():
                 wallet[crypto['currency_code']] = Crypto(crypto['currency_code'])
                 wallet[crypto['currency_code']].instrument = instruments[crypto['currency_code']]
+                wallet[crypto['currency_code']].pair = f'{crypto["currency_code"]}{globalvar.DEFAULT_CURRENCY}'
                 wallet[crypto['currency_code']].rate = None
                 wallet[crypto['currency_code']].top_rate = None
                 wallet[crypto['currency_code']].last_rate = None
@@ -46,16 +47,17 @@ class Init:
 
     def from_kraken_balance(self, wallet) -> dict:
         balances = self.glv.exchanges[globalvar.EXCHANGES_KRAKEN].get_balances()
-
-        for code in balances.keys():
-            if code in globalvar.DEFAULT_CURRENCIES:
+        for full_code in balances.keys():
+            code = f'{full_code}Z' if full_code[0:2] == 'XX' else full_code
+            if code == globalvar.DEFAULT_CURRENCY:
                 continue
-            if code not in wallet.keys():
+            if full_code not in wallet.keys():
                 wallet[code] = Crypto(code)
+                wallet[code].pair = f'{full_code}{globalvar.DEFAULT_CURRENCY}'
                 wallet[code].rate = None
                 wallet[code].top_rate = None
                 wallet[code].last_rate = None
-            wallet[code].amount += float(balances[code])
+            wallet[code].amount += float(balances[full_code])
         return wallet
 
     def from_file(self, wallet) -> dict:
@@ -64,7 +66,7 @@ class Init:
             file.close()
 
         for crypto in data:
-            if crypto['code'] not in globalvar.DEFAULT_CURRENCIES:
+            if crypto['code'] != globalvar.DEFAULT_CURRENCY:
                 wallet[crypto['code']] = Crypto(crypto['code'])
             wallet[crypto['code']].available = crypto['available']
             wallet[crypto['code']].buy_rate = crypto['buy_rate']
@@ -91,11 +93,12 @@ class Init:
     def from_test(self, wallet) -> dict:
         response = self.exchange.ticker()
         for crypto in response.keys():
-            if crypto not in wallet.keys() and crypto not in globalvar.DEFAULT_CURRENCIES:
+            if crypto not in wallet.keys() and crypto not in globalvar.DEFAULT_CURRENCY:
                 amount = float(response[crypto])
                 wallet[crypto] = Crypto(crypto)
                 wallet[crypto].instrument = {'min_size': 0, 'amount_precision': 5}
-                wallet[crypto].amount = amount * 10
+                wallet[crypto].pair = f'{crypto}{globalvar.DEFAULT_CURRENCY}'
+                wallet[crypto].amount = amount * 15
                 wallet[crypto].rate = amount
                 wallet[crypto].top_rate = amount
                 wallet[crypto].last_rate = amount

@@ -1,4 +1,4 @@
-import globalvar as globalvar
+import globalvar
 
 
 class Steps:

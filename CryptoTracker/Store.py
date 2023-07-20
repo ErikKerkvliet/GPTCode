@@ -10,7 +10,7 @@ class Store:
 
     def save(self, wallet):
         for crypto in wallet.keys():
-            if crypto in globalvar.DEFAULT_CURRENCIES:
+            if crypto == globalvar.DEFAULT_CURRENCY:
                 continue
             if globalvar.RESOLVER == globalvar.RESOLVER_STEPS:
                 difference = wallet[crypto].rate - wallet[crypto].buy_rate

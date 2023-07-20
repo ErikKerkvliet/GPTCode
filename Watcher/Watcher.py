@@ -1,7 +1,7 @@
 import json
 import tkinter as tk
 from time import sleep
-import globalvar
+import glv
 from tkinter import ttk
 from Watchers.Percentages import Percentages
 from Watchers.Steps import Steps
@@ -16,8 +16,8 @@ class App:
         self.run_time = ''
 
         self.watchers = {
-            globalvar.WATCHER_PERCENTAGES: Percentages(),
-            globalvar.WATCHER_STEPS: Steps(),
+            glv.WATCHER_PERCENTAGES: Percentages(),
+            glv.WATCHER_STEPS: Steps(),
         }
 
         self.data = []
@@ -79,10 +79,10 @@ class App:
 
         for row in self.data:
             for key in row.keys():
-                if row[key] == globalvar.DEFAULT_CURRENCY:
+                if row[key] == glv.DEFAULT_CURRENCY:
                     continue
 
-                row[key] = globalvar.convert_to_value(row[key])
+                row[key] = glv.convert_to_value(row[key])
 
             result = self.watchers[self.option].load_row(self.treeview, row)
 
@@ -100,17 +100,17 @@ class App:
         for key, column in enumerate(columns):
             columns[key] = column.replace('_', ' ')
 
-        if self.option == globalvar.WATCHER_PERCENTAGES:
+        if self.option == glv.WATCHER_PERCENTAGES:
             columns.append('diff €')
 
-        if globalvar.CURRENT_WATCHER == globalvar.WATCHER_PERCENTAGES:
+        if glv.CURRENT_WATCHER == glv.WATCHER_PERCENTAGES:
             columns.append('value in €')
 
         columns.append('')
         return columns
 
     def load_file(self):
-        with open(globalvar.SAVE_FILE) as file:
+        with open(glv.SAVE_FILE) as file:
             data = json.load(file)
 
             if data[0] == {}:
@@ -123,11 +123,12 @@ class App:
                 self.run_time = data[0]['run_time']
                 del data[0]
             elif 'run_time' == list(data[0].keys())[0]:
-                self.option = globalvar.WATCHER_STEPS
+                self.option = glv.WATCHER_STEPS
                 self.run_time = data[0]['run_time']
                 del data[0]
             else:
-                self.option = globalvar.WATCHER_STEPS
+                self.option = glv.WATCHER_STEPS
+                del data[0]
 
             file.close()
         return sorted(data, key=lambda x: x['code'])
@@ -137,7 +138,7 @@ if __name__ == "__main__":
     app = App()
     app.load_data()
     # Refresh interval in milliseconds (e.g., refresh every 1 second)
-    refresh_interval_ms = globalvar.TIMER * 1000
+    refresh_interval_ms = glv.TIMER * 1000
 
     def refresh():
         app.load_data()

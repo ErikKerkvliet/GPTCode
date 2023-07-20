@@ -15,8 +15,7 @@ class KrakenTracker:
         data = self.exchange.ticker()
 
         if times % 10 == 0:
-            print(f'Times: {times} | Rate BTC: {float(data["XXBTZEUR"]):.2f}')
-
+            print(f'Times: {times} | Rate BTC: {float(data["XXBTZ"]):.2f}')
         for crypto in self.wallet.keys():
             self.wallet[crypto].set_rate(data[crypto])
 

@@ -1,15 +1,15 @@
-from CryptoTracker.Bitpanda import Bitpanda
-from CryptoTracker.Crypto import Crypto
-import CryptoTracker.globalvar as globalvar
+from Bitpanda import Bitpanda
+from Crypto import Crypto
+import globalvar
 
 
 class Trade:
     def __init__(self):
-        self.bitpanda = Bitpanda()
+        self.bitpanda = Bitpanda(globalvar.Globalvar())
 
     def sell(self, crypto_code, amount):
         crypto = Crypto(crypto_code)
-        crypto.amount = amount / self.bitpanda.ticker(crypto_code, globalvar.DEFAULT_CURRENCIES[0])
+        crypto.amount = amount / self.bitpanda.ticker(crypto_code, globalvar.DEFAULT_CURRENCY)
 
         instrument = self.bitpanda.get_instrument(crypto)
 
@@ -20,7 +20,7 @@ class Trade:
 
     def buy(self, crypto_code, amount):
         crypto = Crypto(crypto_code)
-        crypto.amount = (amount / self.bitpanda.ticker(crypto_code, globalvar.DEFAULT_CURRENCIES[0]))
+        crypto.amount = (amount / self.bitpanda.ticker(crypto_code, globalvar.DEFAULT_CURRENCY))
         crypto.rate = crypto.amount
         crypto.amount_euro = amount
         instrument = self.bitpanda.get_instrument(crypto.code)

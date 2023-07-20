@@ -46,7 +46,7 @@ class Kraken:
         order_data = {
             'ordertype': 'market',
             'side': 'buy',
-            'pair': '',
+            'pair': crypto.pair,
             'amount': amount,
             'validate': True  # Test variable
         }
@@ -65,7 +65,7 @@ class Kraken:
         order_data = {
             'ordertype': 'market',
             'side': 'sell',
-            'pair': '',
+            'pair': crypto.pair,
             'amount': amount,
             'validate': True  # Test variable
         }
@@ -83,10 +83,13 @@ class Kraken:
 
         cryptos = {}
         for key in balances.keys():
+            if key == 'ZEUR':
+                continue
             cryptos[key] = balances[key]['balance']
         return cryptos
 
     def create_order(self, order_data):
+        return
         self.get_client().create_order(
             ordertype=order_data,
             side=order_data,
@@ -132,5 +135,6 @@ class Kraken:
         cryptos = {}
         for code in crypto_data.keys():
             if code[-3:] == 'EUR' and code in self.pairs.keys() and self.pairs[code]['status'] == 'online':
-                cryptos[code] = crypto_data[code]['c'][0]
+                currency_code = code.replace('EUR', '')
+                cryptos[currency_code] = crypto_data[code]['c'][0]
         return cryptos

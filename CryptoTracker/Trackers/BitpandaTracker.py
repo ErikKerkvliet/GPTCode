@@ -9,19 +9,19 @@ class BitpandaTracker:
         self.glv = glv
         self.wallet = {}
         self.init = Init(self.glv)
-        self.exchange = self.glv.get_exchange(globalvar.EXCHANGES_BITPANDA)
-        self.resolver = self.glv.get_resolver(globalvar.RESOLVER)
+        self.exchange = self.glv.get_exchange(globalvar.EXCHANGE)
+        self.resolver = self.glv.get_resolver(globalvar.RESOLVER_STEPS)
 
     def track(self, times):
         self.wallet = self.init.fill_wallet(self.wallet)
         data = self.exchange.ticker()
 
         if times % 10 == 0:
-            print(f'Times: {times} | Rate BTC: {float(data[globalvar.DEFAULT_CRYPTO][globalvar.DEFAULT_CURRENCIES[0]]):.2f}')
+            print(f'Times: {times} | Rate BTC: {float(data[globalvar.DEFAULT_CRYPTO]):.2f}')
 
         loop = asyncio.get_event_loop()
         for crypto in self.wallet.keys():
-            if crypto in globalvar.DEFAULT_CURRENCIES:
+            if crypto == globalvar.DEFAULT_CURRENCY:
                 continue
 
             self.wallet[crypto].set_rate(data[crypto])

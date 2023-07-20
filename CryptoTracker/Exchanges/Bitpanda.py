@@ -1,7 +1,7 @@
 import json
 import keys
 
-import globalvar as globalvar
+import globalvar
 from CostHandler import CostHandler
 
 from packages.bitpanda.BitpandaClient import BitpandaClient
@@ -29,9 +29,10 @@ class Bitpanda:
             return self.client
 
         if globalvar.get_ip() == globalvar.IP_WORK:
-            return BitpandaClient(keys.KEY_NON_PRO)
+            self.client = BitpandaClient(keys.KEY_NON_PRO)
         else:
-            return BitpandaClient(keys.KEY_TRADE)
+            self.client = BitpandaClient(keys.KEY_TRADE)
+        return self.client
 
     async def close_client(self):
         if not self.client:
@@ -40,7 +41,7 @@ class Bitpanda:
         await self.client.close()
         self.client = None
 
-    def ticker(self, coin='ALL', currency='ALL'):
+    def ticker(self, coin='ALL') -> dict:
         data = None
         crypto_codes = []
 
@@ -78,29 +79,21 @@ class Bitpanda:
             wallet = {}
             for crypto in response_data.keys():
                 if crypto in crypto_codes:
-                    wallet[crypto] = response_data[crypto]
+                    wallet[crypto] = response_data[crypto][globalvar.DEFAULT_CURRENCY]
 
         if coin != 'ALL' and coin not in wallet.keys():
             raise CoinIndexNotFoundException
 
-        if coin == 'ALL' and currency != 'ALL':
+        if coin == 'ALL':
             coins_data = {}
             for coin in wallet.keys():
-                coins_data[coin] = {}
-                for currency_code in wallet[coin].keys():
-                    coins_data[coin][currency_code] = float(wallet[coin][currency_code])
+                coins_data[coin] = float(wallet[coin][globalvar.DEFAULT_CURRENCY])
             return coins_data
 
         if coin == 'ALL':
             return wallet
 
-        if currency not in wallet[coin]:
-            raise CurrencyIndexNotFoundException
-
-        if currency == 'ALL':
-            return wallet[coin]
-
-        return float(wallet[coin][currency])
+        return wallet
 
     async def get_balances(self, coin='all'):
         response = await self.get_client().get_account_balances()
@@ -110,7 +103,7 @@ class Bitpanda:
         return response['response']['balances'][coin]
 
     async def sell(self, crypto):
-        pair = Pair(crypto.code, globalvar.DEFAULT_CURRENCIES[0])
+        pair = Pair(crypto.code, globalvar.DEFAULT_CURRENCY)
 
         # - 0.00036 BTC
         # + 10.02 EUR
@@ -135,7 +128,7 @@ class Bitpanda:
         if not amount:
             amount = crypto.amount
 
-        pair = Pair(crypto.code, globalvar.DEFAULT_CURRENCIES[0])
+        pair = Pair(crypto.code, globalvar.DEFAULT_CURRENCY)
 
         if globalvar.get_ip() == globalvar.IP_HOME:
             precision = crypto.instrument['amount_precision']
@@ -155,7 +148,8 @@ class Bitpanda:
 
         await self.create_order(order_data)
 
-        await self.client.close()
+        if self.client:
+            await self.client.close()
 
         self.cost_handler.buy(crypto)
 
