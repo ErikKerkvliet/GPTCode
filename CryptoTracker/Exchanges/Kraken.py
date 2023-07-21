@@ -105,6 +105,8 @@ class Kraken:
         response = requests.get(url)
 
         response_data = response.json()
+        response.close()
+
         if response_data['error'] and self.times < 3:
             sleep(5)
             self.asset_pairs()
@@ -124,6 +126,7 @@ class Kraken:
         response = requests.get(url)
 
         response_data = response.json()
+        response.close()
 
         if response_data['error'] and self.times < 3:
             self.times += 1

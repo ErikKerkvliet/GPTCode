@@ -59,7 +59,7 @@ class App:
             elif column == 'available':
                 column_width = 110
             elif column == 'difference %':
-                column_width = 110
+                column_width = 100
             elif column == 'sells':
                 column_width = 40
             elif column in ['position', 'more ⇧', 'less ⇩']:
