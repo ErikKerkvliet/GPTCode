@@ -7,27 +7,27 @@ import globalvar
 class Init:
     def __init__(self, glv):
         self.glv = glv
-        self.exchange = self.glv.get_exchange(globalvar.EXCHANGE)
+        self.exchange = self.glv.get_exchange(self.glv.tracker)
 
-    def fill_wallet(self, wallet):
+    def fill_wallet(self, wallet) -> dict:
         # self.from_file(wallet)
 
         if globalvar.TEST:
             return self.from_test(wallet)
-        elif globalvar.EXCHANGE == globalvar.EXCHANGES_KRAKEN:
+        elif self.glv.tracker == globalvar.EXCHANGES_KRAKEN:
             return self.from_kraken_balance(wallet)
-        elif globalvar.get_ip() == globalvar.IP_WORK:
+        elif self.glv.ip == globalvar.IP_WORK:
             return self.from_work(wallet)
-        elif globalvar.get_ip() == globalvar.IP_HOME:
-            if globalvar.EXCHANGE == globalvar.EXCHANGES_BITPANDA:
+        elif self.glv.ip == globalvar.IP_HOME:
+            if self.glv.tracker == globalvar.EXCHANGES_BITPANDA:
                 return self.from_bitpanda_balance(wallet)
-            elif globalvar.EXCHANGE == globalvar.EXCHANGES_KRAKEN:
+            elif self.glv.tracker == globalvar.EXCHANGES_KRAKEN:
                 return self.from_kraken_balance(wallet)
 
     def from_bitpanda_balance(self, wallet) -> dict:
+        instruments = self.glv.exchanges[globalvar.EXCHANGES_BITPANDA].get_instrument()
         loop = asyncio.get_event_loop()
-        instruments = self.glv.exchanges.get_instrument()
-        response = loop.run_until_complete(self.glv.exchanges.get_balances())
+        response = loop.run_until_complete(self.glv.exchanges[globalvar.EXCHANGES_BITPANDA].get_balances())
 
         for crypto in response:
             if crypto['currency_code'] == 'EUR' or instruments[crypto['currency_code']]['state'] != 'ACTIVE':
@@ -48,7 +48,7 @@ class Init:
     def from_kraken_balance(self, wallet) -> dict:
         balances = self.glv.exchanges[globalvar.EXCHANGES_KRAKEN].get_balances()
         for full_code in balances.keys():
-            code = f'{full_code}Z' if full_code[0:2] == 'XX' or 'XE' else full_code
+            code = f'{full_code}Z' if full_code[0:2] == 'XX' or full_code[0:2] == 'XE' else full_code
             if code == globalvar.DEFAULT_CURRENCY:
                 continue
             if full_code not in wallet.keys():

@@ -9,8 +9,6 @@ from Trackers.KrakenTracker import KrakenTracker
 class CryptoPrices:
     def __init__(self):
         self.glv = globalvar.Globalvar()
-        self.init = Init(self.glv)
-        self.wallet = {}
 
         self.store = Store(self.glv)
         self.resolver = self.glv.get_resolver(globalvar.RESOLVER)
@@ -21,15 +19,19 @@ class CryptoPrices:
         }
 
     def run_infinitely(self):
-        print(f'Exchange: {globalvar.EXCHANGE}')
+        print(f'Exchanges: {", ".join([globalvar.EXCHANGES_BITPANDA, globalvar.EXCHANGES_KRAKEN])}')
         print(f'Option: {globalvar.RESOLVER}')
         print(f'Sleep time: {globalvar.TIMER}')
         print(f'Start time: {globalvar.start_time}\n--------------------')
 
         times = 0
         while True:
-            self.trackers[globalvar.EXCHANGE].track(times)
-            self.store.save(self.trackers[globalvar.EXCHANGE].wallet)
+            # try:
+            for tracker in [globalvar.EXCHANGES_BITPANDA, globalvar.EXCHANGES_KRAKEN]:
+                self.trackers[tracker].track(times)
+                self.store.save(self.trackers[tracker].wallet)
+            # except:
+            #     print(f'Error in {self.glv.tracker}')
             times += 1
             sleep(globalvar.TIMER)
 

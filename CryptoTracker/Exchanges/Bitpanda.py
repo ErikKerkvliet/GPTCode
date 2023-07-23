@@ -28,7 +28,7 @@ class Bitpanda:
         if self.client is not None:
             return self.client
 
-        if globalvar.get_ip() == globalvar.IP_WORK:
+        if self.glv.ip == globalvar.IP_WORK:
             self.client = BitpandaClient(keys.KEY_NON_PRO)
         else:
             self.client = BitpandaClient(keys.KEY_TRADE)
@@ -45,7 +45,7 @@ class Bitpanda:
         data = None
         crypto_codes = []
 
-        if globalvar.get_ip() == globalvar.IP_HOME:
+        if self.glv.ip == globalvar.IP_HOME:
             loop = asyncio.get_event_loop()
             response = loop.run_until_complete(self.get_client().get_account_balances())
             response_data = response['response']['balances']
@@ -87,7 +87,7 @@ class Bitpanda:
         if coin == 'ALL':
             coins_data = {}
             for coin in wallet.keys():
-                coins_data[coin] = float(wallet[coin][globalvar.DEFAULT_CURRENCY])
+                coins_data[coin] = float(wallet[coin])
             return coins_data
 
         if coin == 'ALL':
@@ -107,7 +107,7 @@ class Bitpanda:
 
         # - 0.00036 BTC
         # + 10.02 EUR
-        if globalvar.get_ip() == globalvar.IP_HOME:
+        if self.glv.ip == globalvar.IP_HOME:
             precision = crypto.instrument['amount_precision']
             trade_amount = round(crypto.amount, precision)
         else:
@@ -130,7 +130,7 @@ class Bitpanda:
 
         pair = Pair(crypto.code, globalvar.DEFAULT_CURRENCY)
 
-        if globalvar.get_ip() == globalvar.IP_HOME:
+        if self.glv.ip == globalvar.IP_HOME:
             precision = crypto.instrument['amount_precision']
             trade_amount = round(amount, precision)
         else:
@@ -147,9 +147,6 @@ class Bitpanda:
         }
 
         await self.create_order(order_data)
-
-        if self.client:
-            await self.client.close()
 
         self.cost_handler.buy(crypto)
 
@@ -191,9 +188,9 @@ class Bitpanda:
         number = (order_data['crypto'].amount / order_data['crypto'].rate) if order_data["exchange_type"] == 'SELL' else \
             globalvar.BUY_AMOUNT * float(((order_data['crypto'].rate / order_data['crypto'].buy_rate * 100 + 1) / 100))
         amount_euro = f"{float(number):.8f}"
-        print(f'Type: {order_data["exchange_type"]}, Pair: {order_data["pair"]}, Amount: {amount}, Amount €: {amount_euro}')
+        print(f'Bitpanda {order_data["exchange_type"]}, Pair: {order_data["pair"]}, Amount: {amount}, Amount €: {amount_euro}')
 
-        if globalvar.STATE == globalvar.STATE_DEVELOPMENT or globalvar.get_ip() == globalvar.IP_WORK:
+        if globalvar.STATE == globalvar.STATE_DEVELOPMENT or self.glv.ip == globalvar.IP_WORK:
             self.response = {
                 'code': order_data['pair'],
                 'amount': order_data['amount'],

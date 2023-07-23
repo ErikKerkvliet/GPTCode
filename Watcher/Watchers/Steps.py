@@ -30,9 +30,9 @@ class Steps:
         if '.' in difference:
             difference = difference.rstrip('0').strip('.')
 
-        profit_euro = f'{float(row["profit_€"]):.8f}'
-        if '.' in profit_euro:
-            profit_euro = profit_euro.rstrip('0').strip('.')
+        profit_euro = row["profit_€"]
+        # if '.' in profit_euro:
+        #     profit_euro = profit_euro.rstrip('0').strip('.')
 
         row['profit'] = profit
         row['profit_€'] = profit_euro

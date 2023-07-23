@@ -6,7 +6,10 @@ class Store:
     def __init__(self, glv):
         self.glv = glv
 
-        self.save_data = [{'resolver': globalvar.RESOLVER}]
+        self.save_data = [{
+            'resolver': globalvar.RESOLVER,
+            'exchange': self.glv.tracker,
+        }]
 
     def save(self, wallet):
         for crypto in wallet.keys():
@@ -57,8 +60,8 @@ class Store:
             self.save_data.append(crypto_data)
 
         dump = json.dumps(self.save_data)
-        save_file = globalvar.SAVE_FILE if not globalvar.TEST else globalvar.SAVE_FILE_TEST
-        with open(globalvar.SAVE_FILE, 'w') as file:
+        save_file = f'{globalvar.SAVE_FILE}_{self.glv.tracker}'
+        with open(save_file, 'w') as file:
             file.write(dump)
             self.save_data = [{}]
             file.close()

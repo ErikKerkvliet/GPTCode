@@ -1,10 +1,11 @@
 keys.py
+save_kraken
+save_bitpanda
 pyvenv.cfg
 /lib
 /bin
 /CryptoTracker/__pycache__
 .pyc
 *.pyc
-save
 control/screenshot.png
 __pycache__/

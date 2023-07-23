@@ -48,7 +48,8 @@ class Kraken:
             'side': 'buy',
             'pair': crypto.pair,
             'amount': amount,
-            'validate': True  # Test variable
+            'crypto': crypto,
+            'validate': True,  # Test variable
         }
 
         if not globalvar.TEST:
@@ -67,7 +68,8 @@ class Kraken:
             'side': 'sell',
             'pair': crypto.pair,
             'amount': amount,
-            'validate': True  # Test variable
+            'crypto': crypto,
+            'validate': True,  # Test variable
         }
 
         if not globalvar.TEST:
@@ -89,10 +91,12 @@ class Kraken:
         return cryptos
 
     def create_order(self, order_data):
+
+        print(f'{self.glv.tracker} {order_data["side"]} | {order_data["crypto"].code}: {order_data["amount"]}')
         return
         self.get_client().create_order(
-            ordertype=order_data,
-            side=order_data,
+            ordertype=order_data['ordertype'],
+            side=order_data['side'],
             pair=order_data['pair'],
             volume=order_data['amount'],
             validate=order_data['validate']

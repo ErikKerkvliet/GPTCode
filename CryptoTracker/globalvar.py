@@ -48,9 +48,15 @@ start_time = datetime.now().time().strftime("%H:%M:%S")
 
 class Globalvar:
     def __init__(self):
+        self.ip = self.get_ip()
+        self.tracker = None
         self.exchanges = {
             EXCHANGES_BITPANDA: Bitpanda(self),
             EXCHANGES_KRAKEN: Kraken(self),
+        }
+        self.default_crypto = {
+            EXCHANGES_BITPANDA: '',
+            EXCHANGES_KRAKEN: '',
         }
         self.resolvers = {
             RESOLVER_PERCENTAGES: Percentages(self),
@@ -63,6 +69,15 @@ class Globalvar:
 
     def get_resolver(self, resolver):
         return self.resolvers[resolver]
+
+    @staticmethod
+    def get_ip():
+        data = {'ip': '80.60.131.14'}
+        # requests.get('https://api.ipify.org/?format=json')
+        # data = response.json()
+        # response.close()
+
+        return data['ip']
 
 
 def execute(cmd):
@@ -90,13 +105,6 @@ def convert_to_value(value):
             return float_value
     except ValueError:
         return str(value)
-
-
-def get_ip():
-    response = requests.get('https://api.ipify.org/?format=json')
-    data = response.json()
-
-    return data['ip']
 
 
 def get_run_time():

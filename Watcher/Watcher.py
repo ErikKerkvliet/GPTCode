@@ -1,4 +1,5 @@
 import json
+import time
 import tkinter as tk
 from time import sleep
 import glv
@@ -11,47 +12,49 @@ class App:
     def __init__(self):
         self.window = tk.Tk()
         self.window.title('Watcher')
-        self.window.geometry('1270x200')
+        self.window.geometry('1270x600')
         self.option = ''
         self.run_time = ''
+        self.data = {}
+        self.treeview = {}
 
         self.watchers = {
             glv.WATCHER_PERCENTAGES: Percentages(),
             glv.WATCHER_STEPS: Steps(),
         }
 
-        self.data = []
-        while len(self.data) == 0:
-            self.data = self.load_file()
-            if len(self.data) == 0:
-                sleep(10)
+        self.make_tree('kraken')
+        self.make_tree('bitpanda')
 
+    def make_tree(self, exchange):
         # Top level Treeview object
-        self.treeview = ttk.Treeview(self.window)
+        self.treeview[exchange] = ttk.Treeview(self.window)
 
         # Create a custom style for Treeview
         style = ttk.Style()
         style.theme_use('clam')
+        style.configure('Treeview')
 
-        self.treeview = ttk.Treeview(self.window, style='Treeview')
+        self.treeview[exchange] = ttk.Treeview(self.window, style='Treeview')
+        style.configure("Treeview", foreground="black", background="white")
 
-        self.treeview.pack(fill="both", expand=True)
+        self.treeview[exchange].pack(anchor='n', fill="both", expand=True)
 
-        self.data = []
-        while len(self.data) == 0:
-            self.data = self.load_file()
-            if len(self.data) == 0:
+        data = []
+        while len(data) == 0:
+            data = self.load_file(exchange)
+            if len(data) == 0:
                 sleep(10)
 
-        titles = self.get_columns(list(self.data[0].keys()))
-        self.treeview["columns"] = titles
+        titles = self.get_columns(list(data[0].keys()))
+        self.treeview[exchange]["columns"] = titles
 
-        self.treeview.heading("#0", text="")
-        self.treeview.column("#0", width=10, stretch=False)
+        self.treeview[exchange].heading("#0", text="")
+        self.treeview[exchange].column("#0", width=10, stretch=False)
 
         for column in titles:
             heading_text = column.title()
-            self.treeview.heading(column, text=heading_text)
+            self.treeview[exchange].heading(column, text=heading_text)
             anchor_value = tk.E
             if column == 'code':
                 column_width = 30
@@ -67,33 +70,37 @@ class App:
             else:
                 column_width = 80
 
-            self.treeview.column(column, width=column_width, anchor=anchor_value)
+            self.treeview[exchange].column(column, width=column_width, anchor=anchor_value)
 
-        self.treeview.heading("", text="")
-        self.treeview.column("", width=10, stretch=False)
+        self.treeview[exchange].heading("", text="")
+        self.treeview[exchange].column("", width=10, stretch=False)
 
-    def load_data(self):
-        self.data = self.load_file()
+    def load_data(self, exchange):
+        data = self.load_file(exchange)
 
-        self.treeview.delete(*self.treeview.get_children())
+        self.treeview[exchange].delete(*self.treeview[exchange].get_children())
 
-        for row in self.data:
+        for row in data:
             for key in row.keys():
                 if row[key] == glv.DEFAULT_CURRENCY:
                     continue
 
                 row[key] = glv.convert_to_value(row[key])
 
-            result = self.watchers[self.option].load_row(self.treeview, row)
+            result = self.watchers[self.option].load_row(self.treeview[exchange], row)
 
-            self.treeview.insert("", "end", text="", values=list(result['row'].values()), tags=result['tags'])
+            self.treeview[exchange].insert("", "end", text="", values=list(result['row'].values()), tags=result['tags'])
 
-        combined_dict = self.data[1].copy()
+        combined_dict = data[1].copy()
         combined_dict = {key: '' for key in combined_dict}
+        combined_dict[list(combined_dict.keys())[0]] = exchange
         combined_dict[list(combined_dict.keys())[1]] = self.run_time
         combined_dict.update(self.watchers[self.option].get_totals())
 
-        self.treeview.insert("", "end", text="", values=list(combined_dict.values()))
+        tags = "total"
+        self.treeview[exchange].tag_configure('total', background='#e1e1e1')
+
+        self.treeview[exchange].insert("", "end", text="", values=list(combined_dict.values()), tags=tags)
         self.watchers[self.option].reset_totals()
 
     def get_columns(self, columns):
@@ -109,8 +116,10 @@ class App:
         columns.append('')
         return columns
 
-    def load_file(self):
-        with open(glv.SAVE_FILE) as file:
+    def load_file(self, exchange):
+        save_file = f'{glv.SAVE_FILE}_{exchange}'
+
+        with open(save_file) as file:
             data = json.load(file)
 
             if data[0] == {}:
@@ -136,16 +145,17 @@ class App:
 
 if __name__ == "__main__":
     app = App()
-    app.load_data()
+
     # Refresh interval in milliseconds (e.g., refresh every 1 second)
     refresh_interval_ms = glv.TIMER * 1000
 
-    def refresh():
-        app.load_data()
+    def refresh(exchanges):
+        for exchange in exchanges:
+            app.load_data(exchange)
 
-        app.window.after(refresh_interval_ms, refresh)
+        app.window.after(refresh_interval_ms, refresh, exchanges)
 
     # Schedule initial call and start refreshing
-    app.window.after(refresh_interval_ms, refresh)
+    app.window.after(0, refresh([glv.EXCHANGES_KRAKEN, glv.EXCHANGES_BITPANDA]))
 
     tk.mainloop()

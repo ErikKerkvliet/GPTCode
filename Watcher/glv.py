@@ -13,6 +13,10 @@ WATCHER_STEPS = 'steps'
 WATCHER_PERCENTAGES = 'percentages'
 CURRENT_WATCHER = WATCHER_STEPS
 
+EXCHANGES_BITPANDA = 'bitpanda'
+EXCHANGES_KRAKEN = 'kraken'
+EXCHANGE = EXCHANGES_KRAKEN
+
 
 def execute(cmd):
     popen = subprocess.Popen(cmd, stdout=subprocess.PIPE, universal_newlines=True, preexec_fn=os.setsid)
