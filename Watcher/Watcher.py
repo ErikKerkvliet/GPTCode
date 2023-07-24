@@ -17,6 +17,7 @@ class App:
         self.run_time = ''
         self.data = {}
         self.treeview = {}
+        self.balance_euro = 0
 
         self.watchers = {
             glv.WATCHER_PERCENTAGES: Percentages(),
@@ -94,6 +95,7 @@ class App:
         combined_dict = {key: '' for key in combined_dict}
         combined_dict[list(combined_dict.keys())[0]] = exchange
         combined_dict[list(combined_dict.keys())[1]] = self.run_time
+        combined_dict[list(combined_dict.keys())[2]] = f'€ {self.balance_euro}'
         combined_dict.update(self.watchers[self.option].get_totals())
 
         tags = "total"
@@ -129,10 +131,12 @@ class App:
             if 'option' == list(data[0].keys())[0]:
                 self.option = data[0]['option']
                 self.run_time = data[0]['run_time']
+                self.balance_euro = data[0]['balance_euro']
                 del data[0]
             elif 'run_time' == list(data[0].keys())[0]:
                 self.option = glv.WATCHER_STEPS
                 self.run_time = data[0]['run_time']
+                self.balance_euro = data[0]['balance_euro']
                 del data[0]
             else:
                 self.option = glv.WATCHER_STEPS

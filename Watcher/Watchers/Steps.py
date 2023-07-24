@@ -4,6 +4,7 @@ class Steps:
     def __init__(self):
         self.totals = {
             'sells': 0,
+            'amount_€': 0,
             'profit': 0,
             'profit_€': 0,
         }

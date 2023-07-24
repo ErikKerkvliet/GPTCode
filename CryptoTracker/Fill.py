@@ -2,9 +2,10 @@ import asyncio
 import json
 from Crypto import Crypto
 import globalvar
+from packages.bitpanda.Pair import Pair
 
 
-class Init:
+class Fill:
     def __init__(self, glv):
         self.glv = glv
         self.exchange = self.glv.get_exchange(self.glv.tracker)
@@ -38,11 +39,11 @@ class Init:
             if crypto['currency_code'] not in wallet.keys():
                 wallet[crypto['currency_code']] = Crypto(crypto['currency_code'])
                 wallet[crypto['currency_code']].instrument = instruments[crypto['currency_code']]
-                wallet[crypto['currency_code']].pair = f'{crypto["currency_code"]}{globalvar.DEFAULT_CURRENCY}'
+                wallet[crypto['currency_code']].pair = Pair(crypto["currency_code"], globalvar.DEFAULT_CURRENCY)
                 wallet[crypto['currency_code']].rate = None
                 wallet[crypto['currency_code']].top_rate = None
                 wallet[crypto['currency_code']].last_rate = None
-            wallet[crypto['currency_code']].amount += float(crypto['available'])
+            wallet[crypto['currency_code']].amount = float(crypto['available'])
         return wallet
 
     def from_kraken_balance(self, wallet) -> dict:
@@ -53,11 +54,10 @@ class Init:
                 continue
             if full_code not in wallet.keys():
                 wallet[code] = Crypto(code)
-                wallet[code].pair = f'{full_code}{globalvar.DEFAULT_CURRENCY}'
                 wallet[code].rate = None
                 wallet[code].top_rate = None
                 wallet[code].last_rate = None
-            wallet[code].amount += float(balances[full_code])
+            wallet[code].amount = float(balances[full_code])
         return wallet
 
     def from_file(self, wallet) -> dict:

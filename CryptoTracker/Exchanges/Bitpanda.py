@@ -23,6 +23,7 @@ class Bitpanda:
         self.instruments = {}
         self.response = {}
         self.cost_handler = CostHandler()
+        self.balance_euro = 0
 
     def get_client(self):
         if self.client is not None:

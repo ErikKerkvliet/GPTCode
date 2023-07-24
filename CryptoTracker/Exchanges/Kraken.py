@@ -90,9 +90,15 @@ class Kraken:
             cryptos[key] = balances[key]['balance']
         return cryptos
 
+    def get_balance_euro(self):
+        with self.get_user() as user:
+            euro_balance = user.get_balance('EUR')['available_balance']
+        return euro_balance
+
+
     def create_order(self, order_data):
 
-        print(f'{self.glv.tracker} {order_data["side"]} | {order_data["crypto"].code}: {order_data["amount"]}')
+        print(f'{self.glv.tracker} {order_data["side"]} | {order_data["crypto"].pair}: {order_data["amount"]}')
         return
         self.get_client().create_order(
             ordertype=order_data['ordertype'],
@@ -145,4 +151,5 @@ class Kraken:
                 if currency_code in wallet.keys():
                     wallet[currency_code].set_rate(crypto_data[code]['c'][0])
                     wallet[currency_code].pair = self.pairs[code]['wsname']
+                    wallet[currency_code].trade_amount_min = self.pairs[code]['ordermin']
         return wallet

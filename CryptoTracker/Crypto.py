@@ -13,6 +13,7 @@ class Crypto:
         self.profit_euro = 0
         self.instrument = None
         self.pair = None
+        self.trade_amount_min = 0
 
         # Percentages
         self.value_drops = 0

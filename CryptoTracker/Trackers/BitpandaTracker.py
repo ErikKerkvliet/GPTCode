@@ -1,7 +1,7 @@
 import asyncio
 
 import globalvar
-from Init import Init
+from Fill import Fill
 
 
 class BitpandaTracker:
@@ -9,16 +9,18 @@ class BitpandaTracker:
         self.glv = glv
         self.glv.tracker = globalvar.EXCHANGES_BITPANDA
         self.wallet = {}
-        self.init = Init(self.glv)
+        self.fill = Fill(self.glv)
         self.exchange = self.glv.get_exchange(globalvar.EXCHANGES_BITPANDA)
         self.resolver = self.glv.get_resolver(globalvar.RESOLVER_STEPS)
+        self.balance_euro = 0
 
     def track(self, times):
         if times % 10 == 0:
             print(f'Bitpanda - times: {times}')
 
         self.glv.tracker = globalvar.EXCHANGES_BITPANDA
-        self.wallet = self.init.fill_wallet(self.wallet)
+        if times % 25 == 0:
+            self.wallet = self.fill.fill_wallet(self.wallet)
         data = self.exchange.ticker()
 
         loop = asyncio.get_event_loop()

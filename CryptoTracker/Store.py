@@ -11,7 +11,11 @@ class Store:
             'exchange': self.glv.tracker,
         }]
 
-    def save(self, wallet):
+    def save(self, wallet, balance_euro):
+        self.save_data[0] = {
+            'run_time': globalvar.get_run_time(),
+            'balance_euro': balance_euro
+        }
         for crypto in wallet.keys():
             if crypto == globalvar.DEFAULT_CURRENCY:
                 continue
@@ -55,8 +59,8 @@ class Store:
                     'available': wallet[crypto].available,
                     'sells': wallet[crypto].sells,
                     'gain_€': wallet[crypto].gain,
+                    'balance_euro': balance_euro
                 }
-            self.save_data[0]['run_time'] = globalvar.get_run_time()
             self.save_data.append(crypto_data)
 
         dump = json.dumps(self.save_data)

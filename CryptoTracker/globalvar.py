@@ -50,6 +50,7 @@ class Globalvar:
     def __init__(self):
         self.ip = self.get_ip()
         self.tracker = None
+        self.balance_euro = 0
         self.exchanges = {
             EXCHANGES_BITPANDA: Bitpanda(self),
             EXCHANGES_KRAKEN: Kraken(self),
