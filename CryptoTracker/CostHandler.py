@@ -15,9 +15,8 @@ class CostHandler:
 
     @staticmethod
     def sell(crypto: Crypto):
-        crypto.profit += globalvar.BUY_AMOUNT * (crypto.rate - crypto.buy_rate)
-        # crypto.profit_euro += ((crypto.amount_euro / crypto.buy_rate) * crypto.rate) - crypto.amount_euro
-        crypto.profit_euro += crypto.profit/crypto.buy_rate
+        crypto.profit += crypto.amount * (crypto.rate - crypto.buy_rate)
+        crypto.profit_euro += crypto.profit / crypto.buy_rate
 
         crypto.sells += 1
         crypto.amount = 0

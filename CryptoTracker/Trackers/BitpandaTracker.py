@@ -14,12 +14,12 @@ class BitpandaTracker:
         self.resolver = self.glv.get_resolver(globalvar.RESOLVER_STEPS)
 
     def track(self, times):
+        if times % 10 == 0:
+            print(f'Bitpanda - times: {times}')
+
         self.glv.tracker = globalvar.EXCHANGES_BITPANDA
         self.wallet = self.init.fill_wallet(self.wallet)
         data = self.exchange.ticker()
-
-        if times % 10 == 0:
-            print(f'Bitpanda - times: {times}')
 
         loop = asyncio.get_event_loop()
         for crypto in self.wallet.keys():

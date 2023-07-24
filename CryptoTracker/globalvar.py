@@ -72,10 +72,10 @@ class Globalvar:
 
     @staticmethod
     def get_ip():
-        data = {'ip': '80.60.131.14'}
-        # requests.get('https://api.ipify.org/?format=json')
-        # data = response.json()
-        # response.close()
+        # data = {'ip': '80.60.131.14'}
+        response = requests.get('https://api.ipify.org/?format=json')
+        data = response.json()
+        response.close()
 
         return data['ip']
 

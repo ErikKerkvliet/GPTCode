@@ -1,11 +1,9 @@
 import subprocess
 import os
 import signal
-import requests
 
 TEST = True
 DEFAULT_CURRENCY = 'EUR'
-DEFAULT_CRYPTO = 'BTC'
 TIMER = 10
 SAVE_FILE = '../save'
 
@@ -15,7 +13,7 @@ CURRENT_WATCHER = WATCHER_STEPS
 
 EXCHANGES_BITPANDA = 'bitpanda'
 EXCHANGES_KRAKEN = 'kraken'
-EXCHANGE = EXCHANGES_KRAKEN
+EXCHANGES = [EXCHANGES_KRAKEN, EXCHANGES_BITPANDA]
 
 
 def execute(cmd):
@@ -43,10 +41,3 @@ def convert_to_value(value):
             return float_value
     except ValueError:
         return str(value)
-
-
-def get_ip():
-    response = requests.get('https://api.ipify.org/?format=json')
-    data = response.json()
-
-    return data['ip']

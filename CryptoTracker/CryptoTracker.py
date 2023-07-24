@@ -1,9 +1,9 @@
 import globalvar
 from Trackers.BitpandaTracker import BitpandaTracker
 from time import sleep
-from Init import Init
 from Store import Store
 from Trackers.KrakenTracker import KrakenTracker
+import traceback
 
 
 class CryptoPrices:
@@ -26,14 +26,18 @@ class CryptoPrices:
 
         times = 0
         while True:
-            # try:
-            for tracker in [globalvar.EXCHANGES_BITPANDA, globalvar.EXCHANGES_KRAKEN]:
-                self.trackers[tracker].track(times)
-                self.store.save(self.trackers[tracker].wallet)
-            # except:
-            #     print(f'Error in {self.glv.tracker}')
-            times += 1
-            sleep(globalvar.TIMER)
+            with open("log.txt", "w") as log:
+                try:
+                    for tracker in [globalvar.EXCHANGES_KRAKEN, globalvar.EXCHANGES_BITPANDA]:
+                        self.trackers[tracker].track(times)
+                        self.store.save(self.trackers[tracker].wallet)
+                except Exception as e:
+                    print(f'Error occurred in: {self.glv.tracker}')
+                    traceback.print_exc(file=log)
+                    traceback.print_tb(e.__traceback__)
+                    continue
+                times += 1
+                sleep(globalvar.TIMER)
 
 
 if __name__ == '__main__':

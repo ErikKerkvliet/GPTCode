@@ -24,11 +24,8 @@ class Steps:
                 crypto.position -= 1
 
             if crypto.position > 3 \
-                    and crypto.buy_rate < crypto.rate \
-                    and crypto.rate - crypto.buy_rate > (crypto.top_rate - crypto.buy_rate) * 0.8:
+                    and crypto.amount < crypto.amount_euro / crypto.rate \
+                    and crypto.buy_rate < crypto.rate * globalvar.MARGIN:
                 return globalvar.ORDER_SIDE_SELL
-
-            if crypto.position > 3 and crypto.buy_rate < (crypto.rate * globalvar.MARGIN):
-                return globalvar.ORDER_SIDE_BUY
 
         return False

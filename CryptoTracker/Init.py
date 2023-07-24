@@ -12,7 +12,7 @@ class Init:
     def fill_wallet(self, wallet) -> dict:
         # self.from_file(wallet)
 
-        if globalvar.TEST:
+        if not globalvar.TEST:
             return self.from_test(wallet)
         elif self.glv.tracker == globalvar.EXCHANGES_KRAKEN:
             return self.from_kraken_balance(wallet)

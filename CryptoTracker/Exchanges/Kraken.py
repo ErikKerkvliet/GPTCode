@@ -123,7 +123,7 @@ class Kraken:
                 cryptos[code] = crypto_data[code]
         return cryptos
 
-    def ticker(self, crypto_code=None) -> dict:
+    def ticker(self, crypto_code=None, wallet=None) -> dict:
         url = f'https://api.kraken.com/0/public/Ticker'
         if crypto_code:
             url += f'?pair={crypto_code}EUR'
@@ -139,9 +139,10 @@ class Kraken:
         self.times = 0
 
         crypto_data = response_data['result']
-        cryptos = {}
         for code in crypto_data.keys():
             if code[-3:] == 'EUR' and code in self.pairs.keys() and self.pairs[code]['status'] == 'online':
                 currency_code = code.replace('EUR', '')
-                cryptos[currency_code] = crypto_data[code]['c'][0]
-        return cryptos
+                if currency_code in wallet.keys():
+                    wallet[currency_code].set_rate(crypto_data[code]['c'][0])
+                    wallet[currency_code].pair = self.pairs[code]['wsname']
+        return wallet

@@ -1,5 +1,3 @@
-import globalvar
-
 
 class Crypto:
     def __init__(self, code):
@@ -40,9 +38,9 @@ class Crypto:
         if self.top_rate is None:
             self.top_rate = self.rate
             self.buy_rate = self.rate
-            self.buy_rate_euro = globalvar.BUY_AMOUNT / self.buy_rate
+            self.buy_rate_euro = self.amount_euro / self.rate
 
-        self.top_rate = self.rate if self.rate >= self.top_rate else self.top_rate
+        self.top_rate = self.rate if self.rate > self.top_rate else self.top_rate
 
     def up(self, response):
         self.amount_euro = response['amount_euro']

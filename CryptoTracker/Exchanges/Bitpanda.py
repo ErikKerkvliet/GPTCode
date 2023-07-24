@@ -73,14 +73,14 @@ class Bitpanda:
 
         response_data = json.loads(data.decode("utf-8"))
 
+        wallet = {}
         if not crypto_codes:
-            wallet = response_data
+            for crypto in response_data.keys():
+                wallet[crypto] = response_data[crypto][globalvar.DEFAULT_CURRENCY]
         else:
-            wallet = {}
             for crypto in response_data.keys():
                 if crypto in crypto_codes:
                     wallet[crypto] = response_data[crypto][globalvar.DEFAULT_CURRENCY]
-
         if coin != 'ALL' and coin not in wallet.keys():
             raise CoinIndexNotFoundException
 
@@ -92,7 +92,6 @@ class Bitpanda:
 
         if coin == 'ALL':
             return wallet
-
         return wallet
 
     async def get_balances(self, coin='all'):

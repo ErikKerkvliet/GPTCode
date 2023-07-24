@@ -1,6 +1,7 @@
 keys.py
 save_kraken
 save_bitpanda
+/CryptoTracker/log.txt
 pyvenv.cfg
 /lib
 /bin

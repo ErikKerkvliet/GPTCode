@@ -22,9 +22,8 @@ class App:
             glv.WATCHER_PERCENTAGES: Percentages(),
             glv.WATCHER_STEPS: Steps(),
         }
-
-        self.make_tree('kraken')
-        self.make_tree('bitpanda')
+        for exchange in glv.EXCHANGES:
+            self.make_tree(exchange)
 
     def make_tree(self, exchange):
         # Top level Treeview object
@@ -156,6 +155,6 @@ if __name__ == "__main__":
         app.window.after(refresh_interval_ms, refresh, exchanges)
 
     # Schedule initial call and start refreshing
-    app.window.after(0, refresh([glv.EXCHANGES_KRAKEN, glv.EXCHANGES_BITPANDA]))
+    app.window.after(0, refresh(glv.EXCHANGES))
 
     tk.mainloop()
