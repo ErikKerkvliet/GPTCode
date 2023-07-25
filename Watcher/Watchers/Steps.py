@@ -1,3 +1,4 @@
+import glv
 
 
 class Steps:
@@ -15,11 +16,11 @@ class Steps:
         tags = "color"
         treeview.tag_configure('color', background='white')
 
-        if row['rate'] > row['last_rate']:
+        if row['rate'] > row['buy_rate']:
             tags = "higher"
             treeview.tag_configure('higher', background='#b4f9ab')
 
-        if row['rate'] < row['last_rate']:
+        if row['rate'] * glv.MARGIN > row['buy_rate']:
             tags = "lesser"
             treeview.tag_configure('lesser', background='#ffe5e5')
 
@@ -27,7 +28,7 @@ class Steps:
         if '.' in profit:
             profit = profit.rstrip('0').strip('.')
 
-        difference = f'{float(row["difference"]):.8f}'
+        difference = f'{float(row["difference"]):.7f}'
         if '.' in difference:
             difference = difference.rstrip('0').strip('.')
 
@@ -38,12 +39,12 @@ class Steps:
         row['profit'] = profit
         row['profit_€'] = profit_euro
         row['rate'] = f'{float(row["rate"]):.8f}'
-        row['last_rate'] = f'{float(row["last_rate"]):.8f}'
-        row['top_rate'] = f'{float(row["top_rate"]):.8f}'
-        row['buy_rate'] = f'{float(row["buy_rate"]):.8f}'
+        row['last_rate'] = f'{float(row["last_rate"]):.7f}'
+        row['top_rate'] = f'{float(row["top_rate"]):.7f}'
+        row['buy_rate'] = f'{float(row["buy_rate"]):.7f}'
         row['amount_€'] = f'{float(row["amount_€"]):.4f}'
         row['difference'] = difference
-        row['difference_%'] = f'{float(row["difference_%"]):.8f}'.rstrip('0').strip('.')
+        row['difference_%'] = f'{float(row["difference_%"]):.7f}'.rstrip('0').strip('.')
 
         return {
             'row': row,
@@ -57,7 +58,7 @@ class Steps:
 
     def get_totals(self) -> dict:
         for total in self.totals.keys():
-            total_str = f'{float(self.totals[total]):.8f}'
+            total_str = f'{float(self.totals[total]):.4f}'
             if '.' in total_str:
                 total_str = total_str.rstrip('0').strip('.')
             self.totals[total] = total_str

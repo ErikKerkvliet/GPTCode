@@ -11,10 +11,10 @@ class Store:
             'exchange': self.glv.tracker,
         }]
 
-    def save(self, wallet, balance_euro):
+    def save(self, wallet):
         self.save_data[0] = {
             'run_time': globalvar.get_run_time(),
-            'balance_euro': balance_euro
+            'balance_euro': self.glv.balance_euro[self.glv.tracker]
         }
         for crypto in wallet.keys():
             if globalvar.RESOLVER == globalvar.RESOLVER_STEPS:
@@ -37,6 +37,7 @@ class Store:
                     'amount': wallet[crypto].amount,
                     'amount_€': float(wallet[crypto].rate) * float(wallet[crypto].amount),
                     'position': wallet[crypto].position,
+                    'drops': wallet[crypto].drops,
                     'difference': difference,
                     'difference_%': difference_percentage,
                     'sells': wallet[crypto].sells,
@@ -57,7 +58,6 @@ class Store:
                     'available': wallet[crypto].available,
                     'sells': wallet[crypto].sells,
                     'gain_€': wallet[crypto].gain,
-                    'balance_euro': balance_euro
                 }
             self.save_data.append(crypto_data)
 

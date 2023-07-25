@@ -10,7 +10,6 @@ class KrakenTracker:
         self.fill = Fill(self.glv)
         self.exchange = self.glv.get_exchange(globalvar.EXCHANGES_KRAKEN)
         self.resolver = self.glv.get_resolver(globalvar.RESOLVER)
-        self.balance_euro = 0
 
     def track(self, times):
         if times % 10 == 0:
@@ -20,7 +19,6 @@ class KrakenTracker:
         if times % 25 == 0:
             self.wallet = self.fill.fill_wallet(self.wallet)
             self.exchange.pairs = self.exchange.asset_pairs()
-            self.balance_euro = self.exchange.get_balance_euro()
 
         self.wallet = self.exchange.ticker(None, self.wallet)
         for crypto in self.wallet.keys():

@@ -35,7 +35,7 @@ MAX_DROPS = 3
 MIN_UPS = 3
 PROFIT_PERC = 0.01
 LOSS_PERC = 0.01
-MARGIN = 0.996
+MARGIN = 0.998
 BUY_AMOUNT = 15
 SAVE_FILE = '../save'
 SAVE_FILE_TEST = '../save_test'
@@ -50,14 +50,13 @@ class Globalvar:
     def __init__(self):
         self.ip = self.get_ip()
         self.tracker = None
-        self.balance_euro = 0
         self.exchanges = {
             EXCHANGES_BITPANDA: Bitpanda(self),
             EXCHANGES_KRAKEN: Kraken(self),
         }
-        self.default_crypto = {
-            EXCHANGES_BITPANDA: '',
-            EXCHANGES_KRAKEN: '',
+        self.balance_euro = {
+            EXCHANGES_BITPANDA: 0,
+            EXCHANGES_KRAKEN: 0,
         }
         self.resolvers = {
             RESOLVER_PERCENTAGES: Percentages(self),

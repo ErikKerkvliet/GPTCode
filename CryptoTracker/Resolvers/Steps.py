@@ -29,12 +29,15 @@ class Steps:
             if crypto.drops < 3:
                 crypto.drops += 1
 
-            print(f'{crypto.code}, {crypto.drops}, {crypto.amount_euro / crypto.rate > crypto.amount_euro / crypto.buy_rate},{(crypto.amount > crypto.trade_amount_min)}, {crypto.buy_rate < crypto.rate * globalvar.MARGIN}')
             if crypto.drops > 2 \
-                    and crypto.amount_euro / crypto.rate > crypto.amount_euro / crypto.buy_rate \
-                    and crypto.amount > crypto.trade_amount_min \
+                    and crypto.amount_euro / crypto.rate > crypto.trade_amount_min \
                     and crypto.buy_rate < crypto.rate * globalvar.MARGIN:
-                print('SELL!!!!!!!!!!!!!!!!!!!')
+                print('SELL!!!!!!!!!!!!!!!!!!!', 1)
                 return globalvar.ORDER_SIDE_SELL
 
+            if crypto.amount_euro / crypto.rate > crypto.trade_amount_min \
+                    and crypto.buy_rate < crypto.rate * globalvar.MARGIN \
+                    and crypto.rate < crypto.last_rate * 0.998:
+                print('SELL!!!!!!!!!!!!!!!!!!!', 2)
+                return globalvar.ORDER_SIDE_SELL
         return False

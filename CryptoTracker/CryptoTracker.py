@@ -30,7 +30,7 @@ class CryptoPrices:
                 # try:
                 for tracker in [globalvar.EXCHANGES_KRAKEN, globalvar.EXCHANGES_BITPANDA]:
                     self.trackers[tracker].track(times)
-                    self.store.save(self.trackers[tracker].wallet, self.trackers[tracker].balance_euro)
+                    self.store.save(self.trackers[tracker].wallet)
                 # except Exception as e:
                 #     print(f'Error occurred in: {self.glv.tracker}')
                 #     traceback.print_exc(file=log)

@@ -31,6 +31,10 @@ class Fill:
         response = loop.run_until_complete(self.glv.exchanges[globalvar.EXCHANGES_BITPANDA].get_balances())
 
         for crypto in response:
+            if crypto['currency_code'] == globalvar.DEFAULT_CURRENCY:
+                self.glv.balance_euro[globalvar.EXCHANGES_BITPANDA] = float(crypto['available'])
+                continue
+
             if instruments[crypto['currency_code']]['state'] != 'ACTIVE':
                 continue
 
@@ -41,7 +45,7 @@ class Fill:
                 wallet[crypto['currency_code']].rate = None
                 wallet[crypto['currency_code']].top_rate = None
                 wallet[crypto['currency_code']].last_rate = None
-            wallet[crypto['currency_code']].amount = float(crypto['available'])
+                wallet[crypto['currency_code']].amount = float(crypto['available'])
         return wallet
 
     def from_kraken_balance(self, wallet) -> dict:
@@ -54,6 +58,8 @@ class Fill:
                 wallet[code].top_rate = None
                 wallet[code].last_rate = None
             wallet[code].amount = float(balances[full_code])
+
+        self.glv.balance_euro[globalvar.EXCHANGES_KRAKEN] = self.exchange.get_balance_euro()
         return wallet
 
     def from_file(self, wallet) -> dict:

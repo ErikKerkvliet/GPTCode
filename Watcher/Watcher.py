@@ -65,7 +65,7 @@ class App:
                 column_width = 100
             elif column == 'sells':
                 column_width = 40
-            elif column in ['position', 'more ⇧', 'less ⇩']:
+            elif column in ['position', 'more ⇧', 'less ⇩', 'drops']:
                 column_width = 50
             else:
                 column_width = 80
@@ -95,7 +95,7 @@ class App:
         combined_dict = {key: '' for key in combined_dict}
         combined_dict[list(combined_dict.keys())[0]] = exchange
         combined_dict[list(combined_dict.keys())[1]] = self.run_time
-        combined_dict[list(combined_dict.keys())[2]] = f'€ {self.balance_euro}'
+        combined_dict[list(combined_dict.keys())[2]] = f'€ {round(self.balance_euro, 4)}'
         combined_dict.update(self.watchers[self.option].get_totals())
 
         tags = "total"
