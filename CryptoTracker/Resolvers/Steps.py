@@ -12,20 +12,29 @@ class Steps:
 
         profit = crypto.rate > crypto.last_rate
         if profit:
-            if crypto.buy_rate < crypto.rate and crypto.position < 0:
+            if crypto.position < 0:
                 crypto.position = 1
-            elif crypto.buy_rate < crypto.rate:
+            else:
                 crypto.position += 1
 
+            if crypto.drops > 0:
+                crypto.drops -= 1
+
         if not profit:
-            if crypto.buy_rate > crypto.rate and crypto.position > 0:
+            if crypto.position > 0:
                 crypto.position = -1
-            elif crypto.buy_rate > crypto.rate:
+            else:
                 crypto.position -= 1
 
-            if crypto.position > 3 \
-                    and crypto.amount_euro / crypto.rate > crypto.amount > crypto.trade_amount_min \
+            if crypto.drops < 3:
+                crypto.drops += 1
+
+            print(f'{crypto.code}, {crypto.drops}, {crypto.amount_euro / crypto.rate > crypto.amount_euro / crypto.buy_rate},{(crypto.amount > crypto.trade_amount_min)}, {crypto.buy_rate < crypto.rate * globalvar.MARGIN}')
+            if crypto.drops > 2 \
+                    and crypto.amount_euro / crypto.rate > crypto.amount_euro / crypto.buy_rate \
+                    and crypto.amount > crypto.trade_amount_min \
                     and crypto.buy_rate < crypto.rate * globalvar.MARGIN:
+                print('SELL!!!!!!!!!!!!!!!!!!!')
                 return globalvar.ORDER_SIDE_SELL
 
         return False

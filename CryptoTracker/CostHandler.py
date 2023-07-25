@@ -22,3 +22,4 @@ class CostHandler:
         crypto.amount = 0
         crypto.amount_euro = 0
         crypto.position = 0
+        crypto.drops = 0

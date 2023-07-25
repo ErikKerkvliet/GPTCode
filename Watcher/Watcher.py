@@ -57,7 +57,7 @@ class App:
             self.treeview[exchange].heading(column, text=heading_text)
             anchor_value = tk.E
             if column == 'code':
-                column_width = 30
+                column_width = 40
                 anchor_value = tk.W
             elif column == 'available':
                 column_width = 110

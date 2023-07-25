@@ -17,8 +17,6 @@ class Store:
             'balance_euro': balance_euro
         }
         for crypto in wallet.keys():
-            if crypto == globalvar.DEFAULT_CURRENCY:
-                continue
             if globalvar.RESOLVER == globalvar.RESOLVER_STEPS:
                 difference = wallet[crypto].rate - wallet[crypto].buy_rate
 

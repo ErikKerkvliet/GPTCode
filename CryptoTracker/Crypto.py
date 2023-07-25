@@ -5,7 +5,6 @@ class Crypto:
         self.rate = None
         self.last_rate = None
         self.buy_rate = 0
-        self.buy_rate_euro = 0
         self.top_rate = 0
         self.amount = 0
         self.amount_euro = 0
@@ -23,6 +22,7 @@ class Crypto:
 
         # Steps
         self.position = 0
+        self.drops = 0
 
     def reset(self):
         self.buy_rate = 0
@@ -39,8 +39,8 @@ class Crypto:
         if self.top_rate is None:
             self.top_rate = self.rate
             self.buy_rate = self.rate
-            self.buy_rate_euro = self.amount_euro / self.rate
 
+        self.amount_euro = self.amount / self.rate
         self.top_rate = self.rate if self.rate > self.top_rate else self.top_rate
 
     def up(self, response):

@@ -25,9 +25,6 @@ class BitpandaTracker:
 
         loop = asyncio.get_event_loop()
         for crypto in self.wallet.keys():
-            if crypto == globalvar.DEFAULT_CURRENCY:
-                continue
-
             self.wallet[crypto].set_rate(data[crypto])
 
             result = self.resolver.resolve(self.wallet[crypto])

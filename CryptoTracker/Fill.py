@@ -31,9 +31,7 @@ class Fill:
         response = loop.run_until_complete(self.glv.exchanges[globalvar.EXCHANGES_BITPANDA].get_balances())
 
         for crypto in response:
-            if crypto['currency_code'] == 'EUR' or instruments[crypto['currency_code']]['state'] != 'ACTIVE':
-                continue
-            if crypto['currency_code'] == 'BTC' or crypto['currency_code'] == 'BEST':
+            if instruments[crypto['currency_code']]['state'] != 'ACTIVE':
                 continue
 
             if crypto['currency_code'] not in wallet.keys():
@@ -50,8 +48,6 @@ class Fill:
         balances = self.glv.exchanges[globalvar.EXCHANGES_KRAKEN].get_balances()
         for full_code in balances.keys():
             code = f'{full_code}Z' if full_code[0:2] == 'XX' or full_code[0:2] == 'XE' else full_code
-            if code == globalvar.DEFAULT_CURRENCY:
-                continue
             if full_code not in wallet.keys():
                 wallet[code] = Crypto(code)
                 wallet[code].rate = None
@@ -66,8 +62,7 @@ class Fill:
             file.close()
 
         for crypto in data:
-            if crypto['code'] != globalvar.DEFAULT_CURRENCY:
-                wallet[crypto['code']] = Crypto(crypto['code'])
+            wallet[crypto['code']] = Crypto(crypto['code'])
             wallet[crypto['code']].available = crypto['available']
             wallet[crypto['code']].buy_rate = crypto['buy_rate']
             wallet[crypto['code']].amount = crypto['amount']
@@ -93,14 +88,10 @@ class Fill:
     def from_test(self, wallet) -> dict:
         response = self.exchange.ticker()
         for crypto in response.keys():
-            if crypto not in wallet.keys() and crypto not in globalvar.DEFAULT_CURRENCY:
+            if crypto not in wallet.keys():
                 amount = float(response[crypto])
                 wallet[crypto] = Crypto(crypto)
                 wallet[crypto].instrument = {'min_size': 0, 'amount_precision': 5}
-                wallet[crypto].pair = f'{crypto}{globalvar.DEFAULT_CURRENCY}'
                 wallet[crypto].amount = amount * 15
-                wallet[crypto].rate = amount
-                wallet[crypto].top_rate = amount
                 wallet[crypto].last_rate = amount
-                wallet[crypto].buy_rate = amount
         return wallet

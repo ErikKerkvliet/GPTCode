@@ -151,5 +151,5 @@ class Kraken:
                 if currency_code in wallet.keys():
                     wallet[currency_code].set_rate(crypto_data[code]['c'][0])
                     wallet[currency_code].pair = self.pairs[code]['wsname']
-                    wallet[currency_code].trade_amount_min = self.pairs[code]['ordermin']
+                    wallet[currency_code].trade_amount_min = float(self.pairs[code]['ordermin'])
         return wallet
