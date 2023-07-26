@@ -57,6 +57,7 @@ class Fill:
                 wallet[code].rate = None
                 wallet[code].top_rate = None
                 wallet[code].last_rate = None
+                wallet[code].buy_amount_euro = globalvar.BUY_AMOUNT
             wallet[code].amount = float(balances[full_code])
 
         self.glv.balance_euro[globalvar.EXCHANGES_KRAKEN] = self.exchange.get_balance_euro()

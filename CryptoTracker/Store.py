@@ -21,12 +21,13 @@ class Store:
                 difference = wallet[crypto].rate - wallet[crypto].buy_rate
 
                 difference = f'{difference:.8f}'
-                difference_percentage = f'{float(difference) / float(wallet[crypto].rate):.8f}'
                 if '.' in difference:
                     difference = difference.rstrip('0').rstrip('.')
 
-                if '.' in difference_percentage:
-                    difference_percentage = difference_percentage.rstrip('0').rstrip('.')
+                rate = wallet[crypto].rate if wallet[crypto].rate > 1 else wallet[crypto].rate + 1
+                buy_rate = wallet[crypto].buy_rate if wallet[crypto].buy_rate > 1 else wallet[crypto].buy_rate + 1
+
+                difference_euro = (wallet[crypto].amount * rate) - (wallet[crypto].amount * buy_rate)
 
                 crypto_data = {
                     'code': wallet[crypto].code,
@@ -35,11 +36,11 @@ class Store:
                     'top_rate': wallet[crypto].top_rate,
                     'buy_rate': wallet[crypto].buy_rate,
                     'amount': wallet[crypto].amount,
-                    'amount_€': float(wallet[crypto].rate) * float(wallet[crypto].amount),
+                    'amount_€': amount,
                     'position': wallet[crypto].position,
                     'drops': wallet[crypto].drops,
                     'difference': difference,
-                    'difference_%': difference_percentage,
+                    'difference_€': difference_euro,
                     'sells': wallet[crypto].sells,
                     'profit': wallet[crypto].profit,
                     'profit_€': wallet[crypto].profit_euro,

@@ -22,7 +22,7 @@ class Steps:
 
         if row['rate'] * glv.MARGIN > row['buy_rate']:
             tags = "lesser"
-            treeview.tag_configure('lesser', background='#ffe5e5')
+            treeview.tag_configure('lesser', background='#73c768')
 
         profit = f'{float(row["profit"]):.8f}'
         if '.' in profit:
@@ -44,7 +44,8 @@ class Steps:
         row['buy_rate'] = f'{float(row["buy_rate"]):.7f}'
         row['amount_€'] = f'{float(row["amount_€"]):.4f}'
         row['difference'] = difference
-        row['difference_%'] = f'{float(row["difference_%"]):.7f}'.rstrip('0').strip('.')
+
+        row['difference_€'] = f'{float(row["difference_€"]):.8f}'
 
         return {
             'row': row,

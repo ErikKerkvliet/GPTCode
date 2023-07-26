@@ -26,12 +26,17 @@ class Steps:
             else:
                 crypto.position -= 1
 
-            if crypto.drops < 3:
+            if crypto.drops < 1:
                 crypto.drops += 1
 
-            print(crypto.amount_euro, crypto.rate, crypto.trade_amount_min)
-            if crypto.drops > 2 \
-                    and crypto.amount_euro / crypto.rate > crypto.trade_amount_min \
+            # print(crypto.amount_euro, crypto.rate, crypto.trade_amount_min)
+            if crypto.rate < 0:
+                amount = crypto.amount_euro * crypto.rate
+            else:
+                amount = crypto.amount_euro / crypto.rate
+
+            if crypto.drops > 1 \
+                    and amount > crypto.trade_amount_min \
                     and crypto.buy_rate < crypto.rate * globalvar.MARGIN:
                 print('SELL!!!!!!!!!!!!!!!!!!!', 1)
                 return globalvar.ORDER_SIDE_SELL

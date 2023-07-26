@@ -18,6 +18,7 @@ class App:
         self.data = {}
         self.treeview = {}
         self.balance_euro = 0
+        self.balance_start = 0
 
         self.watchers = {
             glv.WATCHER_PERCENTAGES: Percentages(),
@@ -57,11 +58,11 @@ class App:
             self.treeview[exchange].heading(column, text=heading_text)
             anchor_value = tk.E
             if column == 'code':
-                column_width = 40
+                column_width = 48
                 anchor_value = tk.W
             elif column == 'available':
                 column_width = 110
-            elif column == 'difference %':
+            elif column == 'difference €':
                 column_width = 100
             elif column == 'sells':
                 column_width = 40
@@ -90,6 +91,9 @@ class App:
             result = self.watchers[self.option].load_row(self.treeview[exchange], row)
 
             self.treeview[exchange].insert("", "end", text="", values=list(result['row'].values()), tags=result['tags'])
+
+        if self.balance_start == 0:
+            self.balance_start = f'€ {round(self.balance_euro, 4)}'
 
         combined_dict = data[1].copy()
         combined_dict = {key: '' for key in combined_dict}

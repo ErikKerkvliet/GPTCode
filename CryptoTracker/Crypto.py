@@ -8,6 +8,7 @@ class Crypto:
         self.top_rate = 0
         self.amount = 0
         self.amount_euro = 0
+        self.buy_amount_euro = 0
         self.profit = 0
         self.profit_euro = 0
         self.instrument = None

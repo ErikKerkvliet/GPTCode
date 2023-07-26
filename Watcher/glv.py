@@ -5,7 +5,7 @@ import signal
 TEST = True
 DEFAULT_CURRENCY = 'EUR'
 TIMER = 10
-MARGIN = 0.998
+MARGIN = 0.999
 SAVE_FILE = '../save'
 
 WATCHER_STEPS = 'steps'
