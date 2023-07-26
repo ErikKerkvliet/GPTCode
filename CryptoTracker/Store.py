@@ -24,6 +24,7 @@ class Store:
                 if '.' in difference:
                     difference = difference.rstrip('0').rstrip('.')
 
+                amount = float(wallet[crypto].rate) * float(wallet[crypto].amount)
                 rate = wallet[crypto].rate if wallet[crypto].rate > 1 else wallet[crypto].rate + 1
                 buy_rate = wallet[crypto].buy_rate if wallet[crypto].buy_rate > 1 else wallet[crypto].buy_rate + 1
 
