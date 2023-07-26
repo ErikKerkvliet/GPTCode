@@ -29,6 +29,7 @@ class Steps:
             if crypto.drops < 3:
                 crypto.drops += 1
 
+            print(crypto.amount_euro, crypto.rate, crypto.trade_amount_min)
             if crypto.drops > 2 \
                     and crypto.amount_euro / crypto.rate > crypto.trade_amount_min \
                     and crypto.buy_rate < crypto.rate * globalvar.MARGIN:
@@ -37,7 +38,7 @@ class Steps:
 
             if crypto.amount_euro / crypto.rate > crypto.trade_amount_min \
                     and crypto.buy_rate < crypto.rate * globalvar.MARGIN \
-                    and crypto.rate < crypto.last_rate * 0.998:
+                    and crypto.rate < crypto.top_rate * 0.999:
                 print('SELL!!!!!!!!!!!!!!!!!!!', 2)
                 return globalvar.ORDER_SIDE_SELL
         return False

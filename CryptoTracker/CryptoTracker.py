@@ -17,6 +17,10 @@ class CryptoPrices:
             globalvar.EXCHANGES_BITPANDA: BitpandaTracker(self.glv),
             globalvar.EXCHANGES_KRAKEN: KrakenTracker(self.glv)
         }
+        self.crashes = {
+            globalvar.EXCHANGES_BITPANDA: 0,
+            globalvar.EXCHANGES_KRAKEN: 0,
+        }
 
     def run_infinitely(self):
         print(f'Exchanges: {", ".join([globalvar.EXCHANGES_BITPANDA, globalvar.EXCHANGES_KRAKEN])}')
@@ -31,8 +35,12 @@ class CryptoPrices:
                 for tracker in [globalvar.EXCHANGES_KRAKEN, globalvar.EXCHANGES_BITPANDA]:
                     self.trackers[tracker].track(times)
                     self.store.save(self.trackers[tracker].wallet)
+                    self.crashes[tracker] = 0
                 # except Exception as e:
                 #     print(f'Error occurred in: {self.glv.tracker}')
+                #     self.crashes[tracker] > 1:
+                #         del self.trackers[tracker]
+                #     self.crashes[tracker] += 1
                 #     traceback.print_exc(file=log)
                 #     traceback.print_tb(e.__traceback__)
                 #     continue
