@@ -48,6 +48,7 @@ class Fill:
                 wallet[crypto['currency_code']].top_rate = None
                 wallet[crypto['currency_code']].last_rate = None
                 wallet[crypto['currency_code']].amount = float(crypto['available'])
+                wallet[crypto['currency_code']].buy_amount_euro = globalvar.BUY_AMOUNT
         return wallet
 
     def from_kraken_balance(self, wallet) -> dict:

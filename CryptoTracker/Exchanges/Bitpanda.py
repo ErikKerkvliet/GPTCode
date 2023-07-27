@@ -1,5 +1,6 @@
 import json
 import keys
+import math
 
 import globalvar
 from CostHandler import CostHandler
@@ -34,11 +35,12 @@ class Bitpanda:
         self.client = BitpandaClient(keys.KEY_TRADE)
         return self.client
 
-    async def close_client(self):
+    def close_client(self):
         if not self.client:
             return
 
-        await self.client.close()
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self.client.close())
         self.client = None
 
     def ticker(self, coin='ALL') -> dict:
@@ -101,55 +103,42 @@ class Bitpanda:
             return response['response']['balances']
         return response['response']['balances'][coin]
 
-    async def sell(self, crypto):
+    def start_transaction(self, crypto, side):
+        if crypto.code == 'BTC':
+            return
+
         pair = Pair(crypto.code, globalvar.DEFAULT_CURRENCY)
 
         # - 0.00036 BTC
         # + 10.02 EUR
-        if self.glv.ip == globalvar.IP_HOME:
-            precision = crypto.instrument['amount_precision']
-            trade_amount = round(crypto.amount, precision)
+        precision = crypto.instrument['amount_precision']
+
+        if side == globalvar.ORDER_SIDE_BUY:
+            amount = crypto.buy_amount_euro / crypto.rate
+            side = OrderSide.BUY
         else:
-            trade_amount = round(crypto.amount, 5)
-
-        order_data = {
-            'pair': pair,
-            'exchange_type': OrderSide.SELL,
-            'amount': trade_amount,
-            'crypto': crypto,
-        }
-
-        await self.create_order(order_data)
-
-        self.cost_handler.sell(crypto)
-
-    async def buy(self, crypto, amount=None):
-        if not amount:
             amount = crypto.amount
+            side = OrderSide.SELL
 
-        pair = Pair(crypto.code, globalvar.DEFAULT_CURRENCY)
-
-        if self.glv.ip == globalvar.IP_HOME:
-            precision = crypto.instrument['amount_precision']
-            trade_amount = round(amount, precision)
-        else:
-            trade_amount = round(amount, 5)
-
-        # BTC_EURO
-        # + 0.00039 BTC
-        # - 10 EUR
         order_data = {
             'pair': pair,
-            'exchange_type': OrderSide.BUY,
-            'amount': trade_amount,
+            'exchange_type': side,
+            'amount': math.floor(amount * float(f'1e{precision}')) / float(f'1e{precision}'),
             'crypto': crypto,
         }
 
-        await self.create_order(order_data)
+        loop = asyncio.get_event_loop()
+        response = loop.run_until_complete(self.create_order(order_data))
 
-        self.cost_handler.buy(crypto)
+        self.client.close()
 
-    def get_instrument(self, crypto='ALL'):
+        print(response)
+        if side == OrderSide.BUY:
+            self.cost_handler.buy(crypto)
+        else:
+            self.cost_handler.sell(crypto)
+
+    def get_instrument(self, code='ALL'):
         if self.instruments:
             return self.instruments
 
@@ -169,10 +158,10 @@ class Bitpanda:
             }
         # print(sorted(list(self.instruments)))
 
-        if crypto == 'ALL':
+        if code == 'ALL':
             return self.instruments
 
-        return self.instruments[crypto]
+        return self.instruments[code]
 
     # UNI , EURO Koop 2 UNI voor ? EURO
     # side = OrderSide('BUY')
@@ -189,12 +178,16 @@ class Bitpanda:
         amount_euro = f"{float(number):.8f}"
         print(f'Bitpanda {order_data["exchange_type"]}, Pair: {order_data["pair"]}, Amount: {amount}, Amount €: {amount_euro}')
 
-        if globalvar.STATE == globalvar.STATE_DEVELOPMENT or self.glv.ip == globalvar.IP_WORK:
-            self.response = {
-                'code': order_data['pair'],
-                'amount': order_data['amount'],
-            }
-            return self.response
+        # if globalvar.STATE == globalvar.STATE_DEVELOPMENT or self.glv.ip == globalvar.IP_WORK:
+        #     self.response = {
+        #         'code': order_data['pair'],
+        #         'amount': order_data['amount'],
+        #     }
+        #     return self.response
+
+        print(order_data)
+        return
+
         #
         # if globalvar.STATE is globalvar.STATE_PRODUCTION:
         #     print('NOOOOO !!!!!!!!!!!!!!!!!!!')

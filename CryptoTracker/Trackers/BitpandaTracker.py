@@ -29,12 +29,12 @@ class BitpandaTracker:
 
             result = self.resolver.resolve(self.wallet[crypto])
             if result == globalvar.ORDER_SIDE_SELL:
-                loop.run_until_complete(self.exchange.sell(self.wallet[crypto]))
+                loop.run_until_complete(self.exchange.start_transaction(self.wallet[crypto], globalvar.ORDER_SIDE_SELL))
 
-                loop.run_until_complete(self.exchange.buy(self.wallet[crypto], 15))
+                loop.run_until_complete(self.exchange.start_transaction(self.wallet[crypto], globalvar.ORDER_SIDE_BUY))
 
             elif result == globalvar.ORDER_SIDE_BUY:
-                loop.run_until_complete(self.exchange.buy(self.wallet[crypto]))
+                loop.run_until_complete(self.exchange.start_transaction(self.wallet[crypto], globalvar.ORDER_SIDE_BUY))
 
         # loop.run_until_complete(self.exchange.close_client())
 
