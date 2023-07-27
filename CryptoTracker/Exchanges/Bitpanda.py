@@ -28,10 +28,10 @@ class Bitpanda:
         if self.client is not None:
             return self.client
 
-        if self.glv.ip == globalvar.IP_WORK:
-            self.client = BitpandaClient(keys.KEY_NON_PRO)
-        else:
-            self.client = BitpandaClient(keys.KEY_TRADE)
+        # if self.glv.ip == globalvar.IP_WORK:
+        #     self.client = BitpandaClient(keys.KEY_NON_PRO)
+        # else:
+        self.client = BitpandaClient(keys.KEY_TRADE)
         return self.client
 
     async def close_client(self):

@@ -17,6 +17,8 @@ class Fill:
             return self.from_test(wallet)
         elif self.glv.tracker == globalvar.EXCHANGES_KRAKEN:
             return self.from_kraken_balance(wallet)
+        elif self.glv.tracker == globalvar.EXCHANGES_BITPANDA:
+            return self.from_bitpanda_balance(wallet)
         elif self.glv.ip == globalvar.IP_WORK:
             return self.from_work(wallet)
         elif self.glv.ip == globalvar.IP_HOME:

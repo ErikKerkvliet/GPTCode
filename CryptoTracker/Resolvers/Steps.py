@@ -10,6 +10,11 @@ class Steps:
         if crypto.last_rate is None or crypto.rate == crypto.last_rate:
             return
 
+        if crypto.rate < 0:
+            amount = crypto.amount_euro * crypto.rate
+        else:
+            amount = crypto.amount_euro / crypto.rate
+
         profit = crypto.rate > crypto.last_rate
         if profit:
             if crypto.position < 0:
@@ -19,6 +24,11 @@ class Steps:
 
             if crypto.drops > 0:
                 crypto.drops -= 1
+
+            if amount > crypto.trade_amount_min \
+                    and crypto.buy_rate < crypto.rate * globalvar.MARGIN:
+                print('SELL!!!!!!!!!!!!!!!!!!!', 0)
+                return globalvar.ORDER_SIDE_SELL
 
         if not profit:
             if crypto.position > 0:
@@ -30,13 +40,8 @@ class Steps:
                 crypto.drops += 1
 
             # print(crypto.amount_euro, crypto.rate, crypto.trade_amount_min)
-            if crypto.rate < 0:
-                amount = crypto.amount_euro * crypto.rate
-            else:
-                amount = crypto.amount_euro / crypto.rate
 
-            if crypto.drops > 1 \
-                    and amount > crypto.trade_amount_min \
+            if amount > crypto.trade_amount_min \
                     and crypto.buy_rate < crypto.rate * globalvar.MARGIN:
                 print('SELL!!!!!!!!!!!!!!!!!!!', 1)
                 return globalvar.ORDER_SIDE_SELL
