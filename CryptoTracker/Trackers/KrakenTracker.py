@@ -24,9 +24,9 @@ class KrakenTracker:
         for crypto in self.wallet.keys():
             result = self.resolver.resolve(self.wallet[crypto])
             if result == globalvar.ORDER_SIDE_SELL:
-                self.exchange.sell(self.wallet[crypto])
+                self.exchange.start_transaction(self.wallet[crypto], globalvar.ORDER_SIDE_SELL)
 
-                self.exchange.buy(self.wallet[crypto], globalvar.BUY_AMOUNT)
+                self.exchange.start_transaction(self.wallet[crypto], globalvar.BUY_AMOUNT, globalvar.ORDER_SIDE_BUY)
 
             elif result == globalvar.ORDER_SIDE_BUY:
-                self.exchange.buy(self.wallet[crypto])
+                self.exchange.start_transaction(self.wallet[crypto], globalvar.ORDER_SIDE_BUY)

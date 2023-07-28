@@ -5,8 +5,6 @@ import globalvar
 import requests
 
 from CostHandler import CostHandler
-from packages.kraken.exceptions import KrakenException
-from packages.kraken.base_api import KrakenBaseSpotAPI, defined, ensure_string
 from packages.kraken.spot import Trade
 from packages.kraken.spot import User
 
@@ -39,13 +37,22 @@ class Kraken:
         self.client.close()
         self.client = None
 
-    def buy(self, crypto, amount=None):
-        if not amount:
+    def start_transaction(self, crypto, side):
+        if crypto.code == 'BTC':
+            return
+
+        crypto.rate = 23.08
+        crypto.pair = 'SOL/EUR'
+        if side == globalvar.ORDER_SIDE_BUY:
+            amount = crypto.buy_amount_euro / crypto.rate
+            side = globalvar.ORDER_SIDE_BUY
+        else:
             amount = crypto.amount
+            side = globalvar.ORDER_SIDE_SELL
 
         order_data = {
             'ordertype': 'market',
-            'side': 'buy',
+            'side': side,
             'pair': crypto.pair,
             'amount': amount,
             'crypto': crypto,
@@ -57,27 +64,13 @@ class Kraken:
 
         self.create_order(order_data)
 
-        self.cost_handler.buy(crypto)
+        if side == globalvar.ORDER_SIDE_BUY:
+            self.cost_handler.buy(crypto)
+        else:
+            self.cost_handler.sell(crypto)
 
-    def sell(self, crypto, amount=None):
-        if not amount:
-            amount = crypto.amount
-
-        order_data = {
-            'ordertype': 'market',
-            'side': 'sell',
-            'pair': crypto.pair,
-            'amount': amount,
-            'crypto': crypto,
-            'validate': True,  # Test variable
-        }
-
-        if not globalvar.TEST:
-            order_data['validate'] = False
-
-        self.create_order(order_data)
-
-        self.cost_handler.sell(crypto)
+    def get_instrument(self):
+        return
 
     def get_balances(self):
         with self.get_user() as user:
@@ -95,11 +88,11 @@ class Kraken:
             euro_balance = user.get_balance('EUR')['available_balance']
         return euro_balance
 
-
     def create_order(self, order_data):
 
         print(f'{self.glv.tracker} {order_data["side"]} | {order_data["crypto"].pair}: {order_data["amount"]}')
-        return
+        # return
+        print(order_data)
         self.get_client().create_order(
             ordertype=order_data['ordertype'],
             side=order_data['side'],

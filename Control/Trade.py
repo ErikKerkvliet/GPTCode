@@ -1,34 +1,41 @@
-from Bitpanda import Bitpanda
 from Crypto import Crypto
+from Fill import Fill
 import globalvar
 
 
 class Trade:
     def __init__(self):
-        self.bitpanda = Bitpanda(globalvar.Globalvar())
+        self.glv = globalvar.Globalvar()
+
+        self.current_exchange = 'bitpanda'
+        self.glv.tracker = self.current_exchange
+        self.fill = Fill(self.glv)
+        self.exchange = self.glv.get_exchange(self.glv.tracker)
+        self.wallet = {}
 
     def sell(self, crypto_code, amount):
         crypto = Crypto(crypto_code)
-        crypto.amount = amount / self.bitpanda.ticker(crypto_code)
+        crypto.amount = amount / self.exchange.ticker(crypto_code)
 
-        instrument = self.bitpanda.get_instrument(crypto)
+        if self.current_exchange == 'bitpanda':
+            instrument = self.exchange.get_instrument(crypto)
+            instrument = [d for d in instrument if d.get('code') == crypto_code][0]
+            crypto.instrument = instrument
 
-        instrument = [d for d in instrument if d.get('code') == crypto_code][0]
-        crypto.instrument = instrument
-
-        self.bitpanda.start_transaction(crypto, globalvar.ORDER_SIDE_SELL)
+        self.exchange.start_transaction(crypto, globalvar.ORDER_SIDE_SELL)
 
     def buy(self, crypto_code, amount):
-        crypto = Crypto(crypto_code)
-        crypto.amount = (amount / float(self.bitpanda.ticker(crypto_code)[crypto_code]))
+        self.wallet = self.fill.fill_wallet(self.wallet)
 
-        crypto.rate = float(self.bitpanda.ticker(crypto_code)[crypto_code])
-        crypto.buy_rate = crypto.rate
-        crypto.buy_amount_euro = amount
-        instrument = self.bitpanda.get_instrument(crypto.code)
+        if amount:
+            self.wallet[crypto_code].buy_amount_euro = amount
 
-        crypto.instrument = instrument
-        self.bitpanda.start_transaction(crypto, globalvar.ORDER_SIDE_BUY)
-        self.bitpanda.close_client()
+        if self.current_exchange == 'bitpanda':
+            self.wallet[crypto_code].instrument = self.exchange.get_instrument(self.wallet[crypto_code].code)
+
+        self.exchange.start_transaction(self.wallet[crypto_code], globalvar.ORDER_SIDE_BUY)
+
+        if self.current_exchange == 'bitpanda':
+            self.exchange.close_client()
         print('done')
 

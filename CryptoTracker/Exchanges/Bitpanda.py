@@ -130,7 +130,7 @@ class Bitpanda:
         loop = asyncio.get_event_loop()
         response = loop.run_until_complete(self.create_order(order_data))
 
-        self.client.close()
+        # self.client.close()
 
         print(response)
         if side == OrderSide.BUY:
@@ -185,8 +185,8 @@ class Bitpanda:
         #     }
         #     return self.response
 
-        print(order_data)
-        return
+        # print(order_data)
+        # return
 
         #
         # if globalvar.STATE is globalvar.STATE_PRODUCTION:
