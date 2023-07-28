@@ -5,6 +5,7 @@ import globalvar
 import requests
 
 from CostHandler import CostHandler
+from Crypto import Crypto
 from packages.kraken.spot import Trade
 from packages.kraken.spot import User
 
@@ -41,8 +42,7 @@ class Kraken:
         if crypto.code == 'BTC':
             return
 
-        crypto.rate = 23.08
-        crypto.pair = 'SOL/EUR'
+        crypto.pair = f'{crypto.code}/EUR'
         if side == globalvar.ORDER_SIDE_BUY:
             amount = crypto.buy_amount_euro / crypto.rate
             side = globalvar.ORDER_SIDE_BUY
@@ -59,10 +59,12 @@ class Kraken:
             'validate': True,  # Test variable
         }
 
-        if not globalvar.TEST:
+        if globalvar.TEST:
             order_data['validate'] = False
 
-        self.create_order(order_data)
+        response = self.create_order(order_data)
+
+        print(response)
 
         if side == globalvar.ORDER_SIDE_BUY:
             self.cost_handler.buy(crypto)
@@ -88,19 +90,6 @@ class Kraken:
             euro_balance = user.get_balance('EUR')['available_balance']
         return euro_balance
 
-    def create_order(self, order_data):
-
-        print(f'{self.glv.tracker} {order_data["side"]} | {order_data["crypto"].pair}: {order_data["amount"]}')
-        # return
-        print(order_data)
-        self.get_client().create_order(
-            ordertype=order_data['ordertype'],
-            side=order_data['side'],
-            pair=order_data['pair'],
-            volume=order_data['amount'],
-            validate=order_data['validate']
-        )
-
     def asset_pairs(self, crypto_code=None):
         url = f'https://api.kraken.com/0/public/AssetPairs'
         if crypto_code:
@@ -123,6 +112,8 @@ class Kraken:
         return cryptos
 
     def ticker(self, crypto_code=None, wallet=None) -> dict:
+        if wallet is None:
+            wallet = {}
         url = f'https://api.kraken.com/0/public/Ticker'
         if crypto_code:
             url += f'?pair={crypto_code}EUR'
@@ -130,7 +121,6 @@ class Kraken:
 
         response_data = response.json()
         response.close()
-
         if response_data['error'] and self.times < 3:
             self.times += 1
             sleep(5)
@@ -146,3 +136,16 @@ class Kraken:
                     wallet[currency_code].pair = self.pairs[code]['wsname']
                     wallet[currency_code].trade_amount_min = float(self.pairs[code]['ordermin'])
         return wallet
+
+    def create_order(self, order_data):
+
+        print(f'{self.glv.tracker} {order_data["side"]} | {order_data["crypto"].pair}: {order_data["amount"]}')
+        print(order_data)
+        # return
+        return self.get_client().create_order(
+            ordertype=order_data['ordertype'],
+            side=order_data['side'],
+            pair=order_data['pair'],
+            volume=order_data['amount'],
+            validate=order_data['validate']
+        )

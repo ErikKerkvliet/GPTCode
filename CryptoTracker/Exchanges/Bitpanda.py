@@ -177,7 +177,7 @@ class Bitpanda:
             globalvar.BUY_AMOUNT * float(((order_data['crypto'].rate / order_data['crypto'].buy_rate * 100 + 1) / 100))
         amount_euro = f"{float(number):.8f}"
         print(f'Bitpanda {order_data["exchange_type"]}, Pair: {order_data["pair"]}, Amount: {amount}, Amount €: {amount_euro}')
-
+        return
         # if globalvar.STATE == globalvar.STATE_DEVELOPMENT or self.glv.ip == globalvar.IP_WORK:
         #     self.response = {
         #         'code': order_data['pair'],
