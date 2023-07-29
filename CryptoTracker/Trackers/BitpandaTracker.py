@@ -9,33 +9,29 @@ class BitpandaTracker:
         self.glv = glv
         self.glv.tracker = globalvar.EXCHANGES_BITPANDA
         self.wallet = {}
-        self.fill = Fill(self.glv)
         self.exchange = self.glv.get_exchange(globalvar.EXCHANGES_BITPANDA)
+        self.fill = Fill(self.glv)
         self.resolver = self.glv.get_resolver(globalvar.RESOLVER_STEPS)
         self.balance_euro = 0
 
-    def track(self, times):
-        if times % 10 == 0:
-            print(f'Bitpanda - times: {times}')
+    def track(self):
+        if self.glv.times % 10 == 0:
+            print(f'Bitpanda - times: {self.glv.times}')
 
         self.glv.tracker = globalvar.EXCHANGES_BITPANDA
-        if times % 25 == 0:
+        if self.glv.times % 25 == 0:
             self.wallet = self.fill.fill_wallet(self.wallet)
-        data = self.exchange.ticker()
+            self.exchange.pairs = self.exchange.asset_pairs()
 
-        loop = asyncio.get_event_loop()
+        self.wallet = self.exchange.ticker()
         for crypto in self.wallet.keys():
-            self.wallet[crypto].set_rate(data[crypto])
-
             result = self.resolver.resolve(self.wallet[crypto])
             if result == globalvar.ORDER_SIDE_SELL:
-                loop.run_until_complete(self.exchange.start_transaction(self.wallet[crypto], globalvar.ORDER_SIDE_SELL))
+                self.exchange.start_transaction(self.wallet[crypto], globalvar.ORDER_SIDE_SELL)
 
-                loop.run_until_complete(self.exchange.start_transaction(self.wallet[crypto], globalvar.ORDER_SIDE_BUY))
-
+                self.exchange.start_transaction(self.wallet[crypto], globalvar.ORDER_SIDE_BUY)
+                self.glv.timer = globalvar.TIMER
             elif result == globalvar.ORDER_SIDE_BUY:
-                loop.run_until_complete(self.exchange.start_transaction(self.wallet[crypto], globalvar.ORDER_SIDE_BUY))
-
-        # loop.run_until_complete(self.exchange.close_client())
+                self.exchange.start_transaction(self.wallet[crypto], globalvar.ORDER_SIDE_BUY)
 
         self.exchange.instruments = {}

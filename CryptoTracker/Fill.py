@@ -8,11 +8,11 @@ from packages.bitpanda.Pair import Pair
 class Fill:
     def __init__(self, glv):
         self.glv = glv
-        self.exchange = self.glv.get_exchange(self.glv.tracker)
+        self.exchange = None
 
-    def fill_wallet(self, wallet) -> dict:
+    def fill_wallet(self, wallet, exchange) -> dict:
         # self.from_file(wallet)
-
+        self.exchange = exchange
         if not globalvar.TEST:
             return self.from_test(wallet)
         elif self.glv.tracker == globalvar.EXCHANGES_KRAKEN:
@@ -28,13 +28,13 @@ class Fill:
                 return self.from_kraken_balance(wallet)
 
     def from_bitpanda_balance(self, wallet) -> dict:
-        instruments = self.glv.exchanges[globalvar.EXCHANGES_BITPANDA].get_instrument()
+        instruments = self.exchange.asset_pairs()
         loop = asyncio.get_event_loop()
-        response = loop.run_until_complete(self.glv.exchanges[globalvar.EXCHANGES_BITPANDA].get_balances())
+        response = loop.run_until_complete(self.exchange.get_balances())
 
         for crypto in response:
             if crypto['currency_code'] == globalvar.DEFAULT_CURRENCY:
-                self.glv.balance_euro[globalvar.EXCHANGES_BITPANDA] = float(crypto['available'])
+                self.glv.balance_euro[self.glv.tracker] = float(crypto['available'])
                 continue
 
             if instruments[crypto['currency_code']]['state'] != 'ACTIVE':
@@ -52,7 +52,7 @@ class Fill:
         return wallet
 
     def from_kraken_balance(self, wallet) -> dict:
-        balances = self.glv.exchanges[globalvar.EXCHANGES_KRAKEN].get_balances()
+        balances = self.exchange.get_balances()
         for full_code in balances.keys():
             code = f'{full_code}Z' if full_code[0:2] == 'XX' or full_code[0:2] == 'XE' else full_code
             if full_code not in wallet.keys():
@@ -63,7 +63,7 @@ class Fill:
                 wallet[code].buy_amount_euro = globalvar.BUY_AMOUNT
             wallet[code].amount = float(balances[full_code])
 
-        self.glv.balance_euro[globalvar.EXCHANGES_KRAKEN] = self.exchange.get_balance_euro()
+        self.glv.balance_euro[self.glv.tracker] = self.exchange.get_balance_euro()
         return wallet
 
     def from_file(self, wallet) -> dict:

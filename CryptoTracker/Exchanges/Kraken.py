@@ -5,7 +5,6 @@ import globalvar
 import requests
 
 from CostHandler import CostHandler
-from Crypto import Crypto
 from packages.kraken.spot import Trade
 from packages.kraken.spot import User
 
@@ -85,10 +84,10 @@ class Kraken:
             cryptos[key] = balances[key]['balance']
         return cryptos
 
-    def get_balance_euro(self):
+    def get_balance_euro(self) -> float:
         with self.get_user() as user:
             euro_balance = user.get_balance('EUR')['available_balance']
-        return euro_balance
+        return float(euro_balance)
 
     def asset_pairs(self, crypto_code=None):
         url = f'https://api.kraken.com/0/public/AssetPairs'
@@ -124,7 +123,7 @@ class Kraken:
         if response_data['error'] and self.times < 3:
             self.times += 1
             sleep(5)
-            self.ticker()
+            self.ticker(crypto_code, wallet)
         self.times = 0
 
         crypto_data = response_data['result']
@@ -138,9 +137,8 @@ class Kraken:
         return wallet
 
     def create_order(self, order_data):
-
         print(f'{self.glv.tracker} {order_data["side"]} | {order_data["crypto"].pair}: {order_data["amount"]}')
-        print(order_data)
+        print(order_data, order_data['crypto'].instrument)
         # return
         return self.get_client().create_order(
             ordertype=order_data['ordertype'],

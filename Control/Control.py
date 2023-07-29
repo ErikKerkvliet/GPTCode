@@ -138,4 +138,4 @@ if __name__ == '__main__':
     # cp = Control()
     trade = Trade()
     #      XRP  EUROC ETH PAN SOL ANT
-    trade.sell('TRX', 8)
+    trade.buy('SHIB', 15)
