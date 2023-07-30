@@ -53,7 +53,7 @@ class Store:
                     'buy_rate': wallet[crypto].buy_rate,
                     'top_rate': wallet[crypto].top_rate,
                     'last_rate': wallet[crypto].last_rate,
-                    'drops': wallet[crypto].value_drops,
+                    'drops': wallet[crypto].drops,
                     'amount_€': wallet[crypto].amount_euro,
                     'amount': wallet[crypto].amount,
                     'profit': wallet[crypto].profit,

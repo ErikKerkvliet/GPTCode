@@ -14,9 +14,9 @@ class Tracker:
         self.balance_euro = 0
 
         self.exchanges = {
-            globalvar.EXCHANGES_BITPANDA: Bitpanda(self),
-            globalvar.EXCHANGES_KRAKEN: Kraken(self),
-            globalvar.EXCHANGES_ONE_TRADING: OneTrading(self),
+            globalvar.EXCHANGES_BITPANDA: Bitpanda(self.glv),
+            globalvar.EXCHANGES_KRAKEN: Kraken(self.glv),
+            globalvar.EXCHANGES_ONE_TRADING: OneTrading(self.glv),
         }
 
     def track(self) -> None:
@@ -28,14 +28,13 @@ class Tracker:
             self.exchanges[self.glv.tracker].pairs = self.exchanges[self.glv.tracker].asset_pairs()
 
         self.wallet = self.exchanges[self.glv.tracker].ticker(None, self.wallet)
-        for crypto in self.wallet.keys():
-            result = self.resolver.resolve(self.wallet[crypto])
-            if result == globalvar.ORDER_SIDE_SELL:
-                self.exchanges[self.glv.tracker].start_transaction(self.wallet[crypto], globalvar.ORDER_SIDE_SELL)
+        for code in self.wallet.keys():
+            if self.resolver.resolve_sell(self.wallet[code]):
+                self.exchanges[self.glv.tracker].start_transaction(self.wallet[code], globalvar.ORDER_SIDE_SELL)
+                self.glv.timer = globalvar.BUY_TIMER
 
-                self.exchanges[self.glv.tracker].start_transaction(self.wallet[crypto], globalvar.ORDER_SIDE_BUY)
-                self.glv.timer = globalvar.TIMER
-            elif result == globalvar.ORDER_SIDE_BUY:
-                self.exchanges[self.glv.tracker].start_transaction(self.wallet[crypto], globalvar.ORDER_SIDE_BUY)
+            if self.resolver.resolve_buy(self.wallet[code]):
+                self.exchanges[self.glv.tracker].start_transaction(self.wallet[code], globalvar.ORDER_SIDE_BUY)
+                self.glv.timer = globalvar.SELL_TIMER
 
         self.glv.store.save(self.wallet)

@@ -10,7 +10,7 @@ class CryptoPrices:
 
         self.store = Store(self.glv)
         self.resolver = self.glv.get_resolver(globalvar.RESOLVER)
-        self.trackers = [globalvar.EXCHANGES_BITPANDA, globalvar.EXCHANGES_KRAKEN, globalvar.EXCHANGES_ONE_TRADING]
+        self.exchanges = [key for key, exchange in self.glv.exchanges.items() if exchange]
         self.tracker = Tracker(self.glv)
         self.crashes = {
             globalvar.EXCHANGES_BITPANDA: 0,
@@ -18,15 +18,15 @@ class CryptoPrices:
         }
 
     def run_infinitely(self):
-        print(f'Exchanges: {", ".join(self.trackers)}')
+        print(f'Exchanges: {", ".join(self.exchanges)}')
         print(f'Option: {globalvar.RESOLVER}')
-        print(f'Sleep time: {globalvar.TIMER}')
+        print(f'Sleep time: {globalvar.SELL_TIMER}')
         print(f'Start time: {globalvar.start_time}\n--------------------')
 
         while True:
             with open("log.txt", "w") as log:
                 # try:
-                for tracker in self.trackers:
+                for tracker in self.exchanges:
                     self.glv.tracker = tracker
                     self.tracker.track()
                     self.store.save(self.tracker.wallet)

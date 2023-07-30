@@ -1,6 +1,7 @@
 import asyncio
 
 import globalvar
+from Bitpanda import Bitpanda
 from Fill import Fill
 
 
@@ -9,7 +10,7 @@ class BitpandaTracker:
         self.glv = glv
         self.glv.tracker = globalvar.EXCHANGES_BITPANDA
         self.wallet = {}
-        self.exchange = self.glv.get_exchange(globalvar.EXCHANGES_BITPANDA)
+        self.exchange = Bitpanda(self)
         self.fill = Fill(self.glv)
         self.resolver = self.glv.get_resolver(globalvar.RESOLVER_STEPS)
         self.balance_euro = 0
@@ -30,7 +31,7 @@ class BitpandaTracker:
                 self.exchange.start_transaction(self.wallet[crypto], globalvar.ORDER_SIDE_SELL)
 
                 self.exchange.start_transaction(self.wallet[crypto], globalvar.ORDER_SIDE_BUY)
-                self.glv.timer = globalvar.TIMER
+                self.glv.timer = globalvar.SELL_TIMER
             elif result == globalvar.ORDER_SIDE_BUY:
                 self.exchange.start_transaction(self.wallet[crypto], globalvar.ORDER_SIDE_BUY)
 

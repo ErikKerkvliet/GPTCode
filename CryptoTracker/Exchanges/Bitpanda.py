@@ -50,34 +50,31 @@ class Bitpanda:
     def ticker(self, crypto_code='ALL', wallet=None) -> dict:
         if wallet is None:
             wallet = {}
-        pair = f'{crypto_code}_EUR' if crypto_code else ''
-        url = f'http://api.onetrading.com/public/v1/market-ticker/{pair}'
+        url = 'http://api.bitpanda.com/v1/ticker'
         response = requests.get(url)
 
         response_data = response.json()
         response.close()
 
         cryptos = {}
-        if isinstance(response_data, list):
-            for crypto in response_data:
-                cryptos[crypto['instrument_code']] = crypto
-        else:
-            cryptos[response_data['instrument_code']] = response_data
+        for code in response_data.keys():
+            if code != globalvar.DEFAULT_CURRENCY:
+                cryptos[code] = response_data[code]
 
         loop = asyncio.get_event_loop()
         response = loop.run_until_complete(self.get_client().get_account_balances())
 
         crypto_data = {}
         for crypto in response['response']['balances']:
-            crypto_data[crypto['currency_code']] = crypto
+            if crypto['currency_code'] != globalvar.DEFAULT_CURRENCY:
+                crypto_data[crypto['currency_code']] = crypto
 
         for code in crypto_data.keys():
-
             if code in self.pairs.keys() \
                     and self.pairs[code]['state'] == 'ACTIVE' \
                     and code in wallet.keys():
                 wallet[code].pair = f'{code}_EUR'
-                wallet[code].set_rate(cryptos[wallet[code].pair]['last_price'])
+                wallet[code].set_rate(cryptos[code][globalvar.DEFAULT_CURRENCY])
                 wallet[code].trade_amount_min = float(self.pairs[code]['min_size'])
 
         return wallet
@@ -97,7 +94,7 @@ class Bitpanda:
 
         # - 0.00036 BTC
         # + 10.02 EUR
-        precision = crypto.instrument['market_precision']
+        precision = crypto.instrument['amount_precision']
 
         if side == globalvar.ORDER_SIDE_BUY:
             amount = crypto.buy_amount_euro / crypto.rate
@@ -164,10 +161,28 @@ class Bitpanda:
             globalvar.BUY_AMOUNT * float(((order_data['crypto'].rate / order_data['crypto'].buy_rate * 100 + 1) / 100))
         amount_euro = f"{float(number):.8f}"
         print(f'Bitpanda {order_data["exchange_type"]}, Pair: {order_data["pair"]}, Amount €: {amount_euro}')
+        return
         #
         # if globalvar.STATE is globalvar.STATE_PRODUCTION:
         #     print('NOOOOO !!!!!!!!!!!!!!!!!!!')
         #     exit()
+
+        # headers = {
+        #     'Content-Type': 'application/json',
+        #     'Accept': 'application/json',
+        #     'Authorization': "Bearer " + keys.KEY_TRADE
+        # }
+        #
+        # data = {
+        #     "instrument_code": "SHIB_EUR",
+        #     "side": "BUY",
+        #     "type": "MARKET",
+        #     "amount": "1984126"
+        # }
+        # data = json.dumps(data)
+        # r = requests.post('https://api.exchange.bitpanda.com/public/v1/account/orders', headers=headers, data=data)
+        #
+        # return r.json()
 
         return await self.get_client().create_market_order(
             order_data['pair'],

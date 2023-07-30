@@ -2,15 +2,13 @@ import subprocess
 import os
 import signal
 import requests
-from Exchanges.Bitpanda import Bitpanda
-from Exchanges.Kraken import Kraken
-from Exchanges.OneTrading import OneTrading
 from datetime import datetime
 
 from Resolvers.Percentages import Percentages
 from Resolvers.Profit import Profit
 from Resolvers.Steps import Steps
 from Store import Store
+
 TEST = True
 
 STATE_DEVELOPMENT = 'development'
@@ -20,7 +18,6 @@ STATE = STATE_DEVELOPMENT
 EXCHANGES_BITPANDA = 'Bitpanda'
 EXCHANGES_KRAKEN = 'Kraken'
 EXCHANGES_ONE_TRADING = 'OneTrading'
-EXCHANGE = EXCHANGES_KRAKEN
 
 RESOLVER_STEPS = 'steps'
 RESOLVER_PERCENTAGES = 'percentages'
@@ -32,12 +29,13 @@ ORDER_SIDE_SELL = 'sell'
 
 DEFAULT_CURRENCY = 'EUR'
 DEFAULT_CRYPTO = 'BTC'
-TIMER = 600
+BUY_TIMER = 10
+SELL_TIMER = 600
 MAX_DROPS = 3
 MIN_UPS = 3
 PROFIT_PERC = 0.01
 LOSS_PERC = 0.01
-MARGIN = 0.994
+MARGIN = 0.99
 BUY_AMOUNT = 15
 SAVE_FILE = '../save'
 SAVE_FILE_TEST = '../save_test'
@@ -52,13 +50,13 @@ class Globalvar:
     def __init__(self):
         self.ip = self.get_ip()
         self.tracker = None
-        self.timer = TIMER
+        self.timer = SELL_TIMER
         self.times = 0
         self.store = Store(self)
         self.exchanges = {
-            EXCHANGES_BITPANDA: Bitpanda(self),
-            EXCHANGES_KRAKEN: Kraken(self),
-            EXCHANGES_ONE_TRADING: OneTrading(self),
+            EXCHANGES_BITPANDA: False,
+            EXCHANGES_KRAKEN: True,
+            EXCHANGES_ONE_TRADING: False,
         }
         self.balance_euro = {
             EXCHANGES_BITPANDA: 0,

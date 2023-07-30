@@ -12,6 +12,7 @@ class CostHandler:
         crypto.amount_euro = globalvar.BUY_AMOUNT
         crypto.buy_amount_euro = globalvar.BUY_AMOUNT
         crypto.buy_rate = crypto.rate
+        crypto.drops = 0
 
     @staticmethod
     def sell(crypto: Crypto):

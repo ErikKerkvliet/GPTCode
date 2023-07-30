@@ -1,5 +1,6 @@
 import globalvar
 from Fill import Fill
+from Kraken import Kraken
 
 
 class KrakenTracker:
@@ -7,7 +8,7 @@ class KrakenTracker:
         self.glv = glv
         self.glv.tracker = globalvar.EXCHANGES_KRAKEN
         self.wallet = {}
-        self.exchange = self.glv.get_exchange(globalvar.EXCHANGES_KRAKEN)
+        self.exchange = Kraken(self.glv)
         self.fill = Fill(self.glv)
         self.resolver = self.glv.get_resolver(globalvar.RESOLVER)
 
@@ -27,6 +28,6 @@ class KrakenTracker:
                 self.exchange.start_transaction(self.wallet[crypto], globalvar.ORDER_SIDE_SELL)
 
                 self.exchange.start_transaction(self.wallet[crypto], globalvar.ORDER_SIDE_BUY)
-                self.glv.timer = globalvar.TIMER
+                self.glv.timer = globalvar.SELL_TIMER
             elif result == globalvar.ORDER_SIDE_BUY:
                 self.exchange.start_transaction(self.wallet[crypto], globalvar.ORDER_SIDE_BUY)

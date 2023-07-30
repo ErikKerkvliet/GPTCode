@@ -19,6 +19,8 @@ class Fill:
             return self.from_kraken_balance(wallet)
         elif self.glv.tracker == globalvar.EXCHANGES_BITPANDA:
             return self.from_bitpanda_balance(wallet)
+        elif self.glv.tracker == globalvar.EXCHANGES_ONE_TRADING:
+            return self.from_one_trading_balance(wallet)
         elif self.glv.ip == globalvar.IP_WORK:
             return self.from_work(wallet)
         elif self.glv.ip == globalvar.IP_HOME:
@@ -50,6 +52,9 @@ class Fill:
                 wallet[crypto['currency_code']].amount = float(crypto['available'])
                 wallet[crypto['currency_code']].buy_amount_euro = globalvar.BUY_AMOUNT
         return wallet
+
+    def from_one_trading_balance(self, wallet) -> dict:
+        pass
 
     def from_kraken_balance(self, wallet) -> dict:
         balances = self.exchange.get_balances()

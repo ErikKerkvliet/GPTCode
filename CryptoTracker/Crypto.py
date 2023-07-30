@@ -16,7 +16,6 @@ class Crypto:
         self.trade_amount_min = 0
 
         # Percentages
-        self.value_drops = 0
         self.available = 0
         self.sells = 0
         self.gain = 0
@@ -29,7 +28,7 @@ class Crypto:
         self.buy_rate = 0
         self.top_rate = 0
         self.last_rate = 0
-        self.value_drops = 0
+        self.drops = 0
 
     def set_rate(self, rate):
         if self.rate is not None:
@@ -57,7 +56,7 @@ class Crypto:
         print(f'buy_rate: {self.buy_rate}')
         print(f'sell_rate: {self.rate}')
         print(f'top_rate: {self.top_rate}')
-        print(f'value_drops: {self.value_drops}')
+        print(f'value_drops: {self.drops}')
         print(f'available: {float(self.available):.15f}')
         print(f'profit: {float(self.profit):.15f}')
         print('--------------------------------')

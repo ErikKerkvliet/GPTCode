@@ -73,7 +73,7 @@ class Kraken:
     def get_instrument(self):
         return
 
-    def get_balances(self):
+    def get_balances(self) -> dict:
         with self.get_user() as user:
             balances = user.get_balances()
 
