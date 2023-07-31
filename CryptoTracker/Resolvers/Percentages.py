@@ -5,7 +5,8 @@ class Percentages:
     def __init__(self, glv):
         self.glv = glv
 
-    def resolve(self, wallet, code):
+    @staticmethod
+    def resolve(wallet, code):
         buy_diff_perc = ((wallet[code].rate - wallet[code].buy_rate) / wallet[code].buy_rate)
         top_diff_perc = ((wallet[code].rate - wallet[code].top_rate) / wallet[code].top_rate)
         last_diff_perc = ((wallet[code].rate - wallet[code].last_rate) / wallet[code].last_rate)

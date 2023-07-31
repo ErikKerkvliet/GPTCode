@@ -24,12 +24,6 @@ class Crypto:
         self.position = 0
         self.drops = 0
 
-    def reset(self):
-        self.buy_rate = 0
-        self.top_rate = 0
-        self.last_rate = 0
-        self.drops = 0
-
     def set_rate(self, rate):
         if self.rate is not None:
             self.last_rate = self.rate
@@ -42,14 +36,6 @@ class Crypto:
 
         self.amount_euro = self.amount / self.rate
         self.top_rate = self.rate if self.rate > self.top_rate else self.top_rate
-
-    def up(self, response):
-        self.amount_euro = response['amount_euro']
-        self.buy_rate = response['rate']
-        self.top_rate = self.buy_rate
-        self.last_rate = self.buy_rate
-        self.amount = float(response['amount'])
-        self.available += float(response['amount'])
 
     def print_variables(self):
         print(f'code: {self.code}')

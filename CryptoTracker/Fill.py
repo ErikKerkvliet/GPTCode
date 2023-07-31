@@ -24,7 +24,7 @@ class Fill:
         elif self.glv.tracker == globalvar.EXCHANGES_ONE_TRADING:
             return self.from_one_trading_balance(wallet)
         elif self.glv.ip == globalvar.IP_WORK:
-            return self.from_work(wallet)
+            return self.from_work()
         elif self.glv.ip == globalvar.IP_HOME:
             if self.glv.tracker == globalvar.EXCHANGES_BITPANDA:
                 return self.from_bitpanda_balance(wallet)
@@ -89,7 +89,8 @@ class Fill:
             wallet[crypto['code']].amount_euro = crypto['amount_€']
         return wallet
 
-    def from_work(self, wallet) -> dict:
+    @staticmethod
+    def from_work() -> dict:
         wallet = {'BTC': Crypto('BTC')}
         wallet['BTC'].rate = None
         wallet['BTC'].top_rate = None

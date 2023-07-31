@@ -18,7 +18,7 @@ class KrakenTracker:
 
         self.glv.tracker = globalvar.EXCHANGES_KRAKEN
         if self.glv.times % 25 == 0:
-            self.wallet = self.fill.fill_wallet(self.wallet)
+            self.wallet = self.fill.fill_wallet(self.wallet, self.exchange)
             self.exchange.pairs = self.exchange.asset_pairs()
 
         self.wallet = self.exchange.ticker(None, self.wallet)
