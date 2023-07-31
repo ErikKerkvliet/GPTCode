@@ -41,7 +41,7 @@ class Kraken:
         if crypto.code == 'BTC':
             return
 
-        crypto.pair = f'{crypto.code}/EUR'
+        crypto.pair = f'{crypto.code}/{globalvar.DEFAULT_CURRENCY}'
         if side == globalvar.ORDER_SIDE_BUY:
             amount = crypto.buy_amount_euro / crypto.rate
             side = globalvar.ORDER_SIDE_BUY
@@ -49,16 +49,18 @@ class Kraken:
             amount = crypto.amount
             side = globalvar.ORDER_SIDE_SELL
 
+        precision = self.pairs[f'{crypto.code}{globalvar.DEFAULT_CURRENCY}']['cost_decimals']
+
         order_data = {
             'ordertype': 'market',
             'side': side,
             'pair': crypto.pair,
-            'amount': amount,
+            'amount': float(f'{float(amount):.{precision}f}'),
             'crypto': crypto,
             'validate': True,  # Test variable
         }
 
-        if globalvar.TEST:
+        if not globalvar.TEST:
             order_data['validate'] = False
 
         response = self.create_order(order_data)
@@ -137,8 +139,8 @@ class Kraken:
         return wallet
 
     def create_order(self, order_data):
-        print(f'{self.glv.tracker} {order_data["side"]} | {order_data["crypto"].pair}: {order_data["amount"]}')
-        print(order_data, order_data['crypto'].instrument)
+        # print(f'{self.glv.tracker} {order_data["side"]} | {order_data["crypto"].pair}: {order_data["amount"]}')
+        # print(order_data, order_data['crypto'].instrument)
         # return
         return self.get_client().create_order(
             ordertype=order_data['ordertype'],

@@ -27,7 +27,6 @@ class Bitpanda:
         self.instruments = {}
         self.response = {}
         self.cost_handler = CostHandler()
-        self.pairs = self.asset_pairs()
 
     def get_client(self):
         if self.client is not None:
@@ -160,7 +159,7 @@ class Bitpanda:
         number = (order_data['crypto'].amount / order_data['crypto'].rate) if order_data["exchange_type"] == 'SELL' else \
             globalvar.BUY_AMOUNT * float(((order_data['crypto'].rate / order_data['crypto'].buy_rate * 100 + 1) / 100))
         amount_euro = f"{float(number):.8f}"
-        print(f'Bitpanda {order_data["exchange_type"]}, Pair: {order_data["pair"]}, Amount €: {amount_euro}')
+        print(f'Bitpanda {order_data["exchange_type"]}, Pair: {order_data["pair"]}, Amount: {order_data["amount"]}, Amount €: {amount_euro}')
         return
         #
         # if globalvar.STATE is globalvar.STATE_PRODUCTION:

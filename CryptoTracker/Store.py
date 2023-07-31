@@ -37,7 +37,7 @@ class Store:
                     'top_rate': wallet[crypto].top_rate,
                     'buy_rate': wallet[crypto].buy_rate,
                     'amount': wallet[crypto].amount,
-                    'amount_€': amount,
+                    'amount_€': wallet[crypto].amount_euro,
                     'position': wallet[crypto].position,
                     'drops': wallet[crypto].drops,
                     'difference': difference,

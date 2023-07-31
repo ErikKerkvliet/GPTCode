@@ -11,7 +11,9 @@ class Fill:
         self.exchange = None
 
     def fill_wallet(self, wallet, exchange) -> dict:
-        # self.from_file(wallet)
+        if not wallet:
+            self.from_file(wallet)
+
         self.exchange = exchange
         if not globalvar.TEST:
             return self.from_test(wallet)
@@ -44,13 +46,13 @@ class Fill:
 
             if crypto['currency_code'] not in wallet.keys():
                 wallet[crypto['currency_code']] = Crypto(crypto['currency_code'])
-                wallet[crypto['currency_code']].instrument = instruments[crypto['currency_code']]
-                wallet[crypto['currency_code']].pair = Pair(crypto["currency_code"], globalvar.DEFAULT_CURRENCY)
-                wallet[crypto['currency_code']].rate = None
-                wallet[crypto['currency_code']].top_rate = None
-                wallet[crypto['currency_code']].last_rate = None
-                wallet[crypto['currency_code']].amount = float(crypto['available'])
-                wallet[crypto['currency_code']].buy_amount_euro = globalvar.BUY_AMOUNT
+            wallet[crypto['currency_code']].instrument = instruments[crypto['currency_code']]
+            wallet[crypto['currency_code']].pair = Pair(crypto["currency_code"], globalvar.DEFAULT_CURRENCY)
+            wallet[crypto['currency_code']].rate = None
+            wallet[crypto['currency_code']].top_rate = None
+            wallet[crypto['currency_code']].last_rate = None
+            wallet[crypto['currency_code']].amount = float(crypto['available'])
+            wallet[crypto['currency_code']].buy_amount_euro = globalvar.BUY_AMOUNT
         return wallet
 
     def from_one_trading_balance(self, wallet) -> dict:
@@ -72,17 +74,18 @@ class Fill:
         return wallet
 
     def from_file(self, wallet) -> dict:
-        with open(globalvar.SAVE_FILE, 'r') as file:
+        save_file = f'{globalvar.SAVE_FILE}_{self.glv.tracker}'
+        with open(save_file, 'r') as file:
             data = json.load(file)
             file.close()
 
+        del data[0]
         for crypto in data:
             wallet[crypto['code']] = Crypto(crypto['code'])
-            wallet[crypto['code']].available = crypto['available']
-            wallet[crypto['code']].buy_rate = crypto['buy_rate']
             wallet[crypto['code']].amount = crypto['amount']
-            wallet[crypto['code']].profit = crypto['profit']
-            wallet[crypto['code']].available = crypto['available']
+            wallet[crypto['code']].buy_rate = crypto['buy_rate']
+            wallet[crypto['code']].top_rate = crypto['top_rate']
+            wallet[crypto['code']].last_rate = crypto['last_rate']
             wallet[crypto['code']].amount_euro = crypto['amount_€']
         return wallet
 
