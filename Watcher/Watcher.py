@@ -1,5 +1,4 @@
 import json
-import time
 import tkinter as tk
 from time import sleep
 import glv

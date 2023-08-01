@@ -40,6 +40,9 @@ class CryptoPrices:
                 #     traceback.print_tb(e.__traceback__)
                 #     continue
                 self.glv.times += 1
+
+                if self.glv.times % 25 == 0:
+                    self.tracker.exchanges[globalvar.EXCHANGES_BITPANDA].close_client()
                 sleep(self.glv.timer)
 
 

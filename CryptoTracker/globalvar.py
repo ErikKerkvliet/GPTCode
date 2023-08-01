@@ -54,7 +54,7 @@ class Globalvar:
         self.times = 0
         self.store = Store(self)
         self.exchanges = {
-            EXCHANGES_BITPANDA: False,
+            EXCHANGES_BITPANDA: True,
             EXCHANGES_KRAKEN: True,
             EXCHANGES_ONE_TRADING: False,
         }
@@ -62,6 +62,11 @@ class Globalvar:
             EXCHANGES_BITPANDA: 0,
             EXCHANGES_KRAKEN: 0,
             EXCHANGES_ONE_TRADING: 0,
+        }
+        self.wallets = {
+            EXCHANGES_BITPANDA: {},
+            EXCHANGES_KRAKEN: {},
+            EXCHANGES_ONE_TRADING: {},
         }
         self.resolvers = {
             RESOLVER_PERCENTAGES: Percentages(self),

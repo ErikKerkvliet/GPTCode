@@ -11,66 +11,37 @@ class Fill:
         self.exchange = None
 
     def fill_wallet(self, wallet, exchange) -> dict:
-        if not wallet:
-            self.from_file(wallet)
-
         self.exchange = exchange
-        if not globalvar.TEST:
-            return self.from_test(wallet)
-        elif self.glv.tracker == globalvar.EXCHANGES_KRAKEN:
+
+        if self.glv.tracker == globalvar.EXCHANGES_KRAKEN:
             return self.from_kraken_balance(wallet)
         elif self.glv.tracker == globalvar.EXCHANGES_BITPANDA:
             return self.from_bitpanda_balance(wallet)
         elif self.glv.tracker == globalvar.EXCHANGES_ONE_TRADING:
             return self.from_one_trading_balance(wallet)
-        elif self.glv.ip == globalvar.IP_WORK:
-            return self.from_work()
-        elif self.glv.ip == globalvar.IP_HOME:
-            if self.glv.tracker == globalvar.EXCHANGES_BITPANDA:
-                return self.from_bitpanda_balance(wallet)
-            elif self.glv.tracker == globalvar.EXCHANGES_KRAKEN:
-                return self.from_kraken_balance(wallet)
+        return self.from_file(wallet)
 
     def from_bitpanda_balance(self, wallet) -> dict:
-        instruments = self.exchange.asset_pairs()
-        loop = asyncio.get_event_loop()
-        response = loop.run_until_complete(self.exchange.get_balances())
-
-        for crypto in response:
-            if crypto['currency_code'] == globalvar.DEFAULT_CURRENCY:
-                self.glv.balance_euro[self.glv.tracker] = float(crypto['available'])
+        wallet = self.exchange.get_balances(wallet=wallet)
+        for code in wallet:
+            if wallet[code].code == globalvar.DEFAULT_CURRENCY:
+                self.glv.balance_euro[self.glv.tracker] = wallet[code].balance
                 continue
-
-            if instruments[crypto['currency_code']]['state'] != 'ACTIVE':
-                continue
-
-            if crypto['currency_code'] not in wallet.keys():
-                wallet[crypto['currency_code']] = Crypto(crypto['currency_code'])
-            wallet[crypto['currency_code']].instrument = instruments[crypto['currency_code']]
-            wallet[crypto['currency_code']].pair = Pair(crypto["currency_code"], globalvar.DEFAULT_CURRENCY)
-            wallet[crypto['currency_code']].rate = None
-            wallet[crypto['currency_code']].top_rate = None
-            wallet[crypto['currency_code']].last_rate = None
-            wallet[crypto['currency_code']].amount = float(crypto['available'])
-            wallet[crypto['currency_code']].buy_amount_euro = globalvar.BUY_AMOUNT
+            wallet[code].amount = wallet[code].balance
+            wallet[code].buy_amount_euro = globalvar.BUY_AMOUNT
         return wallet
 
     def from_one_trading_balance(self, wallet) -> dict:
         pass
 
-    def from_kraken_balance(self, wallet) -> dict:
-        balances = self.exchange.get_balances()
-        for full_code in balances.keys():
-            code = f'{full_code}Z' if full_code[0:2] == 'XX' or full_code[0:2] == 'XE' else full_code
-            if full_code not in wallet.keys():
-                wallet[code] = Crypto(code)
-                wallet[code].rate = None
-                wallet[code].top_rate = None
-                wallet[code].last_rate = None
-                wallet[code].buy_amount_euro = globalvar.BUY_AMOUNT
-            wallet[code].amount = float(balances[full_code])
-
-        self.glv.balance_euro[self.glv.tracker] = self.exchange.get_balance_euro()
+    def from_kraken_balance(self, wallet: dict) -> dict:
+        wallet = self.exchange.get_balances(wallet=wallet)
+        for code in wallet:
+            if wallet[code].code == f'Z{globalvar.DEFAULT_CURRENCY}':
+                self.glv.balance_euro[self.glv.tracker] = wallet[code].balance
+                continue
+            wallet[code].buy_amount_euro = globalvar.BUY_AMOUNT
+            wallet[code].amount = wallet[code].balance
         return wallet
 
     def from_file(self, wallet) -> dict:
@@ -81,12 +52,10 @@ class Fill:
 
         del data[0]
         for crypto in data:
-            wallet[crypto['code']] = Crypto(crypto['code'])
-            wallet[crypto['code']].amount = crypto['amount']
-            wallet[crypto['code']].buy_rate = crypto['buy_rate']
-            wallet[crypto['code']].top_rate = crypto['top_rate']
-            wallet[crypto['code']].last_rate = crypto['last_rate']
-            wallet[crypto['code']].amount_euro = crypto['amount_€']
+            if crypto['code'] in wallet.keys():
+                wallet[crypto['code']].buy_rate = crypto['buy_rate']
+                wallet[crypto['code']].top_rate = crypto['top_rate']
+                wallet[crypto['code']].last_rate = crypto['last_rate']
         return wallet
 
     @staticmethod

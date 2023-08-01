@@ -17,7 +17,11 @@ class Store:
             'balance_euro': self.glv.balance_euro[self.glv.tracker]
         }
         for crypto in wallet.keys():
+            if wallet[crypto].rate is None:
+                return False
             if globalvar.RESOLVER == globalvar.RESOLVER_STEPS:
+                if crypto == globalvar.DEFAULT_CURRENCY or crypto == f'Z{globalvar.DEFAULT_CURRENCY}':
+                    continue
                 difference = wallet[crypto].rate - wallet[crypto].buy_rate
 
                 difference = f'{difference:.8f}'

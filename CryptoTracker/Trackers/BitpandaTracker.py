@@ -20,7 +20,7 @@ class BitpandaTracker:
         self.glv.tracker = globalvar.EXCHANGES_BITPANDA
         if self.glv.times % 25 == 0:
             self.wallet = self.fill.fill_wallet(self.wallet, self.exchange)
-            self.exchange.pairs = self.exchange.asset_pairs()
+            self.exchange.pairs = self.exchange.asset_pairs(wallet=self.wallet)
 
         self.wallet = self.exchange.ticker()
         for crypto in self.wallet.keys():

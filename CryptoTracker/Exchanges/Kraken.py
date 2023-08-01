@@ -5,6 +5,7 @@ import globalvar
 import requests
 
 from CostHandler import CostHandler
+from Crypto import Crypto
 from packages.kraken.spot import Trade
 from packages.kraken.spot import User
 
@@ -15,7 +16,6 @@ class Kraken:
         self.client = None
         self.user = None
         self.times = 0
-        self.pairs = self.asset_pairs()
         self.cost_handler = CostHandler()
 
     def get_user(self) -> User:
@@ -30,17 +30,7 @@ class Kraken:
         self.client = Trade(key=keys.KEY_KRAKEN_API, secret=keys.KEY_KRAKEN_PRIVATE)
         return self.client
 
-    def close_client(self):
-        if not self.client:
-            return
-
-        self.client.close()
-        self.client = None
-
     def start_transaction(self, crypto, side):
-        if crypto.code == 'BTC':
-            return
-
         crypto.pair = f'{crypto.code}/{globalvar.DEFAULT_CURRENCY}'
         if side == globalvar.ORDER_SIDE_BUY:
             amount = crypto.buy_amount_euro / crypto.rate
@@ -49,19 +39,15 @@ class Kraken:
             amount = crypto.amount
             side = globalvar.ORDER_SIDE_SELL
 
-        precision = self.pairs[f'{crypto.code}{globalvar.DEFAULT_CURRENCY}']['cost_decimals']
-
+        precision = int(crypto.asset['decimals'])
         order_data = {
             'ordertype': 'market',
             'side': side,
             'pair': crypto.pair,
             'amount': float(f'{float(amount):.{precision}f}'),
             'crypto': crypto,
-            'validate': True,  # Test variable
+            'validate': False,  # Test variable
         }
-
-        if not globalvar.TEST:
-            order_data['validate'] = False
 
         response = self.create_order(order_data)
 
@@ -72,29 +58,19 @@ class Kraken:
         else:
             self.cost_handler.sell(crypto)
 
-    def get_instrument(self):
-        return
-
-    def get_balances(self) -> dict:
+    def get_balances(self, wallet: dict) -> dict:
         with self.get_user() as user:
             balances = user.get_balances()
 
-        cryptos = {}
         for key in balances.keys():
-            if key == 'ZEUR':
-                continue
-            cryptos[key] = balances[key]['balance']
-        return cryptos
+            if key not in wallet.keys():
+                wallet[key] = Crypto(key)
+            wallet[key].balance = float(balances[key]['balance'])
+        return wallet
 
-    def get_balance_euro(self) -> float:
-        with self.get_user() as user:
-            euro_balance = user.get_balance('EUR')['available_balance']
-        return float(euro_balance)
+    def assets(self, wallet: dict):
+        url = f'https://api.kraken.com/0/public/Assets'
 
-    def asset_pairs(self, crypto_code=None):
-        url = f'https://api.kraken.com/0/public/AssetPairs'
-        if crypto_code:
-            url += f'?pair={crypto_code}EUR'
         response = requests.get(url)
 
         response_data = response.json()
@@ -102,22 +78,44 @@ class Kraken:
 
         if response_data['error'] and self.times < 3:
             sleep(5)
-            self.asset_pairs()
+            self.assets(wallet)
         self.times = 0
 
-        crypto_data = response_data['result']
-        cryptos = {}
-        for code in crypto_data.keys():
-            if code[-3:] == 'EUR' and crypto_data[code]['status'] == 'online':
-                cryptos[code] = crypto_data[code]
-        return cryptos
+        codes = wallet.keys() if wallet != {} else response_data['result'].keys()
+        for code in codes:
+            currency_code = response_data['result'][code]['altname']
+            if currency_code in wallet.keys():
+                if response_data['result'][code]['status'] != 'enabled':
+                    del wallet[currency_code]
+                    continue
+                wallet[currency_code].asset = response_data['result'][code]
+        return self.pairs(wallet=wallet)
 
-    def ticker(self, crypto_code=None, wallet=None) -> dict:
-        if wallet is None:
-            wallet = {}
+    def pairs(self, wallet: dict):
+        url = f'https://api.kraken.com/0/public/AssetPairs'
+        response = requests.get(url)
+
+        response_data = response.json()
+        response.close()
+
+        if response_data['error'] and self.times < 3:
+            sleep(5)
+            self.pairs(wallet=wallet)
+        self.times = 0
+
+        pairs_data = response_data['result']
+        for code in pairs_data.keys():
+            currency_code = pairs_data[code]['base']
+            if currency_code in wallet.keys() and pairs_data[code]['quote'] == 'ZEUR':
+                if pairs_data[code]['status'] != 'online':
+                    del wallet[currency_code]
+                    continue
+                wallet[currency_code].pair = pairs_data[code]
+                wallet[currency_code].trade_amount_min = float(pairs_data[code]['ordermin'])
+        return wallet
+
+    def ticker(self, wallet=None) -> dict:
         url = f'https://api.kraken.com/0/public/Ticker'
-        if crypto_code:
-            url += f'?pair={crypto_code}EUR'
         response = requests.get(url)
 
         response_data = response.json()
@@ -125,23 +123,23 @@ class Kraken:
         if response_data['error'] and self.times < 3:
             self.times += 1
             sleep(5)
-            self.ticker(crypto_code, wallet)
+            self.ticker(wallet)
         self.times = 0
 
         crypto_data = response_data['result']
-        for code in crypto_data.keys():
-            if code[-3:] == 'EUR' and code in self.pairs.keys() and self.pairs[code]['status'] == 'online':
-                currency_code = code.replace('EUR', '')
-                if currency_code in wallet.keys():
-                    wallet[currency_code].set_rate(crypto_data[code]['c'][0])
-                    wallet[currency_code].pair = self.pairs[code]['wsname']
-                    wallet[currency_code].trade_amount_min = float(self.pairs[code]['ordermin'])
+        for code in wallet.keys():
+            currency_code = f'{code}{globalvar.DEFAULT_CURRENCY}'
+            if wallet[code] == crypto_data.keys():
+                wallet[code].set_rate(crypto_data[currency_code]['c'][0])
         return wallet
 
     def create_order(self, order_data):
-        # print(f'{self.glv.tracker} {order_data["side"]} | {order_data["crypto"].pair}: {order_data["amount"]}')
-        # print(order_data, order_data['crypto'].instrument)
-        # return
+        print(f'{self.glv.tracker} {order_data["side"]} | {order_data["amount"]}')
+        print(order_data, order_data['crypto'].instrument)
+
+        if globalvar.TEST:
+            order_data['validate'] = True
+
         return self.get_client().create_order(
             ordertype=order_data['ordertype'],
             side=order_data['side'],

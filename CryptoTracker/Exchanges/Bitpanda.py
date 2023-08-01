@@ -5,6 +5,7 @@ from time import sleep
 
 import globalvar
 from CostHandler import CostHandler
+from Crypto import Crypto
 
 from packages.bitpanda.BitpandaClient import BitpandaClient
 from packages.bitpanda.enums import OrderSide
@@ -24,7 +25,6 @@ class Bitpanda:
         self.client = None
         tracemalloc.start()
         self.times = 0
-        self.instruments = {}
         self.response = {}
         self.cost_handler = CostHandler()
 
@@ -46,54 +46,32 @@ class Bitpanda:
         loop.run_until_complete(self.client.close())
         self.client = None
 
-    def ticker(self, crypto_code='ALL', wallet=None) -> dict:
-        if wallet is None:
-            wallet = {}
+    def ticker(self, wallet: dict) -> dict:
         url = 'http://api.bitpanda.com/v1/ticker'
         response = requests.get(url)
 
         response_data = response.json()
         response.close()
 
-        cryptos = {}
         for code in response_data.keys():
-            if code != globalvar.DEFAULT_CURRENCY:
-                cryptos[code] = response_data[code]
-
-        loop = asyncio.get_event_loop()
-        response = loop.run_until_complete(self.get_client().get_account_balances())
-
-        crypto_data = {}
-        for crypto in response['response']['balances']:
-            if crypto['currency_code'] != globalvar.DEFAULT_CURRENCY:
-                crypto_data[crypto['currency_code']] = crypto
-
-        for code in crypto_data.keys():
-            if code in self.pairs.keys() \
-                    and self.pairs[code]['state'] == 'ACTIVE' \
-                    and code in wallet.keys():
-                wallet[code].pair = f'{code}_EUR'
-                wallet[code].set_rate(cryptos[code][globalvar.DEFAULT_CURRENCY])
-                wallet[code].trade_amount_min = float(self.pairs[code]['min_size'])
-
+            if code in wallet.keys():
+                wallet[code].set_rate(response_data[code][globalvar.DEFAULT_CURRENCY])
         return wallet
 
-    async def get_balances(self, coin='all'):
-        response = await self.get_client().get_account_balances()
+    def get_balances(self, wallet: dict):
+        loop = asyncio.get_event_loop()
+        response = loop.run_until_complete(self.get_client().get_account_balances())
+        balances = response['response']['balances']
 
-        if coin == 'all':
-            return response['response']['balances']
-        return response['response']['balances'][coin]
+        for balance in balances:
+            code = balance['currency_code']
+            if code not in wallet.keys():
+                wallet[code] = Crypto(code)
+            wallet[code].balance = float(balance['available'])
+        return wallet
 
     def start_transaction(self, crypto, side):
-        if crypto.code == 'BTC':
-            return
-
-        pair = Pair(crypto.code, globalvar.DEFAULT_CURRENCY)
-
-        # - 0.00036 BTC
-        # + 10.02 EUR
-        precision = crypto.instrument['amount_precision']
+        precision = crypto.pair['pair_decimals']
 
         if side == globalvar.ORDER_SIDE_BUY:
             amount = crypto.buy_amount_euro / crypto.rate
@@ -106,47 +84,40 @@ class Bitpanda:
         order_data = {
             'pair': f'{crypto.code}_{globalvar.DEFAULT_CURRENCY}',
             'exchange_type': side,
-            'amount': float(f'{float(amount):.{precision}f}'),
+            'amount': f'{float(amount):.{precision}f}',
             'crypto': crypto,
         }
 
-        loop = asyncio.get_event_loop()
-        response = loop.run_until_complete(self.create_order(order_data))
-
-        # self.client.close()
+        response = self.create_order(order_data)
 
         print(response)
+
         if side == OrderSide.BUY:
             self.cost_handler.buy(crypto)
         else:
             self.cost_handler.sell(crypto)
 
-    def asset_pairs(self, code='ALL'):
-        if self.instruments:
-            if code and code != 'ALL':
-                return self.instruments[code]
-            else:
-                return self.instruments
-
+    def assets(self, wallet: dict) -> dict:
         loop = asyncio.get_event_loop()
         response = loop.run_until_complete(self.get_client().get_instruments())
+        response_data = response['response']
+        for asset in response_data:
+            code = asset['base']['code']
+            if code in wallet.keys():
+                wallet[code].asset = asset
+                wallet[code].trade_amount_min = float(asset['min_size'])
+        return self.pairs(wallet)
 
+    def pairs(self, wallet: dict) -> dict:
+        loop = asyncio.get_event_loop()
+        response = loop.run_until_complete(self.get_client().get_instruments())
+        response_data = response['response']
         # self.client.close()
 
-        for instrument in response['response']:
-            self.instruments[instrument['base']['code']] = {
-                'state': instrument['state'],
-                'code': instrument['base']['code'],
-                'precision': int(instrument['base']['precision']),
-                'amount_precision': int(instrument['amount_precision']),
-                'market_precision': int(instrument['market_precision']),
-                'min_size': float(instrument['min_size']),
-            }
-        # print(sorted(list(self.instruments)))
-
-        if code == 'ALL':
-            return self.instruments
-        return self.instruments[code]
+        for pair in response_data:
+            if pair['base']['code'] in wallet.keys() and pair['state'] == 'ACTIVE':
+                wallet[pair['base']['code']].pair = wallet
+        return wallet
 
     # UNI , EURO Koop 2 UNI voor ? EURO
     # side = OrderSide('BUY')
@@ -155,40 +126,18 @@ class Bitpanda:
     # print(json.dumps(response['response']))
     # UNI , EUR sell 2 UNI voor ? EURO
     # await client.close()
-    async def create_order(self, order_data) -> dict:
+    def create_order(self, order_data) -> dict:
         number = (order_data['crypto'].amount / order_data['crypto'].rate) if order_data["exchange_type"] == 'SELL' else \
             globalvar.BUY_AMOUNT * float(((order_data['crypto'].rate / order_data['crypto'].buy_rate * 100 + 1) / 100))
         amount_euro = f"{float(number):.8f}"
         print(f'Bitpanda {order_data["exchange_type"]}, Pair: {order_data["pair"]}, Amount: {order_data["amount"]}, Amount €: {amount_euro}')
-        return
-        #
-        # if globalvar.STATE is globalvar.STATE_PRODUCTION:
-        #     print('NOOOOO !!!!!!!!!!!!!!!!!!!')
-        #     exit()
 
-        # headers = {
-        #     'Content-Type': 'application/json',
-        #     'Accept': 'application/json',
-        #     'Authorization': "Bearer " + keys.KEY_TRADE
-        # }
-        #
-        # data = {
-        #     "instrument_code": "SHIB_EUR",
-        #     "side": "BUY",
-        #     "type": "MARKET",
-        #     "amount": "1984126"
-        # }
-        # data = json.dumps(data)
-        # r = requests.post('https://api.exchange.bitpanda.com/public/v1/account/orders', headers=headers, data=data)
-        #
-        # return r.json()
+        if globalvar.TEST:
+            return {}
 
-        return await self.get_client().create_market_order(
+        loop = asyncio.get_event_loop()
+        return loop.run_until_complete(self.get_client().create_market_order(
             order_data['pair'],
             order_data['exchange_type'],
             order_data['amount']
-        )
-
-    @staticmethod
-    def get_balance_euro() -> float:
-        return 0.0
+        ))

@@ -16,15 +16,11 @@ class OneTrading:
         self.glv = glv
         self.instruments = {}
         self.times = 0
-        self.pairs = self.asset_pairs()
         self.cost_handler = CostHandler()
 
-    def asset_pairs(self, crypto_code=None) -> dict:
+    def assets(self, wallet: dict) -> dict:
         if self.instruments:
-            if crypto_code and crypto_code != 'ALL':
-                return self.instruments[crypto_code]
-            else:
-                return self.instruments
+            return self.instruments
 
         url = f'http://api.onetrading.com/public/v1/instruments'
         response = requests.get(url).json()
@@ -39,13 +35,10 @@ class OneTrading:
                 'min_size': float(instrument['min_size']),
             }
 
-        if crypto_code is None:
-            return self.instruments
-        return self.instruments[crypto_code]
+        return self.instruments
 
-    def ticker(self, crypto_code=None, wallet=None) -> dict:
-        pair = f'{crypto_code}_EUR' if crypto_code else ''
-        url = f'http://api.onetrading.com/public/v1/market-ticker/{pair}'
+    def ticker(self, wallet: dict) -> dict:
+        url = 'http://api.onetrading.com/public/v1/market-ticker/'
         response = requests.get(url)
         return {}
 
@@ -53,7 +46,7 @@ class OneTrading:
         print('start_transaction')
         pass
 
-    def get_balances(self, crypto_code=None, wallet=None) -> dict:
+    def get_balances(self, wallet: dict) -> dict:
         if wallet is None:
             wallet = {}
 
@@ -72,11 +65,4 @@ class OneTrading:
                 continue
             wallet[balance['currency_code']] = balance['available']
 
-        if crypto_code is None:
-            return wallet
-
-        return wallet[crypto_code]
-
-    @staticmethod
-    def get_balance_euro() -> float:
-        return 0.0
+        return wallet

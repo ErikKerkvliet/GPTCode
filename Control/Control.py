@@ -87,8 +87,6 @@ class Control:
         pyautogui.moveTo(720, 833, duration=0.6)
         pyautogui.click(720, 833)
 
-
-
     def login(self):
         pyautogui.click(200, 120)
         pyautogui.hotkey('ctrl', 'a')

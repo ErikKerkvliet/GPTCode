@@ -8,8 +8,6 @@ class Steps:
     def resolve_sell(self, crypto) -> bool:
         if crypto.amount == 0 or crypto.last_rate is None or crypto.rate == crypto.last_rate:
             return False
-        if globalvar.TEST:
-            return True
         profit = crypto.rate > crypto.last_rate
         if profit:
             if crypto.position < 0:

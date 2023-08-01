@@ -8,7 +8,7 @@ from OneTrading import OneTrading
 class Tracker:
     def __init__(self, glv):
         self.glv = glv
-        self.wallet = {}
+        self.wallet = None
         self.fill = Fill(self.glv)
         self.resolver = self.glv.get_resolver(globalvar.RESOLVER)
         self.balance_euro = 0
@@ -24,10 +24,10 @@ class Tracker:
             print(f'{self.glv.tracker.capitalize()} - times: {self.glv.times}')
 
         if self.glv.times % 25 == 0:
-            self.wallet = self.fill.fill_wallet(self.wallet, self.exchanges[self.glv.tracker])
-            self.exchanges[self.glv.tracker].pairs = self.exchanges[self.glv.tracker].asset_pairs()
+            self.wallet = self.fill.fill_wallet({}, self.exchanges[self.glv.tracker])
+            self.wallet = self.exchanges[self.glv.tracker].assets(self.wallet)
 
-        self.wallet = self.exchanges[self.glv.tracker].ticker(None, self.wallet)
+        self.wallet = self.exchanges[self.glv.tracker].ticker(self.wallet)
         for code in self.wallet.keys():
             if self.resolver.resolve_sell(self.wallet[code]):
                 self.exchanges[self.glv.tracker].start_transaction(self.wallet[code], globalvar.ORDER_SIDE_SELL)
