@@ -26,10 +26,10 @@ class Fill:
         for code in wallet:
             if wallet[code].code == globalvar.DEFAULT_CURRENCY:
                 self.glv.balance_euro[self.glv.tracker] = wallet[code].balance
+                wallet[code] = None
                 continue
-            wallet[code].amount = wallet[code].balance
             wallet[code].buy_amount_euro = globalvar.BUY_AMOUNT
-        return wallet
+        return {key: value for key, value in wallet.items() if value is not None}
 
     def from_one_trading_balance(self, wallet) -> dict:
         pass
@@ -37,12 +37,12 @@ class Fill:
     def from_kraken_balance(self, wallet: dict) -> dict:
         wallet = self.exchange.get_balances(wallet=wallet)
         for code in wallet:
-            if wallet[code].code == f'Z{globalvar.DEFAULT_CURRENCY}':
+            if wallet[code].code[:1] == 'Z':
                 self.glv.balance_euro[self.glv.tracker] = wallet[code].balance
+                wallet[code] = None
                 continue
             wallet[code].buy_amount_euro = globalvar.BUY_AMOUNT
-            wallet[code].amount = wallet[code].balance
-        return wallet
+        return {key: value for key, value in wallet.items() if value is not None}
 
     def from_file(self, wallet) -> dict:
         save_file = f'{globalvar.SAVE_FILE}_{self.glv.tracker}'
@@ -64,13 +64,13 @@ class Fill:
         wallet['BTC'].rate = None
         wallet['BTC'].top_rate = None
         wallet['BTC'].last_rate = None
-        wallet['BTC'].amount += 0.0003
+        wallet['BTC'].balance += 0.0003
 
         wallet['SHIB'] = Crypto('SHIB')
         wallet['SHIB'].rate = None
         wallet['SHIB'].top_rate = None
         wallet['SHIB'].last_rate = None
-        wallet['SHIB'].amount += 0.0004
+        wallet['SHIB'].balance += 0.0004
         return wallet
 
     def from_test(self, wallet) -> dict:
@@ -80,6 +80,6 @@ class Fill:
                 amount = float(response[crypto])
                 wallet[crypto] = Crypto(crypto)
                 wallet[crypto].instrument = {'min_size': 0, 'amount_precision': 5}
-                wallet[crypto].amount = amount * 15
+                wallet[crypto].balance = amount * 15
                 wallet[crypto].last_rate = amount
         return wallet

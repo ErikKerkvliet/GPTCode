@@ -35,15 +35,15 @@ class Crypto:
             self.top_rate = self.rate
             self.buy_rate = self.rate
 
-        self.amount_euro = self.amount / self.rate
+        self.amount_euro = self.balance / self.rate
         self.top_rate = self.rate if self.rate > self.top_rate else self.top_rate
 
-    def print_variables(self):
+    def print_variables(self, tracker):
+        print(f'Exchange: {tracker}')
         print(f'code: {self.code}')
         print(f'buy_rate: {self.buy_rate}')
         print(f'sell_rate: {self.rate}')
         print(f'top_rate: {self.top_rate}')
         print(f'value_drops: {self.drops}')
-        print(f'available: {float(self.available):.15f}')
         print(f'profit: {float(self.profit):.15f}')
         print('--------------------------------')

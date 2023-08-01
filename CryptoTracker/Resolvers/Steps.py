@@ -6,7 +6,8 @@ class Steps:
         self.glv = glv
 
     def resolve_sell(self, crypto) -> bool:
-        if crypto.amount == 0 or crypto.last_rate is None or crypto.rate == crypto.last_rate:
+        crypto.print_variables(self.glv.tracker)
+        if crypto.balance == 0 or crypto.last_rate is None or crypto.rate == crypto.last_rate:
             return False
         profit = crypto.rate > crypto.last_rate
         if profit:
@@ -43,7 +44,7 @@ class Steps:
 
     @staticmethod
     def resolve_buy(crypto) -> bool:
-        if crypto.amount != 0 or crypto.last_rate is None or crypto.rate == crypto.last_rate:
+        if crypto.balance != 0 or crypto.last_rate is None or crypto.rate == crypto.last_rate:
             return False
         return crypto.rate > crypto.last_rate
 

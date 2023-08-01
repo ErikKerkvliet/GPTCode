@@ -10,7 +10,7 @@ class Trade:
     def __init__(self):
         self.glv = globalvar.Globalvar()
 
-        self.current_exchange = globalvar.EXCHANGES_BITPANDA
+        self.current_exchange = globalvar.EXCHANGES_KRAKEN
         self.glv.tracker = self.current_exchange
         self.fill = Fill(self.glv)
         self.exchange = self.glv.get_exchange(self.glv.tracker)
@@ -25,7 +25,7 @@ class Trade:
         wallet = {crypto_code: Crypto(crypto_code)}
         crypto = self.exchanges[self.current_exchange].ticker(wallet=wallet)[crypto_code]
 
-        crypto.amount = amount / crypto.rate
+        crypto.balance = amount / crypto.rate
 
         assets = self.exchanges[self.current_exchange].assets(wallet)
         asset = [d for d in assets if d.get('code') == crypto_code][0]

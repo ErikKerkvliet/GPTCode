@@ -36,7 +36,7 @@ class Kraken:
             amount = crypto.buy_amount_euro / crypto.rate
             side = globalvar.ORDER_SIDE_BUY
         else:
-            amount = crypto.amount
+            amount = crypto.balance
             side = globalvar.ORDER_SIDE_SELL
 
         precision = int(crypto.asset['decimals'])
@@ -83,12 +83,11 @@ class Kraken:
 
         codes = wallet.keys() if wallet != {} else response_data['result'].keys()
         for code in codes:
-            currency_code = response_data['result'][code]['altname']
-            if currency_code in wallet.keys():
+            if code in wallet.keys():
                 if response_data['result'][code]['status'] != 'enabled':
-                    del wallet[currency_code]
+                    del wallet[code]
                     continue
-                wallet[currency_code].asset = response_data['result'][code]
+                wallet[code].asset = response_data['result'][code]
         return self.pairs(wallet=wallet)
 
     def pairs(self, wallet: dict):
@@ -120,21 +119,15 @@ class Kraken:
 
         response_data = response.json()
         response.close()
-        if response_data['error'] and self.times < 3:
-            self.times += 1
-            sleep(5)
-            self.ticker(wallet)
-        self.times = 0
 
-        crypto_data = response_data['result']
-        for code in wallet.keys():
-            currency_code = f'{code}{globalvar.DEFAULT_CURRENCY}'
-            if wallet[code] == crypto_data.keys():
-                wallet[code].set_rate(crypto_data[currency_code]['c'][0])
+        for code in response_data['result'].keys():
+            currency_code = code[:-4] if code[:1] == 'X' else code[:-3]
+            if code[-3:] == globalvar.DEFAULT_CURRENCY and (currency_code in wallet.keys() or code[:-3] in wallet.keys()):
+                wallet[currency_code].set_rate(response_data['result'][code]['c'][0])
         return wallet
 
     def create_order(self, order_data):
-        print(f'{self.glv.tracker} {order_data["side"]} | {order_data["amount"]}')
+        print(f'=================================Kraken{self.glv.tracker} {order_data["side"]} | {order_data["amount"]}=================================')
         print(order_data, order_data['crypto'].instrument)
 
         if globalvar.TEST:

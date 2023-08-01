@@ -77,7 +77,7 @@ class Bitpanda:
             amount = crypto.buy_amount_euro / crypto.rate
             side = OrderSide.BUY
         else:
-            amount = crypto.amount
+            amount = crypto.balance
             side = OrderSide.SELL
 
         amount = math.floor(amount * float(f'1e{precision}')) / float(f'1e{precision}')
@@ -127,10 +127,10 @@ class Bitpanda:
     # UNI , EUR sell 2 UNI voor ? EURO
     # await client.close()
     def create_order(self, order_data) -> dict:
-        number = (order_data['crypto'].amount / order_data['crypto'].rate) if order_data["exchange_type"] == 'SELL' else \
+        number = (order_data['crypto'].balance / order_data['crypto'].rate) if order_data["exchange_type"] == 'SELL' else \
             globalvar.BUY_AMOUNT * float(((order_data['crypto'].rate / order_data['crypto'].buy_rate * 100 + 1) / 100))
         amount_euro = f"{float(number):.8f}"
-        print(f'Bitpanda {order_data["exchange_type"]}, Pair: {order_data["pair"]}, Amount: {order_data["amount"]}, Amount €: {amount_euro}')
+        print(f'=================================Bitpanda {order_data["exchange_type"]}, Pair: {order_data["pair"]}, Amount: {order_data["amount"]}, Amount €: {amount_euro}=================================')
 
         if globalvar.TEST:
             return {}
