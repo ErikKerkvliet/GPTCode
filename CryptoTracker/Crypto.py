@@ -5,6 +5,7 @@ class Crypto:
         self.rate = None
         self.last_rate = None
         self.buy_rate = None
+        self.sell_rate = None
         self.top_rate = None
         self.amount = 0
         self.amount_euro = 0

@@ -1,7 +1,5 @@
-import json
 import keys
 import math
-from time import sleep
 
 import globalvar
 from CostHandler import CostHandler
@@ -9,9 +7,6 @@ from Crypto import Crypto
 
 from packages.bitpanda.BitpandaClient import BitpandaClient
 from packages.bitpanda.enums import OrderSide
-from packages.bitpanda.Pair import Pair
-from Exceptions import CoinIndexNotFoundException, CurrencyIndexNotFoundException
-import http.client
 import requests
 
 import tracemalloc

@@ -292,7 +292,7 @@ class KrakenFuturesWSClient(KrakenBaseFuturesAPI):
             :linenos:
             :caption: Futures Websocket: Get the available public subscription feeds
 
-            >>> from packages.kraken.futures import KrakenFuturesWSClient
+            >>> from packages import KrakenFuturesWSClient
             >>> KrakenFuturesWSClient.get_available_private_subscription_feeds()
             [
                 "trade", "book", "ticker",
@@ -314,7 +314,7 @@ class KrakenFuturesWSClient(KrakenBaseFuturesAPI):
             :linenos:
             :caption: Futures Websocket: Get the available private subscription feeds
 
-            >>> from packages.kraken.futures import KrakenFuturesWSClient
+            >>> from packages import KrakenFuturesWSClient
             >>> KrakenFuturesWSClient.get_available_private_subscription_feeds()
             [
                 "fills", "open_positions", "open_orders",
@@ -347,7 +347,7 @@ class KrakenFuturesWSClient(KrakenBaseFuturesAPI):
             :linenos:
             :caption: Futures Websocket: Check if the credentials are set
 
-            >>> from packages.kraken.futures import KrakenFuturesWSClient
+            >>> from packages import KrakenFuturesWSClient
             >>> KrakenFuturesWSClient().is_auth()
             False
         """
@@ -372,7 +372,7 @@ class KrakenFuturesWSClient(KrakenBaseFuturesAPI):
             :linenos:
             :caption: Futures Websocket: Get the active subscriptions
 
-            >>> from packages.kraken.futures import KrakenFuturesWSClient
+            >>> from packages import KrakenFuturesWSClient
             ...
             >>> KrakenFuturesWSClient.get_active_subscriptions()
             [

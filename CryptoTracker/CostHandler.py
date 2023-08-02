@@ -20,6 +20,7 @@ class CostHandler:
 
         crypto.profit_euro += (crypto.balance * crypto.rate) - (crypto.balance * crypto.buy_rate) * globalvar.MARGIN
 
+        crypto.sell_rate = crypto.rate
         crypto.sells += 1
         crypto.balance = 0
         crypto.amount_euro = 0

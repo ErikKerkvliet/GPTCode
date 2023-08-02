@@ -33,7 +33,7 @@ class User(KrakenBaseFuturesAPI):
         :linenos:
         :caption: Futures User: Create the user client
 
-        >>> from packages.kraken.futures import User
+        >>> from packages import User
         >>> user = User() # unauthenticated
         >>> user = User(key="api-key", secret="secret-key") # authenticated
 
@@ -41,7 +41,7 @@ class User(KrakenBaseFuturesAPI):
         :linenos:
         :caption: Futures User: Create the user client as context manager
 
-        >>> from packages.kraken.futures import User
+        >>> from packages import User
         >>> with User(key="api-key", secret="secret-key") as user:
         ...     print(user.get_wallets())
     """
@@ -74,7 +74,7 @@ class User(KrakenBaseFuturesAPI):
             :linenos:
             :caption: Futures User: Get the user's wallets
 
-            >>> from packages.kraken.futures import User
+            >>> from packages import User
             >>> user = User(key="api-key", secret="secret-key")
             >>> user.get_wallets()
             {
@@ -160,7 +160,7 @@ class User(KrakenBaseFuturesAPI):
             :linenos:
             :caption: Futures User: Get the user's subaccounts
 
-            >>> from packages.kraken.futures import User
+            >>> from packages import User
             >>> user = User(key="api-key", secret="secret-key")
             >>> user.get_subaccounts()
             {
@@ -189,7 +189,7 @@ class User(KrakenBaseFuturesAPI):
             :linenos:
             :caption: Futures User: Get the user's unwind queue
 
-            >>> from packages.kraken.futures import User
+            >>> from packages import User
             >>> user = User(key="api-key", secret="secret-key")
             >>> user.get_unwind_queue()
             {
@@ -219,7 +219,7 @@ class User(KrakenBaseFuturesAPI):
             :linenos:
             :caption: Futures User: Get the latest notifications
 
-            >>> from packages.kraken.futures import User
+            >>> from packages import User
             >>> user = User(key="api-key", secret="secret-key")
             >>> user.get_notifications()
             {
@@ -275,7 +275,7 @@ class User(KrakenBaseFuturesAPI):
             :linenos:
             :caption: Futures User: Get the user's account log
 
-            >>> from packages.kraken.futures import User
+            >>> from packages import User
             >>> user = User(key="api-key", secret="secret-key")
             >>> user.get_account_log(before="2023-04-04T16:10:46.260Z", count=1)
             {
@@ -342,7 +342,7 @@ class User(KrakenBaseFuturesAPI):
             :linenos:
             :caption: Futures User: Get the account log and export as CSV
 
-            >>> from packages.kraken.futures import User
+            >>> from packages import User
             >>> user = User(key="api-key", secret="secret-key")
             >>> response = user.get_account_log_csv()
             >>> with open(f"account_log.csv", "wb") as file:
@@ -437,7 +437,7 @@ class User(KrakenBaseFuturesAPI):
             :linenos:
             :caption: Futures User: Get the user's historical execution events
 
-            >>> from packages.kraken.futures import User
+            >>> from packages import User
             >>> user = User(key="api-key", secret="secret-key")
             >>> user.get_execution_events(
             ...    tradeable="PF_SOLUSD",
@@ -559,7 +559,7 @@ class User(KrakenBaseFuturesAPI):
             :linenos:
             :caption: Futures User: Get the user's historical order events
 
-            >>> from packages.kraken.futures import User
+            >>> from packages import User
             >>> user = User(key="api-key", secret="secret-key")
             >>> user.get_order_events(tradeable="PF_SOLUSD", since=1668989233, before=1668999999, sort="asc")
             {
@@ -636,7 +636,7 @@ class User(KrakenBaseFuturesAPI):
             :linenos:
             :caption: Futures User: Get the user's historical trigger events
 
-            >>> from packages.kraken.futures import User
+            >>> from packages import User
             >>> user = User(key="api-key", secret="secret-key")
             >>> user.get_trigger_events(tradeable="PF_SOLUSD", since=1668989233, before=1668999999, sort="asc")
             {
@@ -702,7 +702,7 @@ class User(KrakenBaseFuturesAPI):
             :linenos:
             :caption: Futures Trade: Get the user's open positions
 
-            >>> from packages.kraken.futures import Trade
+            >>> from packages import Trade
             >>> trade = Trade(key="api-key", secret="secret-key")
             >>> trade.get_open_positions()
             {
@@ -739,7 +739,7 @@ class User(KrakenBaseFuturesAPI):
             :linenos:
             :caption: Futures Trade: Get open orders
 
-            >>> from packages.kraken.futures import Trade
+            >>> from packages import Trade
             >>> trade = Trade(key="api-key", secret="secret-key")
             >>> trade.get_open_orders()
             {
@@ -824,7 +824,7 @@ class User(KrakenBaseFuturesAPI):
             :linenos:
             :caption: Futures Trade: Check if trading is enabled on a subaccount
 
-            >>> from packages.kraken.futures import Trade
+            >>> from packages import Trade
             >>> trade = Trade(key="api-key", secret="secret-key")
             >>> trade.set_trading_on_subaccount(
             ...    subaccountUid="778387bh61b-f990-4128-16a7-f4ab669a9b",
@@ -859,7 +859,7 @@ class User(KrakenBaseFuturesAPI):
             :linenos:
             :caption: Futures Trade: Dis-/Enable trading on a subaccount
 
-            >>> from packages.kraken.futures import Trade
+            >>> from packages import Trade
             >>> trade = Trade(key="api-key", secret="secret-key")
             >>> trade.set_trading_on_subaccount(
             ...    subaccountUid="778387bh61b-f990-4128-16a7-f4ab669a9b",

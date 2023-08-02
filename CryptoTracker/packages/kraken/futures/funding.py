@@ -30,7 +30,7 @@ class Funding(KrakenBaseFuturesAPI):
         :linenos:
         :caption: Futures Funding: Create the funding client
 
-        >>> from packages.kraken.futures import Funding
+        >>> from packages import Funding
         >>> funding = Funding() # unauthenticated
         >>> funding = Funding(key="api-key", secret="secret-key") # authenticated
 
@@ -38,7 +38,7 @@ class Funding(KrakenBaseFuturesAPI):
         :linenos:
         :caption: Futures Funding: Create the funding client as context manager
 
-        >>> from packages.kraken.futures import Funding
+        >>> from packages import Funding
         >>> with Funding(key="api-key", secret="secret-key") as funding:
         ...     print(funding.get_historical_funding_rates(symbol="PI_XBTUSD"))
     """
@@ -71,7 +71,7 @@ class Funding(KrakenBaseFuturesAPI):
             :linenos:
             :caption: Futures Funding: Get the historical funding rates
 
-            >>> from packages.kraken.futures import Funding
+            >>> from packages import Funding
             >>> Funding().get_historical_funding_rates(symbol="PI_XBTUSD")
             {
                 'rates': [
@@ -122,7 +122,7 @@ class Funding(KrakenBaseFuturesAPI):
             :linenos:
             :caption: Futures Funding: Transfer funds between wallets
 
-            >>> from packages.kraken.futures import Funding
+            >>> from packages import Funding
             >>> funding = Funding(key="api-key", secret="secret-key")
             >>> funding.initiate_wallet_transfer(
             ...     amount='100',
@@ -179,7 +179,7 @@ class Funding(KrakenBaseFuturesAPI):
             :linenos:
             :caption: Futures Funding: Transfer funds between subaccounts
 
-            >>> from packages.kraken.futures import Funding
+            >>> from packages import Funding
             >>> funding = Funding(key="api-key", secret="secret-key")
             >>> funding.initiate_subaccount_transfer(
             ...     amount='2',
@@ -231,7 +231,7 @@ class Funding(KrakenBaseFuturesAPI):
             :linenos:
             :caption: Futures Funding: Transfer funds between Spot and Futures wallets
 
-            >>> from packages.kraken.futures import Funding
+            >>> from packages import Funding
             >>> funding = Funding(key="api-key", secret="secret-key")
             >>> funding.initiate_withdrawal_to_spot_wallet(
             ...     amount=100,

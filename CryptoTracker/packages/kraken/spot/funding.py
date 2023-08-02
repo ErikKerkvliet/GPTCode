@@ -29,7 +29,7 @@ class Funding(KrakenBaseSpotAPI):
         :linenos:
         :caption: Spot Funding: Create the funding client
 
-        >>> from packages.kraken.spot import Funding
+        >>> from packages import Funding
         >>> funding = Funding() # unauthenticated
         >>> auth_funding = Funding(key="api-key", secret="secret-key") # authenticated
 
@@ -37,7 +37,7 @@ class Funding(KrakenBaseSpotAPI):
         :linenos:
         :caption: Spot Funding: Create the funding client as context manager
 
-        >>> from packages.kraken.spot import Funding
+        >>> from packages import Funding
         >>> with Funding(key="api-key", secret="secret-key") as funding:
         ...     print(funding.get_deposit_methods(asset="XLM"))
     """
@@ -69,7 +69,7 @@ class Funding(KrakenBaseSpotAPI):
             :linenos:
             :caption: Spot Funding: Get the available deposit methods
 
-            >>> from packages.kraken.spot import Funding
+            >>> from packages import Funding
             >>> funding = Funding(key="api-key", secret="secret-key")
             >>> funding.get_deposit_methods(asset="XLM")
             [
@@ -111,7 +111,7 @@ class Funding(KrakenBaseSpotAPI):
             :linenos:
             :caption: Spot Funding: Get the available deposit addresses
 
-            >>> from packages.kraken.spot import Funding
+            >>> from packages import Funding
             >>> funding = Funding(key="api-key", secret="secret-key")
             >>> funding.get_deposit_address(asset="XLM", method="Stellar XLM")
             [
@@ -156,7 +156,7 @@ class Funding(KrakenBaseSpotAPI):
             :linenos:
             :caption: Spot Funding: Get the recent deposit status
 
-            >>> from packages.kraken.spot import Funding
+            >>> from packages import Funding
             >>> funding = Funding(key="api-key", secret="secret-key")
             >>> funding.get_recent_deposits_status()
             [

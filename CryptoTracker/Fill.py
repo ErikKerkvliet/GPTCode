@@ -1,8 +1,6 @@
-import asyncio
 import json
 from Crypto import Crypto
 import globalvar
-from packages.bitpanda.Pair import Pair
 
 
 class Fill:

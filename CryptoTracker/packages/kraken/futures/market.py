@@ -32,7 +32,7 @@ class Market(KrakenBaseFuturesAPI):
         :linenos:
         :caption: Futures Market: Create the market client
 
-        >>> from packages.kraken.futures import Market
+        >>> from packages import Market
         >>> market = Market() # unauthenticated
         >>> market = Market(key="api-key", secret="secret-key") # authenticated
 
@@ -40,7 +40,7 @@ class Market(KrakenBaseFuturesAPI):
         :linenos:
         :caption: Futures Market: Create the market client as context manager
 
-        >>> from packages.kraken.futures import Market
+        >>> from packages import Market
         >>> with Market() as market:
         ...     print(market.get_tick_types())
     """
@@ -92,7 +92,7 @@ class Market(KrakenBaseFuturesAPI):
             :linenos:
             :caption: Futures Market: Get the OHLC data
 
-            >>> from packages.kraken.futures import Market
+            >>> from packages import Market
             >>> Market().get_ohlc(tick_type="trade", symbol="PI_XBTUSD", resolution="1h")
             {
                 'candles': [
@@ -144,7 +144,7 @@ class Market(KrakenBaseFuturesAPI):
             :linenos:
             :caption: Futures Market: Get the available tick types
 
-            >>> from packages.kraken.futures import Market
+            >>> from packages import Market
             >>> Market().get_tick_types()
             ['mark', 'spot', 'trade']
         """
@@ -168,7 +168,7 @@ class Market(KrakenBaseFuturesAPI):
             :linenos:
             :caption: Futures Market: Get the tradeable products
 
-            >>> from packages.kraken.futures import Market
+            >>> from packages import Market
             >>> Market().get_tradeable_products(tick_type="trade")
             ["PI_XBTUSD", "PF_XBTUSD", "PF_SOLUSD", ...]
         """
@@ -196,7 +196,7 @@ class Market(KrakenBaseFuturesAPI):
             :linenos:
             :caption: Futures Market: Get the available resolutions
 
-            >>> from packages.kraken.futures import Market
+            >>> from packages import Market
             >>> Market().get_resolutions(tick_type="mark", tradeable="PI_XBTUSD")
             ['1h', '12h', '1w', '15m', '1d', '5m', '30m', '4h', '1m']
         """
@@ -222,7 +222,7 @@ class Market(KrakenBaseFuturesAPI):
             :linenos:
             :caption: Futures Market: Get the available fee schedules
 
-            >>> from packages.kraken.futures import Market
+            >>> from packages import Market
             >>> Market().get_fee_schedules()
             {
                 'feeSchedules': [{
@@ -257,7 +257,7 @@ class Market(KrakenBaseFuturesAPI):
             :linenos:
             :caption: Futures Market: Get the personal fee schedule volumes
 
-            >>> from packages.kraken.futures import Market
+            >>> from packages import Market
             >>> market = Market(key="api-key", secret="secret-key")
             >>> market.get_fee_schedules_vol()
             {
@@ -292,7 +292,7 @@ class Market(KrakenBaseFuturesAPI):
             :linenos:
             :caption: Futures Market: Get the assets orderbook
 
-            >>> from packages.kraken.futures import Market
+            >>> from packages import Market
             >>> Market().get_orderbook(symbol="PI_XBTUSD")
             {
                 'result': 'success', 'orderBook': {
@@ -339,7 +339,7 @@ class Market(KrakenBaseFuturesAPI):
             :linenos:
             :caption: Futures Market: Get the available tickers
 
-            >>> from packages.kraken.futures import Market
+            >>> from packages import Market
             >>> Market().get_tickers()
             {
                 'tickers': [{
@@ -385,7 +385,7 @@ class Market(KrakenBaseFuturesAPI):
             :linenos:
             :caption: Futures Market: Get the available instruments/assets and information
 
-            >>> from packages.kraken.futures import Market
+            >>> from packages import Market
             >>> Market().get_instruments()
             {
               'instruments': [{
@@ -471,7 +471,7 @@ class Market(KrakenBaseFuturesAPI):
             :linenos:
             :caption: Futures Market: Retrieve information about a specific asset/contract/instrument
 
-            >>> from packages.kraken.futures import Market
+            >>> from packages import Market
             >>> Market().get_instruments_status(instrument="PI_XBTUSD")
             {
                 'tradeable': 'PI_XBTUSD',
@@ -516,7 +516,7 @@ class Market(KrakenBaseFuturesAPI):
             :linenos:
             :caption: Futures Market: Get the public trade history
 
-            >>> from packages.kraken.futures import Market
+            >>> from packages import Market
             >>> Market().get_trade_history(symbol="PI_XBTUSD")
             {
                 'history': [{
@@ -564,7 +564,7 @@ class Market(KrakenBaseFuturesAPI):
             :linenos:
             :caption: Futures Market: Get the historical funding rates
 
-            >>> from packages.kraken.futures import Market
+            >>> from packages import Market
             >>> Market().get_historical_funding_rates(symbol="PI_XBTUSD")
             {
                 'rates': [{
@@ -605,7 +605,7 @@ class Market(KrakenBaseFuturesAPI):
             :linenos:
             :caption: Futures Market: Get the users leverage preferences
 
-            >>> from packages.kraken.futures import Market
+            >>> from packages import Market
             >>> market = Market(key="api-key", secret="secret-key")
             >>> market.get_leverage_preference()
             {
@@ -642,7 +642,7 @@ class Market(KrakenBaseFuturesAPI):
             :linenos:
             :caption: Futures Market: Set the users leverage preferences
 
-            >>> from packages.kraken.futures import Market
+            >>> from packages import Market
             >>> market = Market(key="api-key", secret="secret-key")
             >>> market.set_leverage_preference(symbol="PF_XBTUSD", maxLeverage=2)
             {'result': 'success', 'serverTime': '2023-04-04T05:59:49.576Z'}
@@ -674,7 +674,7 @@ class Market(KrakenBaseFuturesAPI):
             :linenos:
             :caption: Futures Market: Get the users profit/loss preferences
 
-            >>> from packages.kraken.futures import Market
+            >>> from packages import Market
             >>> market = Market(key="api-key", secret="secret-key")
             >>> market.get_pnl_preference()
             {'result': 'success', 'serverTime': '2023-04-04T15:21:29.413Z', 'preferences': []}
@@ -704,7 +704,7 @@ class Market(KrakenBaseFuturesAPI):
             :linenos:
             :caption: Futures Market: Set the users profit/loss preferences
 
-            >>> from packages.kraken.futures import Market
+            >>> from packages import Market
             >>> market = Market(key="api-key", secret="secret-key")
             >>> market.set_pnl_preference(symbol="PF_XBTUSD", pnlPreference="USD")
             {'result': 'success', 'serverTime': '2023-04-04T15:24:18.406Z'}
@@ -795,7 +795,7 @@ class Market(KrakenBaseFuturesAPI):
             :linenos:
             :caption: Futures Market: Get the public execution events
 
-            >>> from packages.kraken.futures import Market
+            >>> from packages import Market
             >>> Market().get_public_execution_events(tradeable="PI_XBTUSD")
             {
                 'elements': [
@@ -885,7 +885,7 @@ class Market(KrakenBaseFuturesAPI):
             :linenos:
             :caption: Futures Market: Get the public order events
 
-            >>> from packages.kraken.futures import Market
+            >>> from packages import Market
             >>> Market().get_public_order_events(tradeable="PI_XBTUSD")
             {
                 'elements': [
@@ -956,7 +956,7 @@ class Market(KrakenBaseFuturesAPI):
             :linenos:
             :caption: Futures Market: Get the public mark price events
 
-            >>> from packages.kraken.futures import Market
+            >>> from packages import Market
             >>> Market().get_public_mark_price_events(tradeable="PI_XBTUSD")
             {
                 'elements': [

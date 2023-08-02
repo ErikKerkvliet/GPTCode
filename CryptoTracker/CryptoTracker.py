@@ -23,7 +23,7 @@ class CryptoPrices:
         print(f'Sleep time: {globalvar.SELL_TIMER}')
         print(f'Start time: {globalvar.start_time}\n--------------------')
 
-        while True:
+        while len(self.exchanges) > 0:
             with open("log.txt", "w") as log:
                 # try:
                 for tracker in self.exchanges:
@@ -35,8 +35,8 @@ class CryptoPrices:
                     self.crashes[tracker] = 0
                 # except Exception as e:
                 #     print(f'Error occurred in: {self.glv.tracker}')
-                #     self.crashes[tracker] > 1:
-                #         del self.trackers[tracker]
+                #     if self.crashes[self.glv.tracker] > 1:
+                #         del self.exchanges[self.glv.tracker]
                 #     self.crashes[tracker] += 1
                 #     traceback.print_exc(file=log)
                 #     traceback.print_tb(e.__traceback__)

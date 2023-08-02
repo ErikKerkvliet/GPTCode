@@ -1,9 +1,3 @@
-import asyncio
-import json
-import tracemalloc
-from time import sleep
-import http.client
-
 import requests
 
 import globalvar

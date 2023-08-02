@@ -5,11 +5,10 @@ import logging
 import datetime
 import pytz
 import json
-from typing import List, Callable, Any
+from typing import List
 
 from packages.bitpanda.Pair import Pair
-from packages.bitpanda.subscriptions import Subscription, SubscriptionMgr, PricesSubscription, OrderbookSubscription, AccountSubscription, CandlesticksSubscription, \
-	MarketTickerSubscription, CandlesticksSubscriptionParams
+from packages.bitpanda.subscriptions import Subscription, SubscriptionMgr
 from packages.bitpanda import enums
 from packages.bitpanda.Timer import Timer
 
@@ -119,7 +118,7 @@ class BitpandaClient(object):
 		return await self._create_post("account/orders", data = data, headers = self._get_header_api_key())
 
 	async def create_stop_limit_order(self, pair : Pair, side : enums.OrderSide, amount : str, limit_price : str, stop_price : str,
-	                                  time_in_force : enums.TimeInForce = None, client_id : str = None) -> dict:
+                                      time_in_force : enums.TimeInForce = None, client_id : str = None) -> dict:
 		data = {
 			"instrument_code": str(pair),
 			"side": side.value,

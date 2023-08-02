@@ -29,7 +29,7 @@ class Staking(KrakenBaseSpotAPI):
         :linenos:
         :caption: Spot Staking: Create the staking client
 
-        >>> from packages.kraken.spot import Staking
+        >>> from packages import Staking
         >>> staking = Staking() # unauthenticated
         >>> auth_staking = Staking(key="api-key", secret="secret-key") # authenticated
 
@@ -37,7 +37,7 @@ class Staking(KrakenBaseSpotAPI):
         :linenos:
         :caption: Spot Staking: Create the staking client as context manager
 
-        >>> from packages.kraken.spot import Staking
+        >>> from packages import Staking
         >>> with Staking(key="api-key", secret="secret-key") as staking:
         ...     print(staking.stake_asset(asset="XLM", amount=200, method="Lumen Staked"))
     """
@@ -80,7 +80,7 @@ class Staking(KrakenBaseSpotAPI):
             :linenos:
             :caption: Spot Staking: Stake an asset
 
-            >>> from packages.kraken.spot import Staking
+            >>> from packages import Staking
             >>> staking = Staking(key="api-key", secret="secret-key")
             >>> staking.stake_asset(
             ...     asset="DOT",
@@ -125,7 +125,7 @@ class Staking(KrakenBaseSpotAPI):
             :linenos:
             :caption: Spot Staking: Unstake a staked asset
 
-            >>> from packages.kraken.spot import Staking
+            >>> from packages import Staking
             >>> staking = Staking(key="api-key", secret="secret-key")
             >>> staking.unstake_asset(
             ...     asset="DOT",
@@ -158,7 +158,7 @@ class Staking(KrakenBaseSpotAPI):
             :linenos:
             :caption: Spot Staking: List the stakeable assets
 
-            >>> from packages.kraken.spot import Staking
+            >>> from packages import Staking
             >>> staking = Staking(key="api-key", secret="secret-key")
             >>> staking.list_stakeable_assets()
             [
@@ -214,7 +214,7 @@ class Staking(KrakenBaseSpotAPI):
             :linenos:
             :caption: Spot Staking: Get the pending staking transactions
 
-            >>> from packages.kraken.spot import Staking
+            >>> from packages import Staking
             >>> staking = Staking(key="api-key", secret="secret-key")
             >>> staking.get_pending_staking_transactions()
             [
@@ -250,7 +250,7 @@ class Staking(KrakenBaseSpotAPI):
             :linenos:
             :caption: Spot Staking: List the historical staking transactions
 
-            >>> from packages.kraken.spot import Staking
+            >>> from packages import Staking
             >>> staking = Staking(key="api-key", secret="secret-key")
             >>> staking.list_staking_transactions()
             [

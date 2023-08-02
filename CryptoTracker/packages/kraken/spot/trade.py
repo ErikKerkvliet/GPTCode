@@ -32,7 +32,7 @@ class Trade(KrakenBaseSpotAPI):
         :linenos:
         :caption: Spot Trade: Create the trade client
 
-        >>> from packages.kraken.spot import Trade
+        >>> from packages import Trade
         >>> trade = Trade() # unauthenticated
         >>> auth_trade = Trade(key="api-key", secret="secret-key") # authenticated
 
@@ -40,7 +40,7 @@ class Trade(KrakenBaseSpotAPI):
         :linenos:
         :caption: Spot Trade: Create the trade client as context manager
 
-        >>> from packages.kraken.spot import Trade
+        >>> from packages import Trade
         >>> with Trade(key="api-key", secret="secret-key") as trade:
         ...     print(trade.create_order(...))
 

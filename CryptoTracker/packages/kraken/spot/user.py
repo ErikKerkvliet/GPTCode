@@ -30,7 +30,7 @@ class User(KrakenBaseSpotAPI):
         :linenos:
         :caption: Spot User: Create the user client
 
-        >>> from packages.kraken.spot import User
+        >>> from packages import User
         >>> user = User() # unauthenticated
         >>> auth_user = User(key="api-key", secret="secret-key") # authenticated
 
@@ -38,7 +38,7 @@ class User(KrakenBaseSpotAPI):
         :linenos:
         :caption: Spot User: Create the user client as context manager
 
-        >>> from packages.kraken.spot import User
+        >>> from packages import User
         >>> with User(key="api-key", secret="secret-key") as user:
         ...     print(user.get_account_balances())
     """
@@ -67,7 +67,7 @@ class User(KrakenBaseSpotAPI):
             :linenos:
             :caption: Spot User: Get the account balances
 
-            >>> from packages.kraken.spot import User
+            >>> from packages import User
             >>> user = User(key="api-key", secret="secret-key")
             >>> user.get_account_balances()
             {
@@ -103,7 +103,7 @@ class User(KrakenBaseSpotAPI):
             :linenos:
             :caption: Spot User: Get balances
 
-            >>> from packages.kraken.spot import User
+            >>> from packages import User
             >>> user = User(key="api-key", secret="secret-key")
             >>> user.get_balances()
             {
@@ -143,7 +143,7 @@ class User(KrakenBaseSpotAPI):
             :linenos:
             :caption: Spot User: Get balance
 
-            >>> from packages.kraken.spot import User
+            >>> from packages import User
             >>> user = User(key="api-key", secret="secret-key")
             >>> user.get_balance(currency="EUR")
             {
@@ -185,7 +185,7 @@ class User(KrakenBaseSpotAPI):
             :linenos:
             :caption: Spot User: Get the trade balance
 
-            >>> from packages.kraken.spot import User
+            >>> from packages import User
             >>> user = User(key="api-key", secret="secret-key")
             >>> user.get_trade_balance()
             {
@@ -226,7 +226,7 @@ class User(KrakenBaseSpotAPI):
             :linenos:
             :caption: Spot User: Get the open orders
 
-            >>> from packages.kraken.spot import User
+            >>> from packages import User
             >>> user = User(key="api-key", secret="secret-key")
             >>> user.get_open_orders()
             {

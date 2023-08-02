@@ -31,7 +31,7 @@ class Trade(KrakenBaseFuturesAPI):
         :linenos:
         :caption: Futures Trade: Create the trade client
 
-        >>> from packages.kraken.futures import Trade
+        >>> from packages import Trade
         >>> trade = Trade() # unauthenticated
         >>> trade = Trade(key="api-key", secret="secret-key") # authenticated
 
@@ -39,7 +39,7 @@ class Trade(KrakenBaseFuturesAPI):
         :linenos:
         :caption: Futures Trade: Create the trade client as context manager
 
-        >>> from packages.kraken.futures import Trade
+        >>> from packages import Trade
         >>> with Trade(key="api-key", secret="secret-key") as trade:
         ...     print(trade.get_fills())
     """
@@ -74,7 +74,7 @@ class Trade(KrakenBaseFuturesAPI):
             :linenos:
             :caption: Futures Trade: Get the recent fills
 
-            >>> from packages.kraken.futures import Trade
+            >>> from packages import Trade
             >>> trade = Trade(key="api-key", secret="secret-key")
             >>> trade.get_fills()
             {
@@ -119,7 +119,7 @@ class Trade(KrakenBaseFuturesAPI):
             :linenos:
             :caption: Futures Trade: Create a batch order
 
-            >>> from packages.kraken.futures import Trade
+            >>> from packages import Trade
             >>> trade = Trade(key="api-key", secret="secret-key")
             >>> trade.create_batch_order(
             ...     batchorder_list=[
@@ -226,7 +226,7 @@ class Trade(KrakenBaseFuturesAPI):
             :linenos:
             :caption: Futures Trade: Cancel all open orders
 
-            >>> from packages.kraken.futures import Trade
+            >>> from packages import Trade
             >>> trade = Trade(key="api-key", secret="secret-key")
             >>> trade.cancel_all_orders()
             {
@@ -277,7 +277,7 @@ class Trade(KrakenBaseFuturesAPI):
             :linenos:
             :caption: Futures Trade: Setup the Death man's Switch
 
-            >>> from packages.kraken.futures import Trade
+            >>> from packages import Trade
             >>> trade = Trade(key="api-key", secret="secret-key")
             >>> trade.dead_mans_switch(timeout=60)
             {
@@ -317,7 +317,7 @@ class Trade(KrakenBaseFuturesAPI):
             :linenos:
             :caption: Futures Trade: Cancel an order
 
-            >>> from packages.kraken.futures import Trade
+            >>> from packages import Trade
             >>> trade = Trade(key="api-key", secret="secret-key")
             >>> trade.cancel_order(order_id="fc589be9-5095-48f0-b6f1-a2dfad6d9677")
             {
@@ -378,7 +378,7 @@ class Trade(KrakenBaseFuturesAPI):
             :linenos:
             :caption: Futures Trade: Edit an open order
 
-            >>> from packages.kraken.futures import Trade
+            >>> from packages import Trade
             >>> trade = Trade(key="api-key", secret="secret-key")
             >>> trade.edit_order(orderId="fc589be9-5095-48f0-b6f1-a2dfad6d9677", size=100)
             {
@@ -438,7 +438,7 @@ class Trade(KrakenBaseFuturesAPI):
             :linenos:
             :caption: Futures Trade: Get the order status
 
-            >>> from packages.kraken.futures import Trade
+            >>> from packages import Trade
             >>> trade = Trade(key="api-key", secret="secret-key")
             >>> trade.get_orders_status(
             ...     orderIds=[
@@ -554,7 +554,7 @@ class Trade(KrakenBaseFuturesAPI):
             :linenos:
             :caption: Futures Trade: Create and submit a new limit order
 
-            >>> from packages.kraken.futures import Trade
+            >>> from packages import Trade
             >>> trade = Trade(key="api-key", secret="secret-key")
             >>> trade.create_order(
             ...     orderType="lmt",

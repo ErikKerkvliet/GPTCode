@@ -1,6 +1,6 @@
 import asyncio
 import keys
-from packages.bitpanda.BitpandaClient import BitpandaClient
+from packages.bitpanda import BitpandaClient
 
 
 class AsyncBitpandaClient(BitpandaClient):

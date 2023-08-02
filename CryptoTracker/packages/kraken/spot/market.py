@@ -30,7 +30,7 @@ class Market(KrakenBaseSpotAPI):
         :linenos:
         :caption: Spot Market: Create the market client
 
-        >>> from packages.kraken.spot import Market
+        >>> from packages import Market
         >>> market = Market() # unauthenticated
         >>> auth_market = Market(key="api-key", secret="secret-key") # authenticated
 
@@ -38,7 +38,7 @@ class Market(KrakenBaseSpotAPI):
         :linenos:
         :caption: Spot Market: Create the market client as context manager
 
-        >>> from packages.kraken.spot import Market
+        >>> from packages import Market
         >>> with Market() as market:
         ...     print(market.get_assets())
     """
@@ -81,7 +81,7 @@ class Market(KrakenBaseSpotAPI):
             :linenos:
             :caption: Spot Market: Get information about the available assets
 
-            >>> from packages.kraken.spot import Market
+            >>> from packages import Market
             >>> market = Market()
             >>> market.get_assets(assets="DOT")
             {
@@ -149,7 +149,7 @@ class Market(KrakenBaseSpotAPI):
             :linenos:
             :caption: Spot Market: Get information about tradeable asset pairs
 
-            >>> from packages.kraken.spot import Market
+            >>> from packages import Market
             >>> Market().get_asset_pairs(pair="XBTUSD")
             {
                 'XXBTZUSD': {
@@ -216,7 +216,7 @@ class Market(KrakenBaseSpotAPI):
             :linenos:
             :caption: Spot Market: Get the ticker(s)
 
-            >>> from packages.kraken.spot import Market
+            >>> from packages import Market
             >>> Market().get_ticker(pair="XBTUSD")
             {
                 'XXBTZUSD': {
@@ -264,7 +264,7 @@ class Market(KrakenBaseSpotAPI):
             :linenos:
             :caption: Spot Market: Get the OHLC data
 
-            >>> from packages.kraken.spot import Market
+            >>> from packages import Market
             >>> Market().get_ohlc(pair="XBTUSD")
             {
                 "XXBTZUSD": [

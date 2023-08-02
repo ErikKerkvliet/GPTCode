@@ -128,7 +128,7 @@ class Kraken:
 
     def create_order(self, order_data):
         print(f'=================================Kraken{self.glv.tracker} {order_data["side"]} | {order_data["amount"]}=================================')
-        print(order_data, order_data['crypto'].instrument)
+        print(order_data)
 
         if globalvar.TEST:
             order_data['validate'] = True
