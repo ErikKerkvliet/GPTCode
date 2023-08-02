@@ -27,6 +27,8 @@ class CryptoPrices:
             with open("log.txt", "w") as log:
                 # try:
                 for tracker in self.exchanges:
+                    print(f'================================= {tracker.capitalize()} - times: {self.glv.times} =================================')
+
                     self.glv.tracker = tracker
                     self.tracker.track()
                     self.store.save(self.tracker.wallet)

@@ -20,9 +20,6 @@ class Tracker:
         }
 
     def track(self) -> None:
-        if self.glv.times % 10 == 0:
-            print(f'================================={self.glv.tracker.capitalize()} - times: {self.glv.times}=================================')
-
         if self.glv.times % 25 == 0:
             self.wallet = self.fill.fill_wallet({}, self.exchanges[self.glv.tracker])
             self.wallet = self.exchanges[self.glv.tracker].assets(self.wallet)
