@@ -45,6 +45,7 @@ class Steps:
             if self.calc(crypto.amount_euro, crypto.rate) > crypto.trade_amount_min \
                     and crypto.buy_rate < crypto.rate * globalvar.MARGIN \
                     and crypto.rate < crypto.last_rate * globalvar.SELL_MARGIN:
+
                 print('SELL!!!!!!!!!!!!!!!!!!!', 2)
                 return True
         return False
@@ -53,7 +54,7 @@ class Steps:
     def resolve_buy(crypto) -> bool:
         if crypto.balance != 0 or crypto.last_rate is None or crypto.rate == crypto.last_rate:
             return False
-        if crypto.position > 2 \
+        if crypto.position > 1 \
                 and crypto.sell_rate is not None \
                 or crypto.sell_rate < crypto.rate * globalvar.BUY_MARGIN:
             return True

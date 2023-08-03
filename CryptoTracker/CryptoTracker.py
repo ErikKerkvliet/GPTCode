@@ -20,7 +20,7 @@ class CryptoPrices:
     def run_infinitely(self):
         print(f'Exchanges: {", ".join(self.exchanges)}')
         print(f'Option: {globalvar.RESOLVER}')
-        print(f'Sleep time: {globalvar.SELL_TIMER}')
+        print(f'Sleep time: {globalvar.TIMER}')
         print(f'Start time: {globalvar.start_time}\n--------------------')
 
         while len(self.exchanges) > 0:
@@ -31,7 +31,6 @@ class CryptoPrices:
 
                     self.glv.tracker = tracker
                     self.tracker.track()
-                    self.store.save(self.tracker.wallet)
                     self.crashes[tracker] = 0
                 # except Exception as e:
                 #     print(f'Error occurred in: {self.glv.tracker}')
@@ -45,7 +44,7 @@ class CryptoPrices:
 
                 if self.glv.times % 25 == 0:
                     self.tracker.exchanges[globalvar.EXCHANGES_BITPANDA].close_client()
-                sleep(self.glv.timer)
+                sleep(globalvar.TIMER)
 
 
 if __name__ == '__main__':

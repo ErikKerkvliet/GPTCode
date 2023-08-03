@@ -29,8 +29,7 @@ ORDER_SIDE_SELL = 'sell'
 
 DEFAULT_CURRENCY = 'EUR'
 DEFAULT_CRYPTO = 'BTC'
-BUY_TIMER = 20
-SELL_TIMER = 600
+TIMER = 600
 MAX_DROPS = 3
 MIN_UPS = 3
 PROFIT_PERC = 0.01
@@ -51,7 +50,6 @@ class Globalvar:
     def __init__(self):
         self.ip = self.get_ip()
         self.tracker = None
-        self.timer = SELL_TIMER
         self.times = 0
         self.store = Store(self)
         self.exchanges = {
@@ -63,11 +61,6 @@ class Globalvar:
             EXCHANGES_BITPANDA: 0,
             EXCHANGES_KRAKEN: 0,
             EXCHANGES_ONE_TRADING: 0,
-        }
-        self.wallets = {
-            EXCHANGES_BITPANDA: {},
-            EXCHANGES_KRAKEN: {},
-            EXCHANGES_ONE_TRADING: {},
         }
         self.resolvers = {
             RESOLVER_PERCENTAGES: Percentages(self),

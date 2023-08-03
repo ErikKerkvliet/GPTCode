@@ -12,13 +12,14 @@ class Store:
         }]
 
     def save(self, wallet):
-        self.save_data[0] = {
+        save_data = [{
             'run_time': globalvar.get_run_time(),
             'balance_euro': self.glv.balance_euro[self.glv.tracker]
-        }
+        }]
         for crypto in wallet.keys():
             if wallet[crypto].rate is None:
-                return False
+                continue
+
             if globalvar.RESOLVER == globalvar.RESOLVER_STEPS:
                 if crypto == globalvar.DEFAULT_CURRENCY or crypto == f'Z{globalvar.DEFAULT_CURRENCY}':
                     continue
@@ -64,12 +65,11 @@ class Store:
                     'sells': wallet[crypto].sells,
                     'gain_€': wallet[crypto].gain,
                 }
-            self.save_data.append(crypto_data)
+            save_data.append(crypto_data)
 
-        dump = json.dumps(self.save_data)
+        dump = json.dumps(save_data)
         save_file = f'{globalvar.SAVE_FILE}_{self.glv.tracker}'
-        with open(save_file, 'w') as file:
+        with open(save_file, 'w+') as file:
             file.write(dump)
-            self.save_data = [{}]
             file.close()
             return

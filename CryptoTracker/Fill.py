@@ -8,8 +8,9 @@ class Fill:
         self.glv = glv
         self.exchange = None
 
-    def fill_wallet(self, wallet, exchange) -> dict:
+    def fill_wallet(self, exchange) -> dict:
         self.exchange = exchange
+        wallet = {}
 
         if self.glv.tracker == globalvar.EXCHANGES_KRAKEN:
             return self.from_kraken_balance(wallet)

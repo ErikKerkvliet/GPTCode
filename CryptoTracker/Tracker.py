@@ -20,18 +20,15 @@ class Tracker:
         }
 
     def track(self) -> None:
-        if self.glv.times % 25 == 0:
-            self.wallet = self.fill.fill_wallet({}, self.exchanges[self.glv.tracker])
-            self.wallet = self.exchanges[self.glv.tracker].assets(self.wallet)
+        self.wallet = self.fill.fill_wallet(self.exchanges[self.glv.tracker])
 
+        self.wallet = self.exchanges[self.glv.tracker].assets(self.wallet)
         self.wallet = self.exchanges[self.glv.tracker].ticker(self.wallet)
         for code in self.wallet.keys():
             if self.resolver.resolve_sell(self.wallet[code]):
                 self.exchanges[self.glv.tracker].start_transaction(self.wallet[code], globalvar.ORDER_SIDE_SELL)
-                self.glv.timer = globalvar.BUY_TIMER
 
             if self.resolver.resolve_buy(self.wallet[code]):
                 self.exchanges[self.glv.tracker].start_transaction(self.wallet[code], globalvar.ORDER_SIDE_BUY)
-                self.glv.timer = globalvar.SELL_TIMER
 
         self.glv.store.save(self.wallet)
