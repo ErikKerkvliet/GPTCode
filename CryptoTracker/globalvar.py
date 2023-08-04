@@ -29,7 +29,7 @@ ORDER_SIDE_SELL = 'sell'
 
 DEFAULT_CURRENCY = 'EUR'
 DEFAULT_CRYPTO = 'BTC'
-TIMER = 600
+TIMER = 300
 MAX_DROPS = 3
 MIN_UPS = 3
 PROFIT_PERC = 0.01
@@ -56,6 +56,11 @@ class Globalvar:
             EXCHANGES_BITPANDA: True,
             EXCHANGES_KRAKEN: True,
             EXCHANGES_ONE_TRADING: False,
+        }
+        self.wallets = {
+            EXCHANGES_BITPANDA: {},
+            EXCHANGES_KRAKEN: {},
+            EXCHANGES_ONE_TRADING: {},
         }
         self.balance_euro = {
             EXCHANGES_BITPANDA: 0,

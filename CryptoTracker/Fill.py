@@ -10,7 +10,7 @@ class Fill:
 
     def fill_wallet(self, exchange) -> dict:
         self.exchange = exchange
-        wallet = {}
+        wallet = self.glv.wallets[self.glv.tracker]
 
         if self.glv.tracker == globalvar.EXCHANGES_KRAKEN:
             return self.from_kraken_balance(wallet)
@@ -25,8 +25,8 @@ class Fill:
         for code in wallet:
             if wallet[code].code == globalvar.DEFAULT_CURRENCY:
                 self.glv.balance_euro[self.glv.tracker] = wallet[code].balance
-                wallet[code] = None
-                continue
+                # wallet[code] = None
+                # continue
             wallet[code].buy_amount_euro = globalvar.BUY_AMOUNT
         return {key: value for key, value in wallet.items() if value is not None}
 
@@ -38,8 +38,8 @@ class Fill:
         for code in wallet:
             if wallet[code].code[:1] == 'Z':
                 self.glv.balance_euro[self.glv.tracker] = wallet[code].balance
-                wallet[code] = None
-                continue
+                # wallet[code] = None
+                # continue
             wallet[code].buy_amount_euro = globalvar.BUY_AMOUNT
         return {key: value for key, value in wallet.items() if value is not None}
 

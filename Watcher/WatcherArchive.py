@@ -13,51 +13,58 @@ class WatcherArchive:
         self.window.wm_iconphoto(False, photo)
         self.window.geometry('700x400')
 
+        style = ttk.Style()
+        style.theme_use('clam')
+        style.configure('tree')
+
+        # create a treeview
+        style.configure("Treeview", foreground="black", background="white")
+
+        self.trees = {}
+        for exchange in glv.EXCHANGES:
+            self.trees[exchange] = ttk.Treeview(self.window, style='Treeview', height=400)
+
     def build(self, exchange, index):
         # configure the grid layout
         self.window.rowconfigure(0, weight=1)
         self.window.columnconfigure(0, weight=1)
 
-        style = ttk.Style()
-        style.theme_use('clam')
-        style.configure('tree')
+        item_states = {}
+        for item_id in self.trees[exchange].get_children():
+            item_states[item_id] = self.trees[exchange].item(item_id, 'open')
 
-        # create a treeview
-        tree = ttk.Treeview(self.window, style='Treeview')
-        style.configure("Treeview", foreground="black", background="white")
-
-        tree.heading('#0', text='Crypto currencies', anchor=tk.W)
+        self.trees[exchange].heading('#0', text='Crypto currencies', anchor=tk.W)
 
         save_file = f'{glv.SAVE_FILE}_{exchange}'
-        balance = 0
+
         with open(save_file) as file:
             data = json.load(file)
-            self.window.title(f'Watcher Hierarchical     |     Run Time: {data[0]["run_time"]}')
+            self.window.title(f'Watcher Hierarchical')
             balance = round(data[0]["balance_euro"], 5)
+            run_time = data[0]["run_time"]
             del data[0]
         entries = list(data)
 
-        style = ttk.Style()
-        style.theme_use('clam')
-        style.configure('tree')
-
-        # create a treeview
-        tree = ttk.Treeview(self.window, style='Treeview', height=400)
-        style.configure("Treeview", foreground="black", background="white")
-
-        tree.heading('#0', text=exchange, anchor=tk.W)
+        self.trees[exchange].delete(*self.trees[exchange].get_children())
+        self.trees[exchange].heading('#0', text=exchange)
 
         # adding data
         key = 0
+
+        self.trees[exchange].tag_configure('green', background='#e9ffe9')
+        self.trees[exchange].tag_configure('red', background='#ffece9')
         for entry in entries:
-            tree.insert('', tk.END, text=entry['code'], iid=str(key), open=False)
-            self.insert_sub_entries(tree, entry, key)
+            state = False if item_states == {} else item_states[str(key)]
+
+            self.trees[exchange].insert('', tk.END, text=entry['code'], iid=str(key), open=state, tags=('red',))
+            self.insert_sub_entries(self.trees[exchange], entry, key)
             key += 1
 
-        tree.heading('amount', text=f'€ {balance}', anchor=tk.W)
+        self.trees[exchange].heading('name', text=run_time)
+        self.trees[exchange].heading('amount', text=f'€ {balance}')
 
         # place the Treeview widget on the root window
-        tree.grid(row=0, column=index, sticky=tk.NW)
+        self.trees[exchange].grid(row=0, column=index, sticky=tk.NW)
 
     def insert_sub_entries(self, tree, entry, base_key):
         key = base_key + 1
