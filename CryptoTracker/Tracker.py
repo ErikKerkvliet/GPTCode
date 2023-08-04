@@ -21,8 +21,6 @@ class Tracker:
 
     def track(self) -> None:
         self.wallet = self.fill.fill_wallet(self.exchanges[self.glv.tracker])
-
-        self.wallet = self.exchanges[self.glv.tracker].assets(self.wallet)
         self.wallet = self.exchanges[self.glv.tracker].ticker(self.wallet)
         for code in self.wallet.keys():
             if self.resolver.resolve_sell(self.wallet[code]):

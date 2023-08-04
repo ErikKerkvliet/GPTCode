@@ -12,7 +12,7 @@ class OneTrading:
         self.times = 0
         self.cost_handler = CostHandler()
 
-    def assets(self, wallet: dict) -> dict:
+    def fill_assets(self, wallet: dict) -> dict:
         if self.instruments:
             return self.instruments
 

@@ -13,12 +13,14 @@ class Fill:
         wallet = self.glv.wallets[self.glv.tracker]
 
         if self.glv.tracker == globalvar.EXCHANGES_KRAKEN:
-            return self.from_kraken_balance(wallet)
+            wallet = self.from_kraken_balance(wallet)
         elif self.glv.tracker == globalvar.EXCHANGES_BITPANDA:
-            return self.from_bitpanda_balance(wallet)
+            wallet = self.from_bitpanda_balance(wallet)
         elif self.glv.tracker == globalvar.EXCHANGES_ONE_TRADING:
-            return self.from_one_trading_balance(wallet)
-        return self.from_file(wallet)
+            wallet = self.from_one_trading_balance(wallet)
+        else:
+            wallet = self.from_file(wallet)
+        return self.exchange.fill_assets(wallet)
 
     def from_bitpanda_balance(self, wallet) -> dict:
         wallet = self.exchange.get_balances(wallet=wallet)

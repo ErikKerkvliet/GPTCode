@@ -1,6 +1,7 @@
 import json
 import tkinter as tk
 from time import sleep
+from PIL import Image, ImageTk
 import glv
 from tkinter import ttk
 from Watchers.Percentages import Percentages
@@ -12,6 +13,11 @@ class App:
         self.window = tk.Tk()
         self.window.title('Watcher')
         self.window.geometry('1270x600')
+
+        icon = Image.open("tracker.ico")
+        photo = ImageTk.PhotoImage(icon)
+        self.window.wm_iconphoto(False, photo)
+
         self.option = ''
         self.run_time = ''
         self.data = {}

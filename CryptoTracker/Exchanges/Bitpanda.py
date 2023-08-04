@@ -95,7 +95,7 @@ class Bitpanda:
         else:
             self.cost_handler.sell(crypto)
 
-    def assets(self, wallet: dict) -> dict:
+    def fill_assets(self, wallet: dict) -> dict:
         loop = asyncio.get_event_loop()
         response = loop.run_until_complete(self.get_client().get_instruments())
         response_data = response['response']
@@ -125,7 +125,7 @@ class Bitpanda:
     # UNI , EUR sell 2 UNI voor ? EURO
     # await client.close()
     def create_order(self, order_data) -> dict:
-        print(f'=============== Bitpanda {order_data["exchange_type"]} | Buy: {order_data["amount"] / order_data["crypto"].buy_rate} Sell: {order_data["amount"] / order_data["crypto"].rate} ===============')
+        print(f'=============== Bitpanda {order_data["exchange_type"]} | Euro: {order_data["amount"] / order_data["crypto"].rate} ===============')
         print(order_data["exchange_type"])
 
         if globalvar.TEST:

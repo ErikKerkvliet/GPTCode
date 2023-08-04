@@ -53,10 +53,14 @@ class WatcherArchive:
 
         self.trees[exchange].tag_configure('green', background='#e9ffe9')
         self.trees[exchange].tag_configure('red', background='#ffece9')
+        self.trees[exchange].tag_configure('white', background='white')
         for entry in entries:
             state = False if item_states == {} else item_states[str(key)]
-
-            self.trees[exchange].insert('', tk.END, text=entry['code'], iid=str(key), open=state, tags=('red',))
+            if entry['rate'] == entry['buy_rate']:
+                tag = ('white',)
+            else:
+                tag = ('green',) if entry['rate'] > entry['buy_rate'] else ('red',)
+            self.trees[exchange].insert('', tk.END, text=entry['code'], iid=str(key), open=state, tags=tag)
             self.insert_sub_entries(self.trees[exchange], entry, key)
             key += 1
 
@@ -102,5 +106,4 @@ if __name__ == '__main__':
 
     # Schedule initial call and start refreshing
     watcher_archive.window.after(0, refresh(glv.EXCHANGES))
-
     tk.mainloop()

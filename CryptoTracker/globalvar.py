@@ -121,3 +121,7 @@ def get_run_time():
     run_time = datetime.strptime(now, "%H:%M:%S") - datetime.strptime(start_time, "%H:%M:%S")
 
     return f'🕑 {run_time}'
+
+
+def calc(var1, var2) -> float:
+    return var1 / var2 if var2 > 1 else var1 * var2

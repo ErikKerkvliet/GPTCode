@@ -71,7 +71,7 @@ class Kraken:
             wallet[key].balance = float(balances[key]['balance'])
         return wallet
 
-    def assets(self, wallet: dict):
+    def fill_assets(self, wallet: dict):
         url = f'https://api.kraken.com/0/public/Assets'
 
         response = requests.get(url)
@@ -130,7 +130,7 @@ class Kraken:
         return wallet
 
     def create_order(self, order_data):
-        print(f'=============== Kraken {order_data["side"]} | Buy: {order_data["amount"] / order_data["crypto"].buy_rate} Sell: {order_data["amount"] / order_data["crypto"].rate} ===============')
+        print(f'=============== Kraken {order_data["side"]} | Euro: {order_data["amount"] / order_data["crypto"].rate} ===============')
         print(order_data)
 
         if globalvar.TEST:

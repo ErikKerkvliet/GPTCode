@@ -36,13 +36,13 @@ class Steps:
                 crypto.drops += 1
 
             if crypto.drops > 2 \
-                    and self.calc(crypto.amount_euro, crypto.rate) > crypto.trade_amount_min \
+                    and globalvar.calc(crypto.amount_euro, crypto.rate) > crypto.trade_amount_min \
                     and crypto.buy_rate < crypto.rate * globalvar.MARGIN:
 
                 print('SELL!!!!!!!!!!!!!!!!!!!', 1)
                 return True
 
-            if self.calc(crypto.amount_euro, crypto.rate) > crypto.trade_amount_min \
+            if globalvar.calc(crypto.amount_euro, crypto.rate) > crypto.trade_amount_min \
                     and crypto.buy_rate < crypto.rate * globalvar.MARGIN \
                     and crypto.rate < crypto.last_rate * globalvar.SELL_MARGIN:
 
@@ -59,8 +59,3 @@ class Steps:
                 or crypto.sell_rate < crypto.rate * globalvar.BUY_MARGIN:
             return True
         return False
-
-
-    @staticmethod
-    def calc(var1, var2) -> float:
-        return var1 / var2 if var2 > 1 else var1 * var2
