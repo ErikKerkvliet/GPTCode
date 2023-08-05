@@ -1,3 +1,5 @@
+import traceback
+
 import globalvar
 from time import sleep
 from Store import Store
@@ -12,34 +14,30 @@ class CryptoPrices:
         self.resolver = self.glv.get_resolver(globalvar.RESOLVER)
         self.exchanges = [key for key, exchange in self.glv.exchanges.items() if exchange]
         self.tracker = Tracker(self.glv)
-        self.crashes = {
-            globalvar.EXCHANGES_BITPANDA: 0,
-            globalvar.EXCHANGES_KRAKEN: 0,
-        }
 
     def run_infinitely(self):
         print(f'Exchanges: {", ".join(self.exchanges)}')
         print(f'Option: {globalvar.RESOLVER}')
         print(f'Sleep time: {globalvar.TIMER}')
-        print(f'Start time: {globalvar.start_time}\n--------------------')
+        print(f'Start time: {globalvar.start_time}')
 
         while len(self.exchanges) > 0:
             with open("log.txt", "w") as log:
-                # try:
-                for tracker in self.exchanges:
-                    print(f'================================= {tracker.capitalize()} run_time: {globalvar.get_run_time()} - times: {self.glv.times} =================================')
+                try:
+                    for tracker in self.exchanges:
+                        print(f'================================= {tracker.capitalize()} run_time: {globalvar.get_run_time()} - times: {self.glv.times} =================================')
 
-                    self.glv.tracker = tracker
-                    self.tracker.track()
-                    self.crashes[tracker] = 0
-                # except Exception as e:
-                #     print(f'Error occurred in: {self.glv.tracker}')
-                #     if self.crashes[self.glv.tracker] > 1:
-                #         del self.exchanges[self.glv.tracker]
-                #     self.crashes[tracker] += 1
-                #     traceback.print_exc(file=log)
-                #     traceback.print_tb(e.__traceback__)
-                #     continue
+                        self.glv.tracker = tracker
+                        self.tracker.track()
+                        self.glv.crashes[tracker] = 0
+                except Exception as e:
+                    print(f'Error occurred in: {self.glv.tracker}')
+                    if self.glv.crashes[self.glv.tracker] > 1:
+                        del self.exchanges[self.glv.tracker]
+                    self.glv.crashes[tracker] += 1
+                    traceback.print_exc(file=log)
+                    traceback.print_tb(e.__traceback__)
+                    continue
                 self.glv.times += 1
 
                 if self.glv.times % 25 == 0:

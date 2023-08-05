@@ -34,7 +34,7 @@ MAX_DROPS = 3
 MIN_UPS = 3
 PROFIT_PERC = 0.01
 LOSS_PERC = 0.01
-MARGIN = 0.99
+MARGIN = 0.94
 SELL_MARGIN = 0.997
 BUY_MARGIN = 1.002
 BUY_AMOUNT = 15
@@ -57,6 +57,11 @@ class Globalvar:
             EXCHANGES_KRAKEN: True,
             EXCHANGES_ONE_TRADING: False,
         }
+        self.resolvers = {
+            RESOLVER_PERCENTAGES: Percentages(self),
+            RESOLVER_STEPS: Steps(self),
+            RESOLVER_PROFIT: Profit(self),
+        }
         self.wallets = {
             EXCHANGES_BITPANDA: {},
             EXCHANGES_KRAKEN: {},
@@ -67,10 +72,10 @@ class Globalvar:
             EXCHANGES_KRAKEN: 0,
             EXCHANGES_ONE_TRADING: 0,
         }
-        self.resolvers = {
-            RESOLVER_PERCENTAGES: Percentages(self),
-            RESOLVER_STEPS: Steps(self),
-            RESOLVER_PROFIT: Profit(self),
+        self.crashes = {
+            EXCHANGES_BITPANDA: 0,
+            EXCHANGES_KRAKEN: 0,
+            EXCHANGES_ONE_TRADING: 0,
         }
 
     def get_exchange(self, exchange):

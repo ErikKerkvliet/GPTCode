@@ -25,6 +25,7 @@ class Tracker:
         for code in self.wallet.keys():
             if self.resolver.resolve_sell(self.wallet[code]):
                 self.exchanges[self.glv.tracker].start_transaction(self.wallet[code], globalvar.ORDER_SIDE_SELL)
+                continue
 
             if self.resolver.resolve_buy(self.wallet[code]):
                 self.exchanges[self.glv.tracker].start_transaction(self.wallet[code], globalvar.ORDER_SIDE_BUY)

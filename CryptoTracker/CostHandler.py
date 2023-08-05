@@ -18,7 +18,8 @@ class CostHandler:
     def sell(crypto: Crypto):
         crypto.profit += crypto.balance * (crypto.rate - crypto.buy_rate) * globalvar.MARGIN
 
-        crypto.profit_euro += (crypto.balance * crypto.rate) - (crypto.balance * crypto.buy_rate) * globalvar.MARGIN
+        total_profit = (crypto.rate / crypto.buy_rate) * globalvar.BUY_AMOUNT
+        crypto.profit_euro += (total_profit - crypto.buy_amount_euro) * globalvar.MARGIN
 
         crypto.sell_rate = crypto.rate
         crypto.sells += 1

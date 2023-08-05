@@ -130,7 +130,9 @@ class Kraken:
         return wallet
 
     def create_order(self, order_data):
-        print(f'=============== Kraken {order_data["side"]} | Euro: {order_data["amount"] / order_data["crypto"].rate} ===============')
+        profit_percentage = (order_data["crypto"].rate / order_data["crypto"].buy_rate) * globalvar.BUY_AMOUNT
+        amount_euro = (profit_percentage - order_data["crypto"].buy_amount_euro) * globalvar.MARGIN
+        print(f'=============== Kraken {order_data["side"]} | Euro: {amount_euro} ===============')
         print(order_data)
 
         if globalvar.TEST:

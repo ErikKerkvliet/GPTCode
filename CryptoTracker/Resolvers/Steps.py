@@ -1,11 +1,12 @@
 import globalvar
+from Crypto import Crypto
 
 
 class Steps:
     def __init__(self, glv):
         self.glv = glv
 
-    def resolve_sell(self, crypto) -> bool:
+    def resolve_sell(self, crypto: Crypto) -> bool:
         # crypto.print_variables(self.glv.tracker)
         # print(crypto.balance == 0, crypto.last_rate is None, crypto.rate == crypto.last_rate)
         if crypto.rate is not None:
@@ -17,33 +18,16 @@ class Steps:
         if crypto.balance == 0 or crypto.last_rate is None or crypto.rate == crypto.last_rate:
             return False
         profit = crypto.rate > crypto.last_rate
-        if profit:
-            if crypto.position < 0:
-                crypto.position = 1
-            else:
-                crypto.position += 1
-
-            if crypto.drops > 0:
-                crypto.drops -= 1
+        self.edit_positions(crypto, profit)
 
         if not profit:
-            if crypto.position > 0:
-                crypto.position = -1
-            else:
-                crypto.position -= 1
-
-            if crypto.drops < 2:
-                crypto.drops += 1
-
             if crypto.drops > 2 \
-                    and globalvar.calc(crypto.amount_euro, crypto.rate) > crypto.trade_amount_min \
                     and crypto.buy_rate < crypto.rate * globalvar.MARGIN:
 
                 print('SELL!!!!!!!!!!!!!!!!!!!', 1)
                 return True
 
-            if globalvar.calc(crypto.amount_euro, crypto.rate) > crypto.trade_amount_min \
-                    and crypto.buy_rate < crypto.rate * globalvar.MARGIN \
+            if crypto.buy_rate < crypto.rate * globalvar.MARGIN \
                     and crypto.rate < crypto.last_rate * globalvar.SELL_MARGIN:
 
                 print('SELL!!!!!!!!!!!!!!!!!!!', 2)
@@ -54,8 +38,27 @@ class Steps:
     def resolve_buy(crypto) -> bool:
         if crypto.balance != 0 or crypto.last_rate is None or crypto.rate == crypto.last_rate:
             return False
-        if crypto.position > 1 \
+        if crypto.position > 2 \
                 and crypto.sell_rate is not None \
                 or crypto.sell_rate < crypto.rate * globalvar.BUY_MARGIN:
             return True
         return False
+
+    @staticmethod
+    def edit_positions(crypto: Crypto, profit: bool):
+        if profit:
+            if crypto.position < 0:
+                crypto.position = 1
+            else:
+                crypto.position += 1
+
+            if crypto.drops > 0:
+                crypto.drops -= 1
+        else:
+            if crypto.position > 0:
+                crypto.position = -1
+            else:
+                crypto.position -= 1
+
+            if crypto.drops < 3:
+                crypto.drops += 1

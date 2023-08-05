@@ -27,7 +27,7 @@ class Trade:
 
         crypto.balance = amount / crypto.rate
 
-        self.exchange.start_transaction(crypto, globalvar.ORDER_SIDE_SELL)
+        self.exchanges[self.current_exchange].start_transaction(crypto, globalvar.ORDER_SIDE_SELL)
 
     def buy(self, crypto_code, amount):
         wallet = {crypto_code: Crypto(crypto_code)}

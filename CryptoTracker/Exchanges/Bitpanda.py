@@ -69,7 +69,7 @@ class Bitpanda:
         if crypto.code == globalvar.DEFAULT_CURRENCY:
             return
 
-        precision = crypto.pair['pair_decimals']
+        precision = crypto.pair['amount_precision']
 
         if side == globalvar.ORDER_SIDE_BUY:
             amount = crypto.buy_amount_euro / crypto.rate
@@ -114,7 +114,7 @@ class Bitpanda:
 
         for pair in response_data:
             if pair['base']['code'] in wallet.keys() and pair['state'] == 'ACTIVE':
-                wallet[pair['base']['code']].pair = wallet
+                wallet[pair['base']['code']].pair = pair
         return wallet
 
     # UNI , EURO Koop 2 UNI voor ? EURO
