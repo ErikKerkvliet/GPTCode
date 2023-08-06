@@ -7,13 +7,20 @@ class Steps:
         self.glv = glv
 
     def resolve_sell(self, crypto: Crypto) -> bool:
-        # crypto.print_variables(self.glv.tracker)
-        # print(crypto.balance == 0, crypto.last_rate is None, crypto.rate == crypto.last_rate)
         if crypto.rate is not None:
             code = crypto.code if len(crypto.code) == 4 else f'{crypto.code} '
-            diff = crypto.buy_rate / crypto.rate
-            difference = -(1 - diff) if diff < 1 else (diff - 1) * 100
-            print(f'Coin: {code}, Difference: {difference}%')
+            difference = crypto.rate / crypto.buy_rate
+            percentage = round((difference - 1), 5)
+            amount = round(difference * globalvar.BUY_AMOUNT, 5)
+            sell = '✓✓✓✓' if amount > globalvar.BUY_AMOUNT * 1.01 else '⤫'
+            if percentage < 0:
+                percentage_colored = f'\033[91m{percentage}\033[0m'
+            elif percentage > 0:
+                percentage_colored = f'\033[92m{percentage}\033[0m'
+            else:
+                percentage_colored = percentage
+
+            print(f'Coin: {code}, Difference: {percentage_colored}%, Amount €: {amount}, Drops: {crypto.drops}, Sell: {sell}')
 
         if crypto.balance == 0 or crypto.last_rate is None or crypto.rate == crypto.last_rate:
             return False
@@ -21,7 +28,7 @@ class Steps:
         self.edit_positions(crypto, profit)
 
         if not profit:
-            if crypto.drops > 2 \
+            if crypto.drops > 1 \
                     and crypto.buy_rate < crypto.rate * globalvar.MARGIN:
 
                 print('SELL!!!!!!!!!!!!!!!!!!!', 1)
@@ -60,5 +67,5 @@ class Steps:
             else:
                 crypto.position -= 1
 
-            if crypto.drops < 3:
+            if crypto.drops < 2:
                 crypto.drops += 1

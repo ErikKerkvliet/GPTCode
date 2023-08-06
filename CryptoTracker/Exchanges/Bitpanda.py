@@ -80,10 +80,12 @@ class Bitpanda:
 
         amount = math.floor(amount * float(f'1e{precision}')) / float(f'1e{precision}')
         order_data = {
+            'ordertype': globalvar.ORDER_TYPE,
             'pair': f'{crypto.code}_{globalvar.DEFAULT_CURRENCY}',
             'exchange_type': side,
             'amount': f'{float(amount):.{precision}f}',
             'crypto': crypto,
+            'price': round(globalvar.BUY_AMOUNT * globalvar.BUY_MARGIN, 2)
         }
 
         response = self.create_order(order_data)
@@ -132,8 +134,16 @@ class Bitpanda:
             return {}
 
         loop = asyncio.get_event_loop()
-        return loop.run_until_complete(self.get_client().create_market_order(
-            order_data['pair'],
-            order_data['exchange_type'],
-            order_data['amount']
-        ))
+        if order_data['ordertype'] == globalvar.ORDER_TYPE_LIMIT:
+            return loop.run_until_complete(self.get_client().create_limit_order(
+                order_data['pair'],
+                order_data['exchange_type'],
+                order_data['amount'],
+                order_data['price']
+            ))
+        elif order_data['ordertype'] == globalvar.ORDER_TYPE_MARKET:
+            return loop.run_until_complete(self.get_client().create_market_order(
+                order_data['pair'],
+                order_data['exchange_type'],
+                order_data['amount']
+            ))

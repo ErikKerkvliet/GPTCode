@@ -44,11 +44,12 @@ class Kraken:
 
         precision = int(crypto.asset['decimals'])
         order_data = {
-            'ordertype': 'market',
+            'ordertype': globalvar.ORDER_TYPE,
             'side': side,
             'pair': crypto.pair,
             'amount': float(f'{float(amount):.{precision}f}'),
             'crypto': crypto,
+            'price': round(globalvar.BUY_AMOUNT * globalvar.BUY_MARGIN, 2),
             'validate': False,  # Test variable
         }
 
@@ -81,7 +82,7 @@ class Kraken:
 
         if response_data['error'] and self.times < 3:
             sleep(5)
-            self.assets(wallet)
+            self.fill_assets(wallet)
         self.times = 0
 
         codes = wallet.keys() if wallet != {} else response_data['result'].keys()
@@ -99,11 +100,6 @@ class Kraken:
 
         response_data = response.json()
         response.close()
-
-        if response_data['error'] and self.times < 3:
-            sleep(5)
-            self.pairs(wallet=wallet)
-        self.times = 0
 
         pairs_data = response_data['result']
         for code in pairs_data.keys():
@@ -138,10 +134,20 @@ class Kraken:
         if globalvar.TEST:
             order_data['validate'] = True
 
-        return self.get_client().create_order(
-            ordertype=order_data['ordertype'],
-            side=order_data['side'],
-            pair=order_data['pair'],
-            volume=order_data['amount'],
-            validate=order_data['validate']
-        )
+        if order_data['ordertype'] == globalvar.ORDER_TYPE_LIMIT:
+            return self.get_client().create_order(
+                ordertype=order_data['ordertype'],
+                side=order_data['side'],
+                pair=order_data['pair'],
+                volume=order_data['amount'],
+                validate=order_data['validate'],
+                price=order_data['price']
+            )
+        elif order_data['ordertype'] == globalvar.ORDER_TYPE_MARKET:
+            return self.get_client().create_order(
+                ordertype=order_data['ordertype'],
+                side=order_data['side'],
+                pair=order_data['pair'],
+                volume=order_data['amount'],
+                validate=order_data['validate']
+            )

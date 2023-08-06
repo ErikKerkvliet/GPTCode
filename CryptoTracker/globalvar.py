@@ -9,7 +9,7 @@ from Resolvers.Profit import Profit
 from Resolvers.Steps import Steps
 from Store import Store
 
-TEST = True
+TEST = False
 
 STATE_DEVELOPMENT = 'development'
 STATE_PRODUCTION = 'production'
@@ -27,6 +27,10 @@ RESOLVER = RESOLVER_STEPS
 ORDER_SIDE_BUY = 'buy'
 ORDER_SIDE_SELL = 'sell'
 
+ORDER_TYPE_LIMIT = 'limit'
+ORDER_TYPE_MARKET = 'market'
+ORDER_TYPE = ORDER_TYPE_MARKET
+
 DEFAULT_CURRENCY = 'EUR'
 DEFAULT_CRYPTO = 'BTC'
 TIMER = 300
@@ -34,8 +38,8 @@ MAX_DROPS = 3
 MIN_UPS = 3
 PROFIT_PERC = 0.01
 LOSS_PERC = 0.01
-MARGIN = 0.94
-SELL_MARGIN = 0.997
+MARGIN = 0.99
+SELL_MARGIN = 0.99
 BUY_MARGIN = 1.002
 BUY_AMOUNT = 15
 SAVE_FILE = '../save'
