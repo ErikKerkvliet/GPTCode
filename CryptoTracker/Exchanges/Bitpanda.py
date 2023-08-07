@@ -65,13 +65,13 @@ class Bitpanda:
             wallet[code].balance = float(balance['available'])
         return wallet
 
-    def start_transaction(self, crypto, side):
+    def start_transaction(self, crypto: Crypto, side: str):
         if crypto.code == globalvar.DEFAULT_CURRENCY:
             return
 
         precision = crypto.pair['amount_precision']
 
-        if side == globalvar.ORDER_SIDE_BUY:
+        if side.lower() == globalvar.ORDER_SIDE_BUY:
             amount = crypto.buy_amount_euro / crypto.rate
             side = OrderSide.BUY
         else:
@@ -127,7 +127,8 @@ class Bitpanda:
     # UNI , EUR sell 2 UNI voor ? EURO
     # await client.close()
     def create_order(self, order_data) -> dict:
-        print(f'=============== Bitpanda {order_data["exchange_type"]} | Euro: {order_data["amount"] / order_data["crypto"].rate} ===============')
+        amount = order_data["amount"] if order_data['exchange_type'] == globalvar.ORDER_SIDE_SELL else float(order_data["amount"]) * order_data["crypto"].rate
+        print(f'=============== Bitpanda {order_data["exchange_type"]} | Euro: {amount} ===============')
         print(order_data["exchange_type"])
 
         if globalvar.TEST:

@@ -76,11 +76,6 @@ class Globalvar:
             EXCHANGES_KRAKEN: 0,
             EXCHANGES_ONE_TRADING: 0,
         }
-        self.crashes = {
-            EXCHANGES_BITPANDA: 0,
-            EXCHANGES_KRAKEN: 0,
-            EXCHANGES_ONE_TRADING: 0,
-        }
 
     def get_exchange(self, exchange):
         return self.exchanges[exchange]

@@ -29,12 +29,9 @@ class CryptoPrices:
 
                         self.glv.tracker = tracker
                         self.tracker.track()
-                        self.glv.crashes[tracker] = 0
                 except Exception as e:
                     print(f'Error occurred in: {self.glv.tracker}')
-                    if self.glv.crashes[self.glv.tracker] > 1:
-                        del self.exchanges[self.glv.tracker]
-                    self.glv.crashes[tracker] += 1
+                    self.exchanges.remove(self.glv.tracker)
                     traceback.print_exc(file=log)
                     traceback.print_tb(e.__traceback__)
                     continue
